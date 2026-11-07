@@ -114,7 +114,7 @@ ${shared}
   </div>
 
   <div class="bottom">
-    <span><b>AI / Software / Hardware</b><br>ishanasati.me</span>
+    <span><b>AI / Software / Hardware</b><br>ishanasati.vercel.app</span>
     <span class="page-no">01</span>
   </div>
 </body></html>`;

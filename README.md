@@ -1,4 +1,4 @@
-# ishanasati.me
+# Ishan Asati — Portfolio
 
 The personal portfolio of **Ishan Asati** — an independent, editorial-style record of projects, prototypes and experiments across AI, software engineering, hardware and creative programming.
 
@@ -49,4 +49,6 @@ The Notes collection is intentionally empty until real writing exists. The build
 
 ## Deployment
 
-The site is configured for `https://ishanasati.me` and deploys as a static Vercel site. Update `site` in `astro.config.mjs` and the identity values in `src/config.ts` if the domain changes.
+The site deploys to Vercel from the `main` branch of [IshanAsati/portfolio](https://github.com/IshanAsati/portfolio) and is live at `https://ishanasati.vercel.app`.
+
+Canonical URLs come from `site` in `astro.config.mjs` and `site.url` in `src/config.ts`. If a custom domain is connected later, update both, update `public/robots.txt`, and run `npm run assets` to regenerate the OG image.

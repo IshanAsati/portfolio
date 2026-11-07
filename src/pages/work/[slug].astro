@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from '@lucide/astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectArtwork from '../../components/ProjectArtwork.astro';
 import ArrowLink from '../../components/ArrowLink.astro';
+import { site } from '../../config';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -33,11 +34,11 @@ const schema = {
   '@type': 'CreativeWork',
   name: project.data.title,
   description: project.data.summary,
-  url: `https://ishanasati.me/work/${project.id}`,
+  url: `${site.url}/work/${project.id}`,
   author: {
     '@type': 'Person',
     name: 'Ishan Asati',
-    url: 'https://ishanasati.me',
+    url: site.url,
   },
   keywords: project.data.tools.join(', '),
   ...(project.data.repo ? { sameAs: [project.data.repo] } : {}),

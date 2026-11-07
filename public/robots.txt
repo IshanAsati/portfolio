@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ishanasati.me/sitemap-index.xml
+Sitemap: https://ishanasati.vercel.app/sitemap-index.xml

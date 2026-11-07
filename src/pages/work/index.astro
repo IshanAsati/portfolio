@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { ArrowUpRight } from '@lucide/astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectArtwork from '../../components/ProjectArtwork.astro';
+import { site } from '../../config';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 
@@ -20,7 +21,7 @@ const schema = {
   name: 'Work — Ishan Asati',
   description:
     'Projects, prototypes and experiments by Ishan Asati, spanning AI, software engineering, hardware and creative coding.',
-  url: 'https://ishanasati.me/work',
+  url: `${site.url}/work`,
 };
 ---
 
