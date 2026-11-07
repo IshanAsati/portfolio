@@ -1,0 +1,281 @@
+---
+import { ArrowUp } from '@lucide/astro';
+import { navigation, site, socialLinks } from '../config';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-top">
+      <a class="footer-brand" href="/" aria-label={`${site.brand}, home`}>
+        ishan.asati<span>.</span>
+      </a>
+      <a class="back-top" href="#top">
+        <span>Back to top</span>
+        <ArrowUp aria-hidden="true" stroke-width="1.5" />
+      </a>
+    </div>
+
+    <div class="footer-grid">
+      <div class="footer-column footer-statement">
+        <p class="mono footer-kicker">Colophon</p>
+        <p class="footer-note">
+          An independent portfolio, set in Instrument Serif, Inter and IBM Plex Mono.
+          Built with Astro, TypeScript and Tailwind CSS. Written and maintained in India.
+        </p>
+      </div>
+
+      <nav class="footer-column" aria-label="Footer navigation">
+        <p class="mono footer-kicker">Index</p>
+        <ul class="footer-list">
+          {navigation.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer-column">
+        <p class="mono footer-kicker">Elsewhere</p>
+        <ul class="footer-list">
+          {socialLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noreferrer noopener' : undefined}
+              >
+                {link.label}
+                {link.external && <span class="sr-only"> (opens in a new tab)</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="footer-column footer-meta">
+        <p class="mono footer-kicker">Issue</p>
+        <p class="footer-issue">Vol. 01<br />{site.year}</p>
+        <p class="mono footer-place">{site.location}</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="mono">© {year} {site.name}</p>
+      <p class="mono footer-built">A living document, not a finished one.</p>
+      <p class="mono">Set in India</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+    background: var(--charcoal);
+    color: var(--ivory);
+  }
+
+  .footer-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--line-light);
+  }
+
+  .footer-brand {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    letter-spacing: -0.04em;
+    line-height: 0.82;
+    color: var(--ivory);
+    transition: color 0.25s ease;
+  }
+
+  .footer-brand span {
+    color: var(--cobalt-bright);
+  }
+
+  .footer-brand:hover {
+    color: var(--cobalt-bright);
+  }
+
+  .back-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.35rem;
+    color: var(--stone);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+  }
+
+  .back-top svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .back-top:hover {
+    color: var(--ivory);
+  }
+
+  .back-top:hover svg {
+    transform: translateY(-0.2rem);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .footer-column {
+    min-width: 0;
+  }
+
+  .footer-kicker {
+    margin-bottom: 1.3rem;
+    color: var(--stone);
+  }
+
+  .footer-statement {
+    padding-right: clamp(1rem, 5vw, 4rem);
+  }
+
+  .footer-note {
+    max-width: 30ch;
+    color: var(--stone);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+  }
+
+  .footer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .footer-list a {
+    position: relative;
+    display: inline-block;
+    color: var(--ivory);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+  }
+
+  .footer-list a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -0.15rem;
+    left: 0;
+    height: 1px;
+    background: var(--cobalt-bright);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .footer-list a:hover {
+    color: var(--cobalt-bright);
+  }
+
+  .footer-list a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  .footer-issue {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--ivory);
+  }
+
+  .footer-place {
+    margin-top: 1rem;
+    color: var(--stone);
+  }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line-light);
+    color: var(--stone);
+  }
+
+  .footer-bottom p {
+    white-space: nowrap;
+  }
+
+  .footer-built {
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .footer-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer-statement {
+      grid-column: 1 / -1;
+      padding-right: 0;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .footer-top {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .footer-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 1.5rem;
+    }
+
+    .footer-meta {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem 1.5rem;
+    }
+
+    .footer-kicker {
+      margin-bottom: 0.9rem;
+    }
+
+    .footer-meta .footer-kicker {
+      width: 100%;
+      margin-bottom: 0;
+    }
+
+    .footer-place {
+      margin-top: 0;
+    }
+
+    .footer-bottom {
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+    }
+
+    .footer-built {
+      order: 3;
+      width: 100%;
+      text-align: left;
+    }
+  }
+</style>

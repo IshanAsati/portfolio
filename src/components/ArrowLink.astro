@@ -1,0 +1,42 @@
+---
+import { ArrowDown, ArrowUpRight } from '@lucide/astro';
+
+interface Props {
+  href: string;
+  label: string;
+  direction?: 'up-right' | 'down';
+  external?: boolean;
+  tone?: 'dark' | 'light';
+  class?: string;
+}
+
+const {
+  href,
+  label,
+  direction = 'up-right',
+  external = false,
+  tone = 'dark',
+  class: className = '',
+} = Astro.props;
+
+const Icon = direction === 'down' ? ArrowDown : ArrowUpRight;
+const classes = [
+  'link-line',
+  direction === 'down' ? 'link-line--down' : '',
+  tone === 'light' ? 'link-line--light' : '',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<a
+  class={classes}
+  href={href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noreferrer noopener' : undefined}
+>
+  <span>{label}</span>
+  <Icon aria-hidden="true" stroke-width="1.5" />
+  {external && <span class="sr-only"> (opens in a new tab)</span>}
+</a>

@@ -1,0 +1,179 @@
+---
+title: Atlas Fit
+index: "02"
+year: "2026"
+category: "Software Engineering"
+filter: software
+status: "In development"
+summary: "An offline-first strength-training PWA with deterministic plan generation, workout logging, progress tracking and a muscle-focused exercise library."
+deck: "A local-first training app built around a simple conviction: personal data should live on the person's device, and the plan should still work when the network does not."
+order: 2
+featured: true
+cover: atlas-fit
+tools:
+  - React
+  - TypeScript
+  - Vite
+  - Tailwind CSS
+  - shadcn/ui
+  - Dexie
+  - IndexedDB
+repo: "https://github.com/IshanAsati/atlas-fit"
+demo: "https://atlas-fit-iota.vercel.app"
+metrics:
+  - value: "Offline"
+    label: "Core operating mode"
+    note: "No account or backend required"
+  - value: "Local"
+    label: "Data ownership"
+    note: "Profiles and logs stored on device"
+  - value: "Deterministic"
+    label: "Plan generation"
+    note: "Same inputs produce the same plan"
+  - value: "Active"
+    label: "Development status"
+    note: "Still being built and tested"
+---
+
+import { Image } from 'astro:assets';
+import planShot from '../../assets/projects/atlas-fit/03-plan.png';
+import workoutShot from '../../assets/projects/atlas-fit/04-workout.png';
+import libraryShot from '../../assets/projects/atlas-fit/05-library.png';
+import bodyShot from '../../assets/projects/atlas-fit/06-bodygraph.png';
+
+Atlas Fit is an offline-first fitness and workout-planning Progressive Web App. It is designed for the ordinary conditions of training: a phone in hand, an unreliable connection, and a preference not to hand a personal training history to a server.
+
+The project is under active development. This page documents what exists, what it is built on, and what is still being worked out.
+
+## Overview
+
+The app generates a training plan from a small set of user choices, then supports the session itself — viewing the plan, logging sets, and tracking progress over time. It includes home, gym and travel profiles so the same training intent can adapt to different equipment and environments.
+
+Everything essential is local. There is no account system, no backend and no analytics dependency. The exercise library and muscle-focused artwork are bundled with the app so the experience survives going offline.
+
+## The problem
+
+Most training apps are built as thin clients over a server. That architecture brings account screens, sync conflicts and a hard dependency on connectivity. For a personal training log, most of that is unnecessary. The data is small, private and only useful to one person.
+
+The design question became: how much of a serious training app can be built with the device as the source of truth?
+
+A second, subtler problem was trust. A generated plan is only useful if the user can understand why it looks the way it does. A deterministic generator — where the same profile and preferences produce the same plan — makes the system inspectable in a way that a hidden recommendation engine does not.
+
+## Approach
+
+The app is shaped around three principles:
+
+- **Offline first, not offline as a fallback.** The core flows are designed to work without a network. Persistence is local by default.
+- **Deterministic by design.** Plan generation is a function of explicit inputs, not a random or remotely tuned process. The result can be regenerated and reasoned about.
+- **Quiet interface.** Training is the task; the app should not compete for attention. The UI keeps the current set, the next action and the relevant history close at hand.
+
+The workout profiles — home, gym and travel — change the available equipment and exercise selection without changing the underlying structure of the plan.
+
+## Architecture
+
+The stack is deliberately conventional on the client and unconventional only where the local-first requirement demands it:
+
+```text
+React + TypeScript
+        │
+        ├── Vite build
+        ├── Tailwind CSS + shadcn/ui
+        ├── Dexie → IndexedDB
+        └── Service worker / PWA install
+```
+
+- **React and TypeScript** provide the component model and the type safety that keeps a growing data model manageable.
+- **Vite** handles development and production builds.
+- **Tailwind CSS and shadcn/ui** provide the visual primitives without importing a heavy design system.
+- **Dexie** wraps IndexedDB with a queryable, versioned local database. Profiles, plans, logs and exercise data persist on the device.
+- **A service worker** caches the application shell and bundled assets so the app can launch offline.
+
+There is no server-side rendering layer, no API and no synchronisation service. That removes a class of failure modes, but it also means the app has to solve migrations and data durability locally.
+
+## Development
+
+The build has been driven by using it. The mobile QA screenshots on this page come from the real application, not a mockup: the plan view, an in-progress session and the body view with muscle-focused exercise artwork.
+
+Several implementation details took more thought than the features suggest:
+
+- **Plan generation as a pure pipeline.** The generator takes a profile and preferences and produces a structured plan. Keeping it deterministic makes the output testable and prevents the interface from becoming a slot machine.
+- **Local data migrations.** IndexedDB schemas change. Dexie's versioning helps, but the app still has to treat a user's existing log as data worth preserving.
+- **Exercise media.** Exercise images and the muscle map need to be available offline without turning the install into an enormous download. Bundling and sizing were treated as product decisions, not afterthoughts.
+- **Mobile ergonomics.** Logging a set happens with one hand, mid-session. The interaction has to tolerate imprecision and recover gracefully.
+
+## What works today
+
+The current build includes:
+
+- A local profile and preference setup.
+- Deterministic generation of a workout plan.
+- Home, gym and travel training profiles.
+- A workout session view with set logging.
+- Progress tracking built from logged sessions.
+- A searchable exercise database with bundled imagery.
+- Muscle-focused exercise visualisation.
+- Offline operation and installable PWA behaviour.
+
+A live build is available at [atlas-fit-iota.vercel.app](https://atlas-fit-iota.vercel.app) and the source is on [GitHub](https://github.com/IshanAsati/atlas-fit).
+
+<figure class="case-gallery">
+  <div class="case-gallery-grid">
+    <figure class="case-shot">
+      <Image
+        src={planShot}
+        alt="Atlas Fit plan screen with a generated weekly training plan."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02a</span> Generated plan</figcaption>
+    </figure>
+    <figure class="case-shot">
+      <Image
+        src={workoutShot}
+        alt="Atlas Fit workout screen during a training session."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02b</span> Session logging</figcaption>
+    </figure>
+    <figure class="case-shot">
+      <Image
+        src={libraryShot}
+        alt="Atlas Fit exercise library with bundled exercise imagery."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02c</span> Exercise library</figcaption>
+    </figure>
+    <figure class="case-shot">
+      <Image
+        src={bodyShot}
+        alt="Atlas Fit body view with muscle-focused exercise artwork."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02d</span> Muscle visualisation</figcaption>
+    </figure>
+  </div>
+  <figcaption class="case-gallery-caption">
+    Screenshots from the live build, not mockups. The interface is still being revised as the
+    project develops.
+  </figcaption>
+</figure>
+
+## Limitations and next
+
+Atlas Fit is not finished, and I do not want this page to imply otherwise.
+
+- **Testing is still narrow.** The app has been exercised on a small number of devices and training routines. Broader device coverage and edge-case testing are ongoing.
+- **The plan generator is only as good as its rules.** Deterministic output is inspectable, but it is not personalised by a coach. The quality of the exercise selection depends on the catalogue and the constraints I encoded.
+- **Local-first has a cost.** There is no automatic cross-device sync. A lost device means lost data unless a backup exists.
+- **Content and polish are in progress.** Exercise coverage, onboarding clarity and the finer states of the logging flow are still being refined.
+
+The next phase is less about adding surface area and more about making the existing loop dependable: plan, train, log, review, repeat.
+
+## Reflection
+
+Atlas Fit has taught me more about software architecture than any isolated tutorial. Local-first is not a feature you bolt on at the end; it changes where state lives, how errors are handled and what the user is promised.
+
+It has also clarified what I want from the things I build: they should be useful without being noisy, and they should leave the person using them in control of their own data.

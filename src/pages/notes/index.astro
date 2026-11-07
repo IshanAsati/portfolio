@@ -1,0 +1,604 @@
+---
+import { getCollection } from 'astro:content';
+import { ArrowUpRight, Rss } from '@lucide/astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { site } from '../../config';
+
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const planned = [
+  {
+    number: '01',
+    title: 'What I am learning about machine learning',
+    note: 'Evaluation, failure modes and the distance between a score and a system.',
+    category: 'AI / ML',
+  },
+  {
+    number: '02',
+    title: 'Building local-first software',
+    note: 'Notes from Atlas Fit on state, storage and owning your own data.',
+    category: 'Software',
+  },
+  {
+    number: '03',
+    title: 'Electronics, from the bench',
+    note: 'Sensors, timing, wiring mistakes and the things that only appear in hardware.',
+    category: 'Hardware',
+  },
+  {
+    number: '04',
+    title: 'Linux, slowly',
+    note: 'Learning the system underneath the tools instead of memorising commands.',
+    category: 'Systems',
+  },
+];
+
+const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Notes — Ishan Asati',
+  description: 'Technical notes and writing by Ishan Asati. Currently forthcoming.',
+  url: 'https://ishanasati.me/notes',
+};
+
+const hasNotes = notes.length > 0;
+---
+
+<BaseLayout
+  title="Notes"
+  description="Technical notes and writing by Ishan Asati on machine learning, software, electronics and learning by building. The first entries are forthcoming."
+  schema={schema}
+>
+  <section class="notes-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Index</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">Notes</li>
+        </ol>
+      </nav>
+
+      <div class="head-grid">
+        <div>
+          <p class="eyebrow">Notes / {hasNotes ? `${notes.length} published` : 'Forthcoming'}</p>
+          <h1>
+            Thinking<br />
+            <em>in public.</em>
+          </h1>
+        </div>
+        <div class="head-note">
+          <p>
+            Occasional writing about what I am learning: machine learning, local-first
+            software, electronics, Linux and the unglamorous parts of building things.
+          </p>
+          <p class="mono head-note-detail">
+            {hasNotes ? 'Published entries are listed below.' : 'No entries published yet.'}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="notes-body section" aria-labelledby="notes-index-title">
+    <div class="shell notes-grid">
+      <aside class="notes-aside">
+        <p class="eyebrow">The index</p>
+        <p class="notes-count">
+          <span>{String(notes.length).padStart(2, '0')}</span>
+          published {notes.length === 1 ? 'entry' : 'entries'}
+        </p>
+        <a class="rss-link" href="/rss.xml">
+          <Rss aria-hidden="true" stroke-width="1.5" />
+          RSS feed
+        </a>
+      </aside>
+
+      <div class="notes-main">
+        {hasNotes ? (
+          <ol class="entry-list" aria-labelledby="notes-index-title">
+            {notes.map((note, i) => (
+              <li class="entry">
+                <a href={`/notes/${note.id}`}>
+                  <span class="entry-number">{String(i + 1).padStart(2, '0')}</span>
+                  <div class="entry-body">
+                    <div class="entry-meta">
+                      <span class="mono">{note.data.category}</span>
+                      <time datetime={note.data.pubDate.toISOString()}>
+                        {dateFormatter.format(note.data.pubDate)}
+                      </time>
+                    </div>
+                    <h2>{note.data.title}</h2>
+                    <p>{note.data.description}</p>
+                  </div>
+                  <ArrowUpRight class="entry-arrow" aria-hidden="true" stroke-width="1.5" />
+                </a>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div class="empty-state">
+            <p class="empty-folio" aria-hidden="true">00</p>
+            <div class="empty-copy">
+              <p class="mono empty-label">The shelf is empty, on purpose</p>
+              <h2 id="notes-index-title">No notes are published yet.</h2>
+              <p>
+                Writing takes longer than building, and I would rather publish nothing than
+                publish something manufactured to fill a page. The first entries will appear
+                here when they are actually written, edited and worth your time.
+              </p>
+              <p>
+                There is no newsletter and no account. The <a href="/rss.xml">RSS feed</a> is
+                the honest way to know when something changes.
+              </p>
+            </div>
+          </div>
+        )}
+
+        <div class="planned">
+          <div class="planned-head">
+            <p class="mono">Planned, not published</p>
+            <p>
+              These are topics I intend to write about. They are not articles, and they will
+              not be presented as such until they exist.
+            </p>
+          </div>
+
+          <ol class="planned-list">
+            {planned.map((item) => (
+              <li>
+                <span class="planned-number">{item.number}</span>
+                <div>
+                  <span class="mono planned-category">{item.category}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.note}</p>
+                </div>
+                <span class="planned-status">Planned</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="notes-contact section--tight">
+    <div class="shell notes-contact-grid">
+      <p class="eyebrow">Correspondence</p>
+      <p class="notes-contact-note">
+        If something here is wrong, unclear or worth arguing with, I would like to hear it.
+      </p>
+      <a class="notes-mail" href={`mailto:${site.email}`}>
+        {site.email}
+        <ArrowUpRight aria-hidden="true" stroke-width="1.25" />
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notes-head {
+    padding-top: 1.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .crumbs {
+    padding-bottom: 1.5rem;
+  }
+
+  .crumbs ol {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .crumbs a:hover {
+    color: var(--cobalt);
+  }
+
+  .crumbs [aria-current] {
+    color: var(--charcoal);
+  }
+
+  .head-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.65fr);
+    align-items: end;
+    gap: clamp(2rem, 6vw, 6rem);
+    padding-block: clamp(1.5rem, 3vw, 2rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .head-grid h1 {
+    margin-top: 1.25rem;
+    font-family: var(--font-serif);
+    font-size: clamp(3.75rem, 9vw, 8rem);
+    letter-spacing: -0.055em;
+    line-height: 0.86;
+  }
+
+  .head-grid h1 em {
+    color: var(--cobalt);
+  }
+
+  .head-note {
+    max-width: 42ch;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .head-note-detail {
+    margin-top: 1.25rem;
+    color: var(--ink-muted);
+  }
+
+  .notes-body {
+    background: var(--paper);
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.38fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+  }
+
+  .notes-aside {
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+
+  .notes-count {
+    margin-top: 1.5rem;
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .notes-count span {
+    display: block;
+    color: var(--cobalt);
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+
+  .rss-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.5rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .rss-link svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    color: var(--cobalt);
+  }
+
+  .rss-link:hover {
+    border-bottom-color: var(--cobalt);
+    color: var(--cobalt);
+  }
+
+  .empty-state {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--charcoal);
+  }
+
+  .empty-folio {
+    color: var(--cobalt);
+    font-family: var(--font-serif);
+    font-size: clamp(4.5rem, 10vw, 8rem);
+    letter-spacing: -0.05em;
+    line-height: 0.8;
+  }
+
+  .empty-label {
+    color: var(--ink-muted);
+  }
+
+  .empty-copy h2 {
+    max-width: 20ch;
+    margin-top: 0.75rem;
+    font-family: var(--font-serif);
+    font-size: clamp(2.25rem, 4.5vw, 3.75rem);
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+  }
+
+  .empty-copy > p:not(.empty-label) {
+    max-width: 54ch;
+    margin-top: 1.25rem;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .empty-copy a {
+    color: var(--cobalt);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .entry-list {
+    border-top: 1px solid var(--charcoal);
+  }
+
+  .entry {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .entry > a {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 1rem;
+    padding-block: 1.5rem;
+    transition: color 0.2s ease;
+  }
+
+  .entry-number {
+    color: var(--cobalt);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    line-height: 1.8;
+  }
+
+  .entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .entry-body h2 {
+    margin-top: 0.5rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .entry-body p {
+    max-width: 52ch;
+    margin-top: 0.5rem;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .entry-arrow {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.2rem;
+    color: var(--cobalt);
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .entry > a:hover h2,
+  .entry > a:hover .entry-arrow {
+    color: var(--cobalt);
+  }
+
+  .entry > a:hover .entry-arrow {
+    transform: translate(0.2rem, -0.2rem);
+  }
+
+  .planned {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .planned-head {
+    display: grid;
+    grid-template-columns: minmax(0, 0.45fr) minmax(0, 1fr);
+    gap: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .planned-head .mono {
+    color: var(--ink-muted);
+  }
+
+  .planned-head > p:last-child {
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .planned-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .planned-list li {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 1rem;
+    padding-block: 1.2rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .planned-number {
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    line-height: 1.6;
+  }
+
+  .planned-category {
+    color: var(--ink-muted);
+  }
+
+  .planned-list h3 {
+    margin-top: 0.35rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+
+  .planned-list li p {
+    max-width: 48ch;
+    margin-top: 0.35rem;
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+  }
+
+  .planned-status {
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+    text-transform: uppercase;
+  }
+
+  .notes-contact {
+    border-top: 1px solid var(--line);
+  }
+
+  .notes-contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.35fr) minmax(0, 0.8fr) auto;
+    align-items: baseline;
+    gap: clamp(1.5rem, 4vw, 4rem);
+  }
+
+  .notes-contact-note {
+    max-width: 42ch;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .notes-mail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    transition: color 0.2s ease;
+  }
+
+  .notes-mail svg {
+    width: 1rem;
+    height: 1rem;
+    color: var(--cobalt);
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .notes-mail:hover {
+    color: var(--cobalt);
+  }
+
+  .notes-mail:hover svg {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  @media (max-width: 900px) {
+    .head-grid,
+    .notes-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .notes-aside {
+      position: static;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 1rem 2rem;
+    }
+
+    .notes-count {
+      margin-top: 0;
+    }
+
+    .notes-count span {
+      display: inline;
+      margin-right: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0;
+    }
+
+    .rss-link {
+      margin-top: 0;
+    }
+
+    .notes-contact-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .head-grid h1 {
+      font-size: clamp(3.25rem, 15vw, 5rem);
+    }
+
+    .empty-state {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .empty-folio {
+      font-size: 4.5rem;
+    }
+
+    .planned-head {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .planned-list li {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+
+    .planned-status {
+      grid-column: 2;
+    }
+
+    .notes-mail {
+      word-break: break-all;
+    }
+  }
+</style>

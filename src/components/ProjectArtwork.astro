@@ -1,0 +1,858 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import planShot from '../assets/projects/atlas-fit/03-plan.png';
+import workoutShot from '../assets/projects/atlas-fit/04-workout.png';
+import bodyShot from '../assets/projects/atlas-fit/06-bodygraph.png';
+
+interface Props {
+  kind: 'dermoai' | 'atlas-fit' | 'robotics' | 'programming';
+  class?: string;
+  priority?: boolean;
+  caption?: string;
+}
+
+const { kind, class: className = '', priority = false, caption } = Astro.props;
+
+const atlasShots: Array<{
+  src: ImageMetadata;
+  alt: string;
+  label: string;
+  className: string;
+}> = [
+  {
+    src: planShot,
+    alt: 'Atlas Fit plan screen showing a generated training plan by day.',
+    label: 'Plan',
+    className: 'phone--plan',
+  },
+  {
+    src: workoutShot,
+    alt: 'Atlas Fit workout screen showing a guided training session and set logging.',
+    label: 'Session',
+    className: 'phone--workout',
+  },
+  {
+    src: bodyShot,
+    alt: 'Atlas Fit body screen showing muscle-focused exercise artwork.',
+    label: 'Body',
+    className: 'phone--body',
+  },
+];
+---
+
+<figure class:list={['artwork', `artwork--${kind}`, className]}>
+  {kind === 'dermoai' && (
+    <div class="plate plate--dermoai">
+      <div class="plate-meta">
+        <span>Fig. 01 — Classification study</span>
+        <span>ConvNeXt-Base / TTA</span>
+      </div>
+
+      <div class="dermoai-diagram" aria-hidden="true">
+        <div class="diagram-node diagram-input">
+          <span class="diagram-label">Input</span>
+          <div class="pixel-grid">
+            {Array.from({ length: 36 }).map((_, i) => (
+              <i style={`--i:${(i * 37) % 100}`} />
+            ))}
+          </div>
+          <span class="diagram-sub">Skin image</span>
+        </div>
+
+        <div class="diagram-link">
+          <span class="link-dot" />
+          <span class="link-line" />
+          <span class="link-dot" />
+        </div>
+
+        <div class="diagram-node diagram-model">
+          <span class="diagram-label">Backbone</span>
+          <div class="model-bars">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <i style={`--i:${i}`} />
+            ))}
+          </div>
+          <span class="diagram-sub">Fine-tuned features</span>
+        </div>
+
+        <div class="diagram-link">
+          <span class="link-dot" />
+          <span class="link-line" />
+          <span class="link-dot" />
+        </div>
+
+        <div class="diagram-node diagram-output">
+          <span class="diagram-label">Output</span>
+          <div class="class-bars">
+            {[46, 30, 64, 38, 84, 52, 22, 70, 42, 58, 34, 48].map((height, i) => (
+              <i style={`--h:${height}%;--i:${i}`} />
+            ))}
+          </div>
+          <span class="diagram-sub">12 classes</span>
+        </div>
+      </div>
+
+      <div class="plate-metrics">
+        <div class="metric">
+          <span class="metric-value">82.79<span>%</span></span>
+          <span class="metric-label">Reported accuracy</span>
+        </div>
+        <div class="metric">
+          <span class="metric-value">87.30<span>%</span></span>
+          <span class="metric-label">Cancer-class sensitivity</span>
+        </div>
+        <div class="metric metric--note">
+          <span class="metric-value metric-value--small">12</span>
+          <span class="metric-label">Output classes</span>
+        </div>
+      </div>
+
+      <div class="plate-foot">
+        <span>Research prototype — not clinically validated</span>
+        <span>I. Asati</span>
+      </div>
+    </div>
+  )}
+
+  {kind === 'atlas-fit' && (
+    <div class="plate plate--atlas">
+      <div class="plate-meta plate-meta--light">
+        <span>Fig. 02 — Product study</span>
+        <span>Offline-first PWA</span>
+      </div>
+
+      <div class="atlas-stage">
+        <div class="atlas-index" aria-hidden="true">
+          <span>Local</span>
+          <span>data</span>
+          <span>ownership</span>
+        </div>
+
+        {atlasShots.map((shot, i) => (
+          <div class:list={['phone', shot.className]}>
+            <div class="phone-frame">
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                widths={[240, 360, 480]}
+                sizes="(max-width: 700px) 32vw, 220px"
+                loading={priority ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </div>
+            <span class="phone-label">
+              <em>0{i + 1}</em> {shot.label}
+            </span>
+          </div>
+        ))}
+
+        <div class="atlas-stamp" aria-hidden="true">
+          <span>Offline</span>
+          <span>by default</span>
+        </div>
+      </div>
+
+      <div class="plate-foot plate-foot--light">
+        <span>React · TypeScript · Dexie</span>
+        <span>In development</span>
+      </div>
+    </div>
+  )}
+
+  {kind === 'robotics' && (
+    <div class="plate plate--robotics">
+      <div class="plate-meta">
+        <span>Fig. 03 — System sketch</span>
+        <span>ESP32 / sensors</span>
+      </div>
+
+      <svg
+        class="circuit"
+        viewBox="0 0 820 500"
+        role="img"
+        aria-labelledby="circuit-title circuit-desc"
+      >
+        <title id="circuit-title">Concept schematic of an ESP32-based sensor device</title>
+        <desc id="circuit-desc">
+          An ESP32 board at the centre connected to PIR, infrared, ultrasonic and sound sensors,
+          plus an LCD, LEDs, a buzzer and physical buttons. The drawing is a concept diagram,
+          not a verified wiring diagram.
+        </desc>
+
+        <g class="circuit-grid" aria-hidden="true">
+          {Array.from({ length: 17 }).map((_, i) => (
+            <line x1={i * 50} y1="0" x2={i * 50} y2="500" />
+          ))}
+          {Array.from({ length: 11 }).map((_, i) => (
+            <line x1="0" y1={i * 50} x2="820" y2={i * 50} />
+          ))}
+        </g>
+
+        <g class="circuit-traces" aria-hidden="true">
+          <path d="M 350 250 H 235 V 150 H 190" />
+          <path d="M 350 250 H 235 V 250 H 190" />
+          <path d="M 350 250 H 235 V 350 H 190" />
+          <path d="M 470 250 H 585 V 150 H 630" />
+          <path d="M 470 250 H 585 V 250 H 630" />
+          <path d="M 470 250 H 585 V 350 H 630" />
+          <path d="M 410 205 V 105 H 290" />
+          <path d="M 410 295 V 405 H 530" />
+          <circle cx="235" cy="150" r="4" />
+          <circle cx="235" cy="250" r="4" />
+          <circle cx="235" cy="350" r="4" />
+          <circle cx="585" cy="150" r="4" />
+          <circle cx="585" cy="250" r="4" />
+          <circle cx="585" cy="350" r="4" />
+          <circle cx="290" cy="105" r="4" />
+          <circle cx="530" cy="405" r="4" />
+        </g>
+
+        <g class="circuit-board">
+          <rect x="345" y="195" width="130" height="110" rx="0" />
+          <text x="410" y="236" text-anchor="middle" class="board-name">ESP32</text>
+          <text x="410" y="258" text-anchor="middle" class="board-sub">MICROCONTROLLER</text>
+          <g class="board-pins">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <line x1={345 + i * 18 + 9} y1="195" x2={345 + i * 18 + 9} y2="185" />
+            ))}
+            {Array.from({ length: 7 }).map((_, i) => (
+              <line x1={345 + i * 18 + 9} y1="305" x2={345 + i * 18 + 9} y2="315" />
+            ))}
+          </g>
+        </g>
+
+        <g class="circuit-nodes">
+          <g>
+            <rect x="105" y="132" width="85" height="36" />
+            <text x="147" y="155" text-anchor="middle">PIR</text>
+          </g>
+          <g>
+            <rect x="105" y="232" width="85" height="36" />
+            <text x="147" y="255" text-anchor="middle">IR</text>
+          </g>
+          <g>
+            <rect x="105" y="332" width="85" height="36" />
+            <text x="147" y="355" text-anchor="middle">ULTRASONIC</text>
+          </g>
+          <g>
+            <rect x="630" y="132" width="85" height="36" />
+            <text x="672" y="155" text-anchor="middle">LCD</text>
+          </g>
+          <g>
+            <rect x="630" y="232" width="85" height="36" />
+            <text x="672" y="255" text-anchor="middle">LEDS</text>
+          </g>
+          <g>
+            <rect x="630" y="332" width="85" height="36" />
+            <text x="672" y="355" text-anchor="middle">BUZZER</text>
+          </g>
+          <g>
+            <rect x="220" y="87" width="70" height="30" />
+            <text x="255" y="106" text-anchor="middle">SOUND</text>
+          </g>
+          <g>
+            <rect x="530" y="390" width="80" height="30" />
+            <text x="570" y="409" text-anchor="middle">BUTTONS</text>
+          </g>
+        </g>
+
+        <g class="circuit-annotations">
+          <text x="105" y="112">SENSE</text>
+          <text x="630" y="112">RESPOND</text>
+          <text x="105" y="455">CONCEPT DIAGRAM — NOT A VERIFIED WIRING DIAGRAM</text>
+          <text x="715" y="455" text-anchor="end">VOL. 01</text>
+        </g>
+      </svg>
+
+      <div class="plate-foot">
+        <span>PIR · IR · ultrasonic · sound</span>
+        <span>Prototypes / concepts</span>
+      </div>
+    </div>
+  )}
+
+  {kind === 'programming' && (
+    <div class="plate plate--programming">
+      <div class="plate-meta">
+        <span>Fig. 04 — Reserved pages</span>
+        <span>Python / Pygame</span>
+      </div>
+
+      <div class="programming-stage" aria-hidden="true">
+        <div class="programming-word">
+          <span class="programming-number">04</span>
+          <span class="programming-title">Forth<em>coming</em></span>
+        </div>
+        <div class="programming-grid">
+          {['Game loop', 'Sprite study', 'Input', 'Physics', 'Score', 'Idea pending'].map((label, i) => (
+            <div class="programming-cell" style={`--i:${i}`}>
+              <span class="cell-mark">+</span>
+              <span class="cell-label">{label}</span>
+              <span class="cell-line" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="plate-foot">
+        <span>No finished projects published yet</span>
+        <span>Index entry</span>
+      </div>
+    </div>
+  )}
+
+  {caption && <figcaption class="artwork-caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .artwork {
+    margin: 0;
+  }
+
+  .plate {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.1rem, 2.5vw, 1.75rem);
+    border-radius: var(--radius-img);
+  }
+
+  .plate-meta,
+  .plate-foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.07em;
+    line-height: 1.45;
+    text-transform: uppercase;
+  }
+
+  .plate-meta {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .plate-foot {
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .plate-foot span:last-child {
+    text-align: right;
+  }
+
+  .plate-meta--light,
+  .plate-foot--light {
+    border-color: rgba(243, 240, 232, 0.25);
+    color: rgba(243, 240, 232, 0.92);
+  }
+
+  /* DermoAI */
+
+  .plate--dermoai {
+    background:
+      repeating-linear-gradient(90deg, transparent 0, transparent 79px, rgba(243, 240, 232, 0.045) 80px),
+      repeating-linear-gradient(0deg, transparent 0, transparent 79px, rgba(243, 240, 232, 0.045) 80px),
+      var(--charcoal);
+    color: var(--ivory);
+  }
+
+  .plate--dermoai .plate-meta {
+    border-color: var(--line-light);
+    color: var(--stone);
+  }
+
+  .plate--dermoai .plate-foot {
+    border-color: var(--line-light);
+    color: var(--stone);
+  }
+
+  .dermoai-diagram {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .diagram-node {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    min-width: 0;
+  }
+
+  .diagram-label {
+    color: var(--cobalt-bright);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .diagram-sub {
+    color: var(--stone);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .pixel-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    aspect-ratio: 1;
+    max-width: 7.5rem;
+    padding: 5px;
+    border: 1px solid var(--line-light);
+  }
+
+  .pixel-grid i {
+    background: color-mix(
+      in srgb,
+      var(--stone) calc(18% + (var(--i) * 0.42%)),
+      var(--charcoal)
+    );
+  }
+
+  .model-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 4rem;
+    max-width: 6rem;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--line-light);
+  }
+
+  .model-bars i {
+    flex: 1;
+    height: calc(30% + (var(--i) * 13%));
+    background: var(--cobalt);
+    opacity: calc(0.4 + (var(--i) * 0.15));
+  }
+
+  .class-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 4rem;
+    max-width: 8.5rem;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--line-light);
+  }
+
+  .class-bars i {
+    flex: 1;
+    height: var(--h);
+    background: var(--ivory);
+    opacity: calc(0.5 + (var(--i) * 0.04));
+  }
+
+  .class-bars i:nth-child(5) {
+    background: var(--cobalt-bright);
+    opacity: 1;
+  }
+
+  .diagram-link {
+    display: flex;
+    align-items: center;
+    width: clamp(0.9rem, 2.5vw, 2.2rem);
+  }
+
+  .link-dot {
+    width: 3px;
+    height: 3px;
+    flex: 0 0 auto;
+    background: var(--stone);
+  }
+
+  .link-line {
+    flex: 1;
+    height: 1px;
+    background: var(--stone);
+  }
+
+  .plate-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    padding-block: clamp(1.25rem, 3vw, 2rem);
+    border-top: 1px solid var(--line-light);
+  }
+
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .metric-value {
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 6vw, 4.75rem);
+    letter-spacing: -0.045em;
+    line-height: 0.85;
+    color: var(--ivory);
+  }
+
+  .metric-value span {
+    color: var(--cobalt-bright);
+    font-size: 0.55em;
+    letter-spacing: 0;
+  }
+
+  .metric-value--small {
+    color: var(--ivory);
+  }
+
+  .metric-label {
+    color: var(--stone);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  /* Atlas Fit */
+
+  .plate--atlas {
+    background:
+      linear-gradient(rgba(49, 91, 232, 0.92), rgba(49, 91, 232, 0.92)),
+      repeating-linear-gradient(90deg, transparent 0, transparent 59px, rgba(243, 240, 232, 0.12) 60px);
+    color: var(--ivory);
+  }
+
+  .atlas-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+    padding: clamp(2rem, 4.5vw, 3.25rem) clamp(0.25rem, 3vw, 2rem) clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .atlas-index {
+    position: absolute;
+    top: 1.5rem;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    color: rgba(243, 240, 232, 0.55);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .phone {
+    position: relative;
+    min-width: 0;
+  }
+
+  .phone--plan {
+    transform: translateY(0.5rem) rotate(-1.6deg);
+  }
+
+  .phone--workout {
+    z-index: 1;
+    transform: translateY(-0.75rem);
+  }
+
+  .phone--body {
+    transform: translateY(1rem) rotate(1.6deg);
+  }
+
+  .phone-frame {
+    padding: clamp(3px, 0.6vw, 6px);
+    background: var(--ivory);
+    box-shadow: 0 18px 36px rgba(20, 35, 80, 0.22);
+  }
+
+  .phone-frame :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 1px;
+  }
+
+  .phone-label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    margin-top: 0.65rem;
+    color: rgba(243, 240, 232, 0.95);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .phone-label em {
+    font-style: normal;
+    color: var(--ivory);
+  }
+
+  .atlas-stamp {
+    position: absolute;
+    right: 0;
+    bottom: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    color: rgba(243, 240, 232, 0.55);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+    line-height: 1.45;
+    text-align: right;
+    text-transform: uppercase;
+  }
+
+  /* Robotics */
+
+  .plate--robotics {
+    background: var(--paper);
+    color: var(--charcoal);
+  }
+
+  .plate--robotics .plate-meta {
+    color: var(--ink-muted);
+  }
+
+  .circuit {
+    width: 100%;
+    height: auto;
+    margin-block: clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .circuit-grid line {
+    stroke: rgba(37, 37, 37, 0.07);
+    stroke-width: 1;
+  }
+
+  .circuit-traces path {
+    fill: none;
+    stroke: var(--cobalt);
+    stroke-width: 1.25;
+  }
+
+  .circuit-traces circle {
+    fill: var(--cobalt);
+  }
+
+  .circuit-board rect {
+    fill: var(--charcoal);
+  }
+
+  .board-name {
+    fill: var(--ivory);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+  }
+
+  .board-sub {
+    fill: var(--stone);
+    font-family: var(--font-mono);
+    font-size: 5.5px;
+    letter-spacing: 0.08em;
+  }
+
+  .board-pins line {
+    stroke: var(--charcoal);
+    stroke-width: 2;
+  }
+
+  .circuit-nodes rect {
+    fill: var(--ivory);
+    stroke: var(--charcoal);
+    stroke-width: 1;
+  }
+
+  .circuit-nodes text {
+    fill: var(--charcoal);
+    font-family: var(--font-mono);
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  .circuit-annotations text {
+    fill: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 6px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Programming */
+
+  .plate--programming {
+    background:
+      repeating-linear-gradient(-45deg, transparent 0, transparent 23px, rgba(37, 37, 37, 0.04) 24px),
+      var(--stone-wash);
+    color: var(--charcoal);
+  }
+
+  .plate--programming .plate-meta {
+    color: var(--ink-muted);
+  }
+
+  .programming-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding-block: clamp(2.25rem, 5vw, 4rem);
+  }
+
+  .programming-word {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .programming-number {
+    color: var(--cobalt);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+  }
+
+  .programming-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 6.5vw, 5.25rem);
+    letter-spacing: -0.04em;
+    line-height: 0.86;
+  }
+
+  .programming-title em {
+    display: block;
+    color: var(--cobalt);
+  }
+
+  .programming-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .programming-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: clamp(3.75rem, 7vw, 5.5rem);
+    padding: 0.5rem;
+    border: 1px dashed rgba(37, 37, 37, 0.35);
+  }
+
+  .cell-mark {
+    color: var(--cobalt);
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    line-height: 1;
+  }
+
+  .cell-label {
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.4375rem;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .cell-line {
+    position: absolute;
+    top: 1.3rem;
+    right: 0.5rem;
+    width: 30%;
+    height: 1px;
+    background: rgba(37, 37, 37, 0.18);
+  }
+
+  .artwork-caption {
+    margin-top: 0.8rem;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 700px) {
+    .dermoai-diagram {
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.6rem;
+    }
+
+    .diagram-output {
+      grid-column: 1 / -1;
+      margin-top: 0.5rem;
+    }
+
+    .diagram-link:nth-of-type(2) {
+      display: none;
+    }
+
+    .class-bars {
+      max-width: none;
+    }
+
+    .plate-metrics {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .metric--note {
+      display: none;
+    }
+
+    .atlas-index,
+    .atlas-stamp {
+      display: none;
+    }
+
+    .atlas-stage {
+      padding-inline: 0;
+      gap: 0.4rem;
+    }
+
+    .programming-stage {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .plate {
+      padding: 0.9rem;
+    }
+
+    .plate-meta,
+    .plate-foot {
+      font-size: 0.5rem;
+    }
+
+    .plate-meta span:last-child,
+    .plate-foot span:last-child {
+      display: none;
+    }
+
+    .phone-label {
+      font-size: 0.4375rem;
+    }
+
+    .circuit-nodes text {
+      font-size: 7px;
+    }
+  }
+</style>

@@ -1,0 +1,573 @@
+---
+import { getCollection } from 'astro:content';
+import { ArrowUpRight } from '@lucide/astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectArtwork from '../../components/ProjectArtwork.astro';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+
+const filters = [
+  { key: 'all', label: 'All entries', short: 'All' },
+  { key: 'ai', label: 'AI / ML', short: 'AI / ML' },
+  { key: 'software', label: 'Software', short: 'Software' },
+  { key: 'hardware', label: 'Hardware', short: 'Hardware' },
+  { key: 'experiments', label: 'Experiments', short: 'Experiments' },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Work — Ishan Asati',
+  description:
+    'Projects, prototypes and experiments by Ishan Asati, spanning AI, software engineering, hardware and creative coding.',
+  url: 'https://ishanasati.me/work',
+};
+---
+
+<BaseLayout
+  title="Work"
+  description="Projects, prototypes and experiments by Ishan Asati — AI and machine learning, software engineering, hardware, and creative coding."
+  schema={schema}
+>
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Index</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">Work</li>
+        </ol>
+      </nav>
+
+      <div class="head-grid">
+        <div class="head-title">
+          <p class="eyebrow">The index / {String(projects.length).padStart(2, '0')} entries</p>
+          <h1>
+            Work,<br />
+            <em>in progress.</em>
+          </h1>
+        </div>
+        <div class="head-note">
+          <p>
+            A complete record of the projects, prototypes and experiments currently in the
+            index. Some are finished studies. Some are under active development. Some are
+            placeholders for work that does not exist yet — and are labelled as such.
+          </p>
+          <p class="mono head-updated">Vol. 01 / 2026 · India</p>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-group" role="group" aria-label="Filter work by category">
+          <span class="mono filter-label">Filter</span>
+          {filters.map((filter) => (
+            <button
+              type="button"
+              class="filter-button"
+              data-filter={filter.key}
+              aria-pressed={filter.key === 'all' ? 'true' : 'false'}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+        <p class="filter-count mono" data-filter-count aria-live="polite">
+          Showing {projects.length} of {projects.length} entries
+        </p>
+      </div>
+      <noscript>
+        <p class="noscript-note mono">
+          Filters require JavaScript. All {projects.length} entries are listed below.
+        </p>
+      </noscript>
+    </div>
+  </section>
+
+  <section class="work-index section--tight" aria-label="Projects and experiments">
+    <div class="shell">
+      <div class="project-grid" data-project-grid>
+        {projects.map((project) => (
+          <article
+            class:list={['project-card', `project-card--${project.data.cover}`]}
+            data-category={project.data.filter}
+          >
+            <a class="card-art" href={`/work/${project.id}`}>
+              <span class="sr-only">View {project.data.title}</span>
+              <div aria-hidden="true"><ProjectArtwork kind={project.data.cover} /></div>
+            </a>
+            <div class="card-body">
+              <div class="card-topline">
+                <span class="index-number">{project.data.index}</span>
+                <span class="tag">{project.data.category}</span>
+                <span class="card-status mono">{project.data.status}</span>
+              </div>
+              <h2><a href={`/work/${project.id}`}>{project.data.title}</a></h2>
+              <p class="card-summary">{project.data.summary}</p>
+              <div class="card-foot">
+                <span class="mono">{project.data.year}</span>
+                <a class="card-link" href={`/work/${project.id}`}>
+                  Open entry
+                  <ArrowUpRight aria-hidden="true" stroke-width="1.5" />
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="empty-filter" data-empty-filter hidden>
+        <p class="mono">No entries in this category yet.</p>
+        <button type="button" class="empty-reset" data-filter-reset>Show all entries</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="work-foot section--tight">
+    <div class="shell work-foot-grid">
+      <p class="eyebrow">A note on the record</p>
+      <p class="work-foot-note">
+        Projects are described at the stage they are actually in. Research work is marked as
+        research. Unfinished software is marked as unfinished. Concepts are not presented as
+        products. If an entry looks quiet, it is because the work is still being done.
+      </p>
+      <a class="work-foot-link" href="/about">
+        About the person behind the index
+        <ArrowUpRight aria-hidden="true" stroke-width="1.5" />
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: 1.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .crumbs {
+    padding-bottom: 1.5rem;
+  }
+
+  .crumbs ol {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .crumbs a:hover {
+    color: var(--cobalt);
+  }
+
+  .crumbs [aria-current] {
+    color: var(--charcoal);
+  }
+
+  .head-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.7fr);
+    align-items: end;
+    gap: clamp(2rem, 6vw, 6rem);
+    padding-bottom: clamp(2.75rem, 5vw, 4.5rem);
+  }
+
+  .head-title h1 {
+    margin-top: 1.25rem;
+    font-family: var(--font-serif);
+    font-size: clamp(3.75rem, 9vw, 8rem);
+    letter-spacing: -0.055em;
+    line-height: 0.86;
+  }
+
+  .head-title h1 em {
+    color: var(--cobalt);
+  }
+
+  .head-note {
+    max-width: 42ch;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .head-updated {
+    margin-top: 1.5rem;
+    color: var(--ink-muted);
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 1.1rem;
+  }
+
+  .filter-label {
+    margin-right: 0.25rem;
+    color: var(--ink-muted);
+  }
+
+  .filter-button {
+    padding: 0.2rem 0;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .filter-button:hover {
+    color: var(--charcoal);
+  }
+
+  .filter-button[aria-pressed="true"] {
+    border-bottom-color: var(--cobalt);
+    color: var(--cobalt);
+  }
+
+  .filter-count {
+    color: var(--ink-muted);
+  }
+
+  .noscript-note {
+    padding-bottom: 1rem;
+    color: var(--ink-muted);
+  }
+
+  .work-index {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(2.5rem, 5vw, 4.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .project-card:nth-child(1) {
+    grid-column: span 7;
+  }
+
+  .project-card:nth-child(2) {
+    grid-column: span 5;
+    padding-top: clamp(2rem, 5vw, 4rem);
+  }
+
+  .project-card:nth-child(3) {
+    grid-column: span 5;
+  }
+
+  .project-card:nth-child(4) {
+    grid-column: span 7;
+    padding-top: clamp(2rem, 5vw, 4rem);
+  }
+
+  .project-card[hidden] {
+    display: none;
+  }
+
+  .card-art {
+    display: block;
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .card-art :global(.plate) {
+    transition: box-shadow 0.5s var(--ease-out);
+  }
+
+  .card-art:hover {
+    transform: translateY(-0.35rem);
+  }
+
+  .card-art:hover :global(.plate) {
+    box-shadow: 0 1.5rem 3rem rgba(37, 37, 37, 0.1);
+  }
+
+  .card-body {
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--line);
+    margin-top: 1.15rem;
+  }
+
+  .card-topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 0.9rem;
+  }
+
+  .card-status {
+    margin-left: auto;
+    color: var(--ink-muted);
+  }
+
+  .card-body h2 {
+    margin-top: 0.85rem;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+  }
+
+  .card-body h2 a {
+    transition: color 0.25s ease;
+  }
+
+  .card-body h2 a:hover {
+    color: var(--cobalt);
+  }
+
+  .card-summary {
+    max-width: 46ch;
+    margin-top: 0.85rem;
+    color: var(--ink-soft);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.35rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line-soft);
+    color: var(--ink-muted);
+  }
+
+  .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--charcoal);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+  }
+
+  .card-link svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    color: var(--cobalt);
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .card-link:hover {
+    color: var(--cobalt);
+  }
+
+  .card-link:hover svg {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  .empty-filter {
+    padding-block: 3rem;
+    border-top: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .empty-filter .mono {
+    color: var(--ink-muted);
+  }
+
+  .empty-reset {
+    margin-top: 1rem;
+    padding: 0.35rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--cobalt);
+    background: transparent;
+    color: var(--cobalt);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .work-foot {
+    border-top: 1px solid var(--line);
+  }
+
+  .work-foot-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.5fr) minmax(0, 1.2fr) minmax(0, 0.6fr);
+    align-items: start;
+    gap: 2rem;
+  }
+
+  .work-foot-note {
+    max-width: 54ch;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .work-foot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    justify-self: end;
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+  }
+
+  .work-foot-link svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: var(--cobalt);
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .work-foot-link:hover {
+    color: var(--cobalt);
+  }
+
+  .work-foot-link:hover svg {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  @media (max-width: 900px) {
+    .head-grid,
+    .work-foot-grid {
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+    }
+
+    .head-note {
+      max-width: 52ch;
+    }
+
+    .work-foot-link {
+      justify-self: start;
+    }
+
+    .project-grid {
+      gap: 3rem 1.25rem;
+    }
+
+    .project-card:nth-child(1),
+    .project-card:nth-child(2),
+    .project-card:nth-child(3),
+    .project-card:nth-child(4) {
+      grid-column: span 6;
+      padding-top: 0;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .head-title h1 {
+      font-size: clamp(3.25rem, 15vw, 5rem);
+    }
+
+    .project-card:nth-child(1),
+    .project-card:nth-child(2),
+    .project-card:nth-child(3),
+    .project-card:nth-child(4) {
+      grid-column: 1 / -1;
+    }
+
+    .card-status {
+      margin-left: 0;
+      width: 100%;
+    }
+
+    .filter-bar {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('[data-filter]'),
+  );
+  const cards = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-category]'),
+  );
+  const count = document.querySelector<HTMLElement>('[data-filter-count]');
+  const empty = document.querySelector<HTMLElement>('[data-empty-filter]');
+  const reset = document.querySelector<HTMLButtonElement>('[data-filter-reset]');
+
+  const applyFilter = (filter: string) => {
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const match = filter === 'all' || card.dataset.category === filter;
+      card.hidden = !match;
+      if (match) visible += 1;
+    });
+
+    buttons.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
+    });
+
+    if (count) {
+      count.textContent = `Showing ${visible} of ${cards.length} entries`;
+    }
+
+    if (empty) {
+      empty.hidden = visible !== 0;
+    }
+  };
+
+  const fromUrl = new URLSearchParams(window.location.search).get('filter');
+  const valid = buttons.some((button) => button.dataset.filter === fromUrl);
+  if (valid && fromUrl) applyFilter(fromUrl);
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter ?? 'all';
+      applyFilter(filter);
+
+      const url = new URL(window.location.href);
+      if (filter === 'all') {
+        url.searchParams.delete('filter');
+      } else {
+        url.searchParams.set('filter', filter);
+      }
+      window.history.replaceState({}, '', url);
+    });
+  });
+
+  reset?.addEventListener('click', () => {
+    applyFilter('all');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('filter');
+    window.history.replaceState({}, '', url);
+  });
+</script>

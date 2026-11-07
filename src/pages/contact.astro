@@ -1,0 +1,389 @@
+---
+import { ArrowUpRight } from '@lucide/astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, socialLinks } from '../config';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contact — Ishan Asati',
+  url: 'https://ishanasati.me/contact',
+  mainEntity: {
+    '@type': 'Person',
+    name: site.name,
+    email: `mailto:${site.email}`,
+    url: site.url,
+    sameAs: [site.github],
+  },
+};
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact Ishan Asati by email, or find him on GitHub. No forms, no funnels — just a direct line."
+  schema={schema}
+>
+  <section class="contact-head">
+    <div class="shell">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Index</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page">Contact</li>
+        </ol>
+      </nav>
+
+      <div class="contact-title-grid">
+        <div>
+          <p class="eyebrow">Correspondence / Vol. 01</p>
+          <h1>
+            Say<br />
+            <em>hello.</em>
+          </h1>
+        </div>
+        <p class="contact-deck">
+          A question about a project, a correction, a useful pointer or a conversation worth
+          having — email is the best place to start.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-body section" aria-labelledby="contact-options">
+    <div class="shell contact-grid">
+      <div class="contact-primary">
+        <h2 class="mono contact-label" id="contact-options">Primary</h2>
+        <a class="email-link" href={`mailto:${site.email}`}>
+          <span>{site.email}</span>
+          <ArrowUpRight aria-hidden="true" stroke-width="1.25" />
+        </a>
+        <p class="contact-note">
+          Email is a real inbox, read by a real person. There is no contact form because
+          there is no backend and no desire to put a form between us.
+        </p>
+      </div>
+
+      <div class="contact-secondary">
+        <h2 class="mono contact-label">Elsewhere</h2>
+        <ul class="contact-links">
+          {socialLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noreferrer noopener' : undefined}
+              >
+                <span>{link.label}</span>
+                <span class="contact-link-detail">
+                  {link.label === 'GitHub' ? 'github.com/IshanAsati' : 'Direct email'}
+                </span>
+                <ArrowUpRight aria-hidden="true" stroke-width="1.5" />
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div class="contact-location">
+          <h3 class="mono contact-label">Based in</h3>
+          <p>India</p>
+          <p class="mono contact-timezone">IST / UTC+5:30</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-foot section--tight">
+    <div class="shell contact-foot-grid">
+      <p class="eyebrow">Before you write</p>
+      <div class="contact-foot-copy">
+        <p>
+          I am a student, so my time is not always my own. I read everything that is not
+          obviously automated, and I reply when I can.
+        </p>
+        <p>
+          If you are asking about DermoAI, please remember that it is a research project, not
+          a diagnostic service. I cannot offer medical advice or evaluate a skin image.
+        </p>
+      </div>
+      <a class="contact-index-link" href="/work">
+        While you're here, read the work
+        <ArrowUpRight aria-hidden="true" stroke-width="1.5" />
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-head {
+    padding-top: 1.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .crumbs {
+    padding-bottom: 1.5rem;
+  }
+
+  .crumbs ol {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .crumbs a:hover {
+    color: var(--cobalt);
+  }
+
+  .crumbs [aria-current] {
+    color: var(--charcoal);
+  }
+
+  .contact-title-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+    align-items: end;
+    gap: clamp(2rem, 6vw, 6rem);
+    padding-block: clamp(1.5rem, 3vw, 2rem) clamp(3rem, 6vw, 5rem);
+  }
+
+  .contact-title-grid h1 {
+    margin-top: 1.25rem;
+    font-family: var(--font-serif);
+    font-size: clamp(5rem, 14vw, 12rem);
+    letter-spacing: -0.06em;
+    line-height: 0.78;
+  }
+
+  .contact-title-grid h1 em {
+    color: var(--cobalt);
+  }
+
+  .contact-deck {
+    max-width: 36ch;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-serif);
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--ink-soft);
+  }
+
+  .contact-body {
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+  }
+
+  .contact-label {
+    color: var(--ink-muted);
+  }
+
+  .contact-primary {
+    padding-right: clamp(0rem, 4vw, 3rem);
+  }
+
+  .email-link {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--charcoal);
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4.5vw, 4rem);
+    letter-spacing: -0.045em;
+    line-height: 1.05;
+    transition: color 0.25s ease;
+  }
+
+  .email-link svg {
+    width: clamp(1.1rem, 2.4vw, 1.75rem);
+    height: clamp(1.1rem, 2.4vw, 1.75rem);
+    flex: 0 0 auto;
+    margin-top: 0.25rem;
+    color: var(--cobalt);
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .email-link:hover {
+    color: var(--cobalt);
+  }
+
+  .email-link:hover svg {
+    transform: translate(0.25rem, -0.25rem);
+  }
+
+  .contact-note {
+    max-width: 42ch;
+    margin-top: 1.5rem;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    line-height: 1.65;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-links li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .contact-links a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 0.8rem;
+    transition: color 0.2s ease;
+  }
+
+  .contact-links a > span:first-child {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-link-detail {
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .contact-links svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: var(--cobalt);
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .contact-links a:hover {
+    color: var(--cobalt);
+  }
+
+  .contact-links a:hover svg {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  .contact-location {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .contact-location > p:nth-child(2) {
+    margin-top: 0.4rem;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-timezone {
+    margin-top: 0.4rem;
+    color: var(--ink-muted);
+  }
+
+  .contact-foot-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr) minmax(0, 0.55fr);
+    align-items: start;
+    gap: clamp(1.5rem, 4vw, 4rem);
+  }
+
+  .contact-foot-copy {
+    max-width: 54ch;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .contact-foot-copy p + p {
+    margin-top: 0.85rem;
+  }
+
+  .contact-index-link {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    justify-self: end;
+    max-width: 20ch;
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+  }
+
+  .contact-index-link svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    flex: 0 0 auto;
+    margin-top: 0.1rem;
+    color: var(--cobalt);
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .contact-index-link:hover {
+    color: var(--cobalt);
+  }
+
+  .contact-index-link:hover svg {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  @media (max-width: 900px) {
+    .contact-title-grid,
+    .contact-grid,
+    .contact-foot-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .contact-deck {
+      max-width: 46ch;
+    }
+
+    .contact-primary {
+      padding-right: 0;
+    }
+
+    .contact-index-link {
+      justify-self: start;
+    }
+  }
+
+  @media (max-width: 620px) {
+    .contact-title-grid h1 {
+      font-size: clamp(4.5rem, 24vw, 7.5rem);
+    }
+
+    .email-link {
+      word-break: break-all;
+    }
+
+    .contact-links a {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .contact-link-detail {
+      display: none;
+    }
+  }
+</style>

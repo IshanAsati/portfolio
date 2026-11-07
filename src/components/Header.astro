@@ -1,0 +1,532 @@
+---
+import { ArrowUpRight, Menu, X } from '@lucide/astro';
+import { navigation, site, socialLinks } from '../config';
+
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+
+const isActive = (href: string) => {
+  if (href === '/work') return currentPath === '/work' || currentPath.startsWith('/work/');
+  return currentPath === href;
+};
+---
+
+<header class="site-header">
+  <div class="header-inner shell">
+    <a class="brand" href="/">
+      <span class="brand-name">ishan.asati<span class="brand-dot">.</span></span>
+      <span class="brand-caption">Independent portfolio</span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Primary navigation">
+      {navigation.map((item, i) => (
+        <a
+          class:list={['nav-link', { 'is-active': isActive(item.href) }]}
+          href={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          <span class="nav-index">0{i + 1}</span>
+          <span>{item.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <div class="header-end">
+      <a class="header-contact" href="/contact">
+        <span>Contact</span>
+        <ArrowUpRight aria-hidden="true" stroke-width="1.5" />
+      </a>
+
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-haspopup="dialog"
+        data-menu-open
+      >
+        <Menu aria-hidden="true" stroke-width="1.5" />
+      </button>
+    </div>
+  </div>
+
+  <nav class="header-fallback" aria-label="Mobile navigation">
+    <div class="shell header-fallback-inner">
+      {navigation.map((item, i) => (
+        <a href={item.href}>
+          <span>0{i + 1}</span>
+          {item.label}
+        </a>
+      ))}
+      <a href="/contact">
+        <span>04</span>
+        Contact
+      </a>
+    </div>
+  </nav>
+</header>
+
+<dialog class="menu-dialog" aria-label="Site menu" data-menu-dialog>
+  <div class="menu-inner shell">
+    <div class="menu-top">
+      <a class="brand brand--light" href="/">
+        <span class="brand-name">ishan.asati<span class="brand-dot">.</span></span>
+        <span class="brand-caption">Independent portfolio</span>
+      </a>
+      <button class="menu-close" type="button" aria-label="Close menu" data-menu-close>
+        <X aria-hidden="true" stroke-width="1.5" />
+      </button>
+    </div>
+
+    <nav class="menu-nav" aria-label="Mobile navigation">
+      {navigation.map((item, i) => (
+        <a
+          class:list={['menu-link', { 'is-active': isActive(item.href) }]}
+          href={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          <span class="menu-index">0{i + 1}</span>
+          <span class="menu-label">{item.label}</span>
+          <ArrowUpRight aria-hidden="true" stroke-width="1.25" />
+        </a>
+      ))}
+      <a class:list={['menu-link', { 'is-active': currentPath === '/contact' }]} href="/contact">
+        <span class="menu-index">04</span>
+        <span class="menu-label">Contact</span>
+        <ArrowUpRight aria-hidden="true" stroke-width="1.25" />
+      </a>
+    </nav>
+
+    <div class="menu-foot">
+      <div>
+        {socialLinks.map((link) => (
+          <a
+            class="menu-social"
+            href={link.href}
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noreferrer noopener' : undefined}
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+      <p class="mono">{site.location} / {site.year}</p>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--ivory) 94%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .header-inner {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr);
+    align-items: center;
+    min-height: 5.1rem;
+    gap: 2rem;
+  }
+
+  .brand {
+    display: inline-flex;
+    flex-direction: column;
+    justify-self: start;
+    width: max-content;
+    line-height: 1;
+  }
+
+  .brand-name {
+    font-family: var(--font-serif);
+    font-size: clamp(1.55rem, 2.3vw, 1.9rem);
+    letter-spacing: -0.045em;
+    line-height: 0.9;
+  }
+
+  .brand-dot {
+    color: var(--cobalt);
+  }
+
+  .brand-caption {
+    margin-top: 0.34rem;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .brand--light {
+    color: var(--ivory);
+  }
+
+  .brand--light .brand-caption {
+    color: var(--stone);
+  }
+
+  .brand--light .brand-dot {
+    color: var(--cobalt-bright);
+  }
+
+  .primary-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.5rem, 3vw, 2.8rem);
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding-block: 0.4rem;
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    font-weight: 450;
+    line-height: 1;
+    transition: color 0.25s ease;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: var(--cobalt);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.35s var(--ease-out);
+  }
+
+  .nav-link:hover,
+  .nav-link.is-active {
+    color: var(--charcoal);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  .nav-index {
+    color: var(--stone);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-link.is-active .nav-index {
+    color: var(--cobalt);
+  }
+
+  .header-end {
+    display: flex;
+    justify-self: end;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .header-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    transition: color 0.2s ease;
+  }
+
+  .header-contact svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .header-contact:hover {
+    color: var(--cobalt);
+  }
+
+  .header-contact:hover svg {
+    transform: translate(0.15rem, -0.15rem);
+  }
+
+  .menu-toggle,
+  .menu-close {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid var(--line);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .menu-toggle svg,
+  .menu-close svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .header-fallback {
+    display: none;
+  }
+
+  .header-fallback-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 1.35rem;
+    padding-block: 0.75rem;
+  }
+
+  .header-fallback a {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    color: var(--ink-muted);
+    font-family: var(--font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .header-fallback a span {
+    color: var(--cobalt);
+  }
+
+  .menu-dialog {
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--charcoal);
+    color: var(--ivory);
+  }
+
+  .menu-dialog[open] {
+    display: flex;
+    animation: menu-in 0.35s var(--ease-out) both;
+  }
+
+  .menu-dialog::backdrop {
+    background: var(--charcoal);
+  }
+
+  .menu-dialog :focus-visible {
+    outline-color: var(--ivory);
+  }
+
+  .menu-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding-block: 1.35rem 1.75rem;
+  }
+
+  .menu-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 1.35rem;
+    border-bottom: 1px solid var(--line-light);
+  }
+
+  .menu-close {
+    display: inline-flex;
+    border-color: var(--line-light);
+    color: var(--ivory);
+  }
+
+  .menu-nav {
+    display: flex;
+    flex-direction: column;
+    margin-block: auto;
+    padding-block: 2rem;
+  }
+
+  .menu-link {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    align-items: baseline;
+    gap: 0.8rem;
+    padding-block: 0.4rem;
+    border-bottom: 1px solid var(--line-light-soft);
+    color: var(--ivory);
+  }
+
+  .menu-link:first-child {
+    border-top: 1px solid var(--line-light-soft);
+  }
+
+  .menu-index {
+    color: var(--stone);
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.05em;
+  }
+
+  .menu-label {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 13vw, 5.5rem);
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+    transition: color 0.2s ease, transform 0.35s var(--ease-out);
+  }
+
+  .menu-link svg {
+    width: clamp(1.1rem, 4vw, 1.6rem);
+    height: clamp(1.1rem, 4vw, 1.6rem);
+    color: var(--cobalt-bright);
+    opacity: 0;
+    transform: translate(-0.3rem, 0.3rem);
+    transition: opacity 0.25s ease, transform 0.35s var(--ease-out);
+  }
+
+  .menu-link:hover .menu-label,
+  .menu-link.is-active .menu-label {
+    color: var(--cobalt-bright);
+  }
+
+  .menu-link:hover svg,
+  .menu-link.is-active svg {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  .menu-foot {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--line-light);
+  }
+
+  .menu-foot > div {
+    display: flex;
+    gap: 1.1rem;
+  }
+
+  .menu-social {
+    color: var(--stone);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .menu-social:hover {
+    color: var(--ivory);
+  }
+
+  .menu-foot p {
+    color: var(--stone);
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .header-inner {
+      grid-template-columns: 1fr auto;
+      min-height: 4.4rem;
+      gap: 1rem;
+    }
+
+    .primary-nav,
+    .header-contact {
+      display: none;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+    }
+
+    .brand-caption {
+      display: none;
+    }
+
+    :global(html:not(.js)) .header-fallback {
+      display: block;
+      border-top: 1px solid var(--line);
+    }
+
+    :global(html:not(.js)) .menu-toggle {
+      display: none;
+    }
+  }
+
+  @media (max-width: 430px) {
+    .menu-foot {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+</style>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-menu-dialog]');
+  const openButton = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const closeButton = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+
+  if (dialog && openButton) {
+    const lockScroll = () => {
+      document.documentElement.classList.add('menu-open');
+    };
+
+    const unlockScroll = () => {
+      document.documentElement.classList.remove('menu-open');
+    };
+
+    openButton.addEventListener('click', () => {
+      dialog.showModal();
+      lockScroll();
+    });
+
+    closeButton?.addEventListener('click', () => {
+      dialog.close();
+    });
+
+    dialog.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => dialog.close());
+    });
+
+    dialog.addEventListener('close', unlockScroll);
+
+    const desktopQuery = window.matchMedia('(min-width: 901px)');
+    desktopQuery.addEventListener('change', (event) => {
+      if (event.matches && dialog.open) {
+        dialog.close();
+      }
+    });
+  }
+</script>
+
+<style is:global>
+  html.menu-open {
+    overflow: hidden;
+  }
+</style>

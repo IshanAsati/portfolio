@@ -1,0 +1,134 @@
+---
+title: DermoAI
+index: "01"
+year: "2026"
+category: "AI / Machine Learning"
+filter: ai
+status: "Research study"
+summary: "A 12-class skin-image classifier built on ConvNeXt-Base, evaluated with test-time augmentation and entered into a machine-learning competition."
+deck: "A computer-vision study in skin-image classification — built to understand the gap between a model that scores well and a system that deserves trust."
+order: 1
+featured: true
+cover: dermoai
+tools:
+  - Python
+  - PyTorch
+  - ConvNeXt-Base
+  - Computer vision
+  - Test-time augmentation
+repo: "https://github.com/IshanAsati/dermoai-final"
+award: "First place — DAV ML Khanna machine learning competition"
+metrics:
+  - value: "82.79%"
+    label: "Reported accuracy"
+    note: "As evaluated within the project"
+  - value: "87.30%"
+    label: "Cancer-class sensitivity"
+    note: "As evaluated within the project"
+  - value: "12"
+    label: "Output classes"
+    note: "Single-label image classification"
+  - value: "1st"
+    label: "DAV ML Khanna competition"
+    note: "Machine learning competition"
+---
+
+DermoAI is an experimental machine-learning project that classifies skin images into one of twelve categories. It began as a question about how far a modern vision model could be pushed on a small, difficult dataset — and became a lesson in why a good score is not the same thing as a reliable system.
+
+<aside class="notice">
+  <p class="notice-label">Research use only</p>
+  <p>DermoAI is not a medical device, a diagnostic system or a screening tool. It has not been clinically validated, and its outputs must not be treated as medical advice. The figures on this page are the project's own reported evaluation results, not an independent clinical assessment. Any concern about skin health belongs with a qualified clinician.</p>
+</aside>
+
+## Overview
+
+The project is a single-label image classifier: one image in, one of twelve class predictions out. It uses a ConvNeXt-Base backbone, a classification head adapted to the twelve-class problem, and test-time augmentation at inference.
+
+The work was entered into the DAV ML Khanna machine learning competition, where it placed first. That result is the most concrete external signal the project has. It is not evidence that the model is ready for clinical use.
+
+The full implementation and model tester live in the [DermoAI repository](https://github.com/IshanAsati/dermoai-final).
+
+## The problem
+
+Skin-image classification is hard for reasons that have little to do with architecture choice. Many categories look alike to a non-expert eye. Images vary in lighting, scale, focus and skin tone. A dataset can be imbalanced in ways that make overall accuracy flattering and per-class performance uneven.
+
+The question I set out to explore was deliberately modest: can a fine-tuned ConvNeXt-Base model classify images across twelve categories well enough to be a credible research prototype? A second question sat underneath it — what should I report, and what should I refuse to claim?
+
+## Approach
+
+The approach was standard transfer learning, treated carefully:
+
+- Start from a pretrained ConvNeXt-Base backbone rather than training a vision model from scratch.
+- Adapt the output head to twelve classes and fine-tune the model on the available labelled images.
+- Evaluate with metrics that expose more than aggregate accuracy, including sensitivity on the cancer-related classes.
+- Apply test-time augmentation at inference to reduce the variance of a single prediction.
+- Package the selected model with a local tester so results could be inspected rather than only described.
+
+Test-time augmentation does not add information to the model. It averages predictions over transformed versions of the same image, which can make inference more stable. It was a deliberate, small robustness measure — not a substitute for a proper external validation set.
+
+## Architecture
+
+The core is **ConvNeXt-Base**, a modern convolutional architecture, used as a feature extractor and then fine-tuned for the classification task.
+
+```text
+skin image
+    │
+    ▼
+ConvNeXt-Base backbone
+    │
+    ▼
+12-class classification head
+    │
+    ▼
+test-time augmentation
+    │
+    ▼
+averaged class prediction
+```
+
+The diagram above is the conceptual pipeline. Implementation details, weights and the tester are documented in the repository rather than reproduced here, so this page does not drift out of sync with the code.
+
+## Development
+
+Development moved through the usual research loop: prepare the data pipeline, get a baseline training run working, inspect where the model failed, adjust the training setup, and evaluate again. The expensive part was not writing the training loop. It was learning to read the results honestly.
+
+Two decisions shaped the project more than any hyperparameter:
+
+1. **Report per-class behaviour, not just accuracy.** A single accuracy number can hide a class the model never learns to recognise.
+2. **Keep the evaluation reproducible.** The selected checkpoint, evaluation artifacts and a local tester were kept together so the reported numbers could be traced back to something concrete.
+
+The public repository includes a local drag-and-drop tester. It runs on the user's machine and is intended for inspection and experimentation only.
+
+## Results
+
+The project's original competition entry reported **82.79% accuracy** across twelve classes and **87.30% sensitivity on the cancer-related classes**. Those are the figures from the project's own evaluation and the ones I present here. I have not invented a dataset size, a comparison against other architectures or a clinical validation study to make them sound stronger.
+
+The work placed **first in the DAV ML Khanna machine learning competition**.
+
+| Measure | Reported result |
+| --- | --- |
+| Accuracy | 82.79% |
+| Cancer-class sensitivity | 87.30% |
+| Classes | 12 |
+| Inference | Test-time augmentation |
+| Competition | First place, DAV ML Khanna |
+
+Accuracy and sensitivity answer different questions. A model can be accurate overall while still missing the cases that matter most. Reporting both is a minimum, not a complete evaluation.
+
+## Limitations
+
+The limitations are the important part of this page.
+
+- **No clinical validation.** The model has not been tested in a clinical setting, against a prospective patient population, or under the supervision of dermatologists.
+- **No claim of diagnostic utility.** A class prediction is not a diagnosis. The model's outputs are uncalibrated research outputs.
+- **Narrow evaluation.** The reported metrics come from the project's own evaluation setup. They do not establish how the model behaves on images from different devices, populations or lighting conditions.
+- **Dataset bias is unresolved.** Skin-image datasets are known to under-represent darker skin tones and rare conditions. This project does not solve that problem.
+- **A competition result is not a product result.** First place is a useful signal about the project relative to its entrants. It is not evidence of safety, fairness or readiness.
+
+I would rather state these limits plainly than let a strong headline number imply more than the work supports.
+
+## What I learned
+
+The technical lessons — transfer learning, augmentation, evaluation hygiene — matter, but the larger lesson was about framing. In applied machine learning, the distance between "the model performs well" and "this system should be used" is enormous. Most of that distance is made of validation, failure analysis and honesty about what was never tested.
+
+DermoAI made me more interested in evaluation than in leaderboard chasing. It also changed how I describe my own work: state the result, state the scope, state what remains unknown.

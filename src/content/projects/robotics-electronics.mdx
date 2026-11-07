@@ -1,0 +1,102 @@
+---
+title: Robotics & Electronics
+index: "03"
+year: "Ongoing"
+category: "Hardware / Embedded Systems"
+filter: hardware
+status: "Prototypes & concepts"
+summary: "Bench experiments with ESP32 microcontrollers, sensors, displays and physical controls — including a concept for a compact study-focus desk device."
+deck: "Notes from the physical side of computing: sensors, microcontrollers, wiring, and the small pleasure of making a circuit respond to the world."
+order: 3
+featured: true
+cover: robotics
+tools:
+  - ESP32
+  - PIR sensors
+  - IR sensors
+  - Ultrasonic sensors
+  - Sound sensors
+  - LCD displays
+  - LEDs
+  - Buzzers
+  - Buttons
+---
+
+Robotics and electronics are where software stops being only text on a screen. I use an ESP32 and a collection of sensors and output components to explore how a small system can sense its environment, make a decision and respond physically.
+
+This is an area of experiments and concepts, not a catalogue of finished products. Some ideas are sketches. Some exist as bench prototypes. Some are still just a parts list and a question.
+
+<aside class="notice notice--stone">
+  <p class="notice-label">Bench notes</p>
+  <p>Everything on this page is exploratory. Nothing here is presented as a finished, tested or commercially available device. Documentation photography of the physical builds is still pending; the diagram below is a concept sketch, not a verified wiring diagram.</p>
+</aside>
+
+## Overview
+
+The work sits at the intersection of embedded systems and interaction design. A microcontroller reads from sensors, applies a small amount of logic, and drives displays, lights or sound. The interesting part is rarely the individual component. It is how the whole loop behaves when the inputs are noisy and the environment is not.
+
+Components I have worked with or explored include:
+
+- **ESP32** microcontrollers for Wi-Fi-capable sensing and control.
+- **PIR and IR sensors** for presence and proximity.
+- **Ultrasonic sensors** for distance measurement.
+- **Sound sensors** for noise-level response.
+- **LCD displays, LEDs and RGB LEDs** for output.
+- **Buttons, buzzers and passive components** for interaction and feedback.
+
+## The starting point
+
+I began with the usual embedded-systems path: blink an LED, read a button, then a sensor. Each step is small, but together they form the vocabulary for larger systems — digital input, analogue input, timing, debouncing, serial output, power.
+
+From there the questions became more interesting. What does a room feel like to a microcontroller? Can a desk device notice that someone has left and quietly change state? Can it respond to noise without becoming another source of noise?
+
+## Study Focus Console — a concept
+
+One idea I have explored is a **Study Focus Console**: a compact ESP32-powered desk device for focused work.
+
+The concept combines:
+
+- A timer for structured study sessions.
+- PIR motion detection to sense presence at the desk.
+- Noise monitoring through a sound sensor.
+- Physical controls for starting, pausing and changing modes.
+- An LCD display for time and state.
+- LEDs and a buzzer for quiet, glanceable feedback.
+
+The design intention is calm and physical: fewer notifications, more ambient feedback. A timer you can see without unlocking a phone. A device that knows when you have stepped away, and does not pretend otherwise.
+
+This is a **concept**, not a finished product. The parts exist in various forms, but the complete device — enclosure, reliable sensing, tested behaviour — is still a direction rather than a delivered object.
+
+## Experiments and directions
+
+Beyond the console concept, the areas I keep returning to are:
+
+- **Line-following robots.** The classic embedded exercise, and a useful test of sensor calibration, motor control and control-loop tuning.
+- **Sensor-based automation.** Small systems that react to motion, distance or sound with a defined output.
+- **Interactive desk gadgets.** Objects that make computation physical — a display, a button, a light that means something.
+- **Component studies.** Deliberately small experiments with a single sensor or output, built to understand its behaviour before combining it with others.
+
+These are explorations, not a product roadmap. The point is to keep the loop short: wire it, code it, observe it, adjust it.
+
+## What I am learning
+
+Working with hardware makes abstract software ideas concrete:
+
+- **Timing matters.** A sensor reading is only meaningful in the context of when it was taken. Debouncing, polling intervals and blocking code become visible problems.
+- **The physical world is noisy.** A PIR sensor is not a boolean truth about a room. It is a signal with sensitivity, delay and false positives.
+- **Failure is often electrical.** Loose grounds, wrong voltage assumptions and bad connections produce behaviour that no amount of application code can fix.
+- **Constraints shape design.** A microcontroller has limited memory, power and pins. Those limits force clarity about what the device is actually for.
+
+I am still early in this area. That is part of why it is worth documenting: the work is the learning, not a claim of expertise.
+
+## Status
+
+The current state is best described as **ongoing experimentation**. Individual components have been exercised; the Study Focus Console remains a concept; no finished hardware product exists.
+
+As builds are documented, this page will be updated with real photographs, wiring notes and honest results — including the parts that did not work.
+
+## Reflection
+
+Electronics has changed how I think about software. A program that runs on a laptop can ignore the physical world. A program on a microcontroller cannot. Sensors drift, power sags, buttons bounce and users press things at the wrong time.
+
+That friction is the appeal. It is a reminder that computing is not only an abstract system; it is something that eventually has to work in a room, on a desk, with a person nearby.
