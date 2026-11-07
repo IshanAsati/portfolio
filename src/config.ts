@@ -5,7 +5,7 @@ export const site = {
   title: 'Ishan Asati — Ideas into things.',
   description:
     'Ishan Asati is a student, developer and maker in India, exploring artificial intelligence, software engineering and embedded systems. A portfolio of projects, experiments and notes.',
-  url: 'https://ishanasati.vercel.app',
+  url: 'https://ishan.devs.surf',
   email: 'ishanlikecube@gmail.com',
   github: 'https://github.com/IshanAsati',
   location: 'India',

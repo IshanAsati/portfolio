@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://ishanasati.vercel.app',
+  site: 'https://ishan.devs.surf',
   integrations: [
     mdx(),
     sitemap({
