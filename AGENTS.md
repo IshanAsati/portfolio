@@ -30,4 +30,4 @@ The domain is duplicated in four places: `astro.config.mjs` (`site`), `src/confi
 
 ## Deploy
 
-Pushing `main` to `IshanAsati/portfolio` triggers a Vercel production deploy at `https://ishan.devs.surf`. Confirm the deployment reports READY before calling a change live.
+Pushing `main` to `IshanAsati/portfolio` triggers a Vercel production deploy at `https://ishan.smartfools.in`. Confirm the deployment reports READY before calling a change live.

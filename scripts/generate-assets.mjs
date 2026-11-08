@@ -140,7 +140,7 @@ ${shared}
   </div>
 
   <div class="bottom">
-    <span><b>AI / Software / Hardware</b><br><span class="domain">ishan.devs.surf</span></span>
+    <span><b>AI / Software / Hardware</b><br><span class="domain">ishan.smartfools.in</span></span>
     <span>Build · Observe · Revise</span>
   </div>
 </body></html>`;

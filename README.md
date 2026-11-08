@@ -49,6 +49,6 @@ The Notes collection is intentionally empty until real writing exists. The build
 
 ## Deployment
 
-The site deploys to Vercel from the `main` branch of [IshanAsati/portfolio](https://github.com/IshanAsati/portfolio) and is live at `https://ishan.devs.surf`. `https://ishanasati.vercel.app` also serves the deployment.
+The site deploys to Vercel from the `main` branch of [IshanAsati/portfolio](https://github.com/IshanAsati/portfolio) and is live at `https://ishan.smartfools.in`. `https://ishanasati.vercel.app` also serves the deployment.
 
 Canonical URLs come from `site` in `astro.config.mjs` and `site.url` in `src/config.ts`. If a custom domain is connected later, update both, update `public/robots.txt`, and run `npm run assets` to regenerate the OG image.

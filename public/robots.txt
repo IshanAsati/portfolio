@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ishan.devs.surf/sitemap-index.xml
+Sitemap: https://ishan.smartfools.in/sitemap-index.xml
