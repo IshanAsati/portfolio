@@ -6,7 +6,7 @@ export const site = {
   description:
     'Ishan Asati is a student, developer and maker in India, exploring artificial intelligence, software engineering and embedded systems. A portfolio of projects, experiments and notes.',
   url: 'https://ishan.devs.surf',
-  email: 'ishanlikecube@gmail.com',
+  email: 'hello@smartfools.in',
   github: 'https://github.com/IshanAsati',
   location: 'India',
   issue: 'Vol. 01',
