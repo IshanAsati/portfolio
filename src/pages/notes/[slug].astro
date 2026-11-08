@@ -68,7 +68,8 @@ const schema = {
             <h1>{note.data.title}</h1>
             <p class="note-deck">{note.data.description}</p>
           </div>
-          <dl class="note-meta">
+
+          <dl class="note-meta panel">
             <div>
               <dt>Published</dt>
               <dd><time datetime={note.data.pubDate.toISOString()}>{dateFormatter.format(note.data.pubDate)}</time></dd>
@@ -92,8 +93,8 @@ const schema = {
       <div class="shell note-body-grid">
         <aside class="note-aside">
           {toc.length > 0 && (
-            <nav aria-label="On this page">
-              <p class="mono">Contents</p>
+            <nav class="toc panel panel--warm" aria-label="On this page">
+              <p class="mono toc-label">Contents</p>
               <ol>
                 {toc.map((heading) => (
                   <li><a href={`#${heading.slug}`}>{heading.text}</a></li>
@@ -101,8 +102,9 @@ const schema = {
               </ol>
             </nav>
           )}
+
           <a class="note-back" href="/notes">
-            <ArrowLeft aria-hidden="true" stroke-width="1.5" />
+            <ArrowLeft aria-hidden="true" stroke-width="1.6" />
             All notes
           </a>
         </aside>
@@ -117,8 +119,8 @@ const schema = {
 
 <style>
   .note-head {
-    padding-top: 1.75rem;
-    border-bottom: 1px solid var(--line);
+    padding-block: 1.5rem clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--border);
   }
 
   .crumbs {
@@ -130,158 +132,186 @@ const schema = {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.65rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5625rem;
-    letter-spacing: 0.06em;
+    font-weight: 650;
+    letter-spacing: 0.07em;
     line-height: 1.4;
     text-transform: uppercase;
   }
 
+  .crumbs a {
+    transition: color var(--motion-state) var(--ease);
+  }
+
   .crumbs a:hover {
-    color: var(--cobalt);
+    color: var(--primary);
   }
 
   .crumbs [aria-current] {
-    color: var(--charcoal);
+    color: var(--ink);
   }
 
   .note-head-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.55fr);
+    grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.45fr);
     align-items: start;
-    gap: clamp(2rem, 6vw, 6rem);
-    padding-block: clamp(1.5rem, 3vw, 2rem) clamp(2.5rem, 5vw, 4rem);
+    gap: clamp(2rem, 5vw, 4.5rem);
   }
 
   .note-head h1 {
-    max-width: 20ch;
-    margin-top: 1.1rem;
-    font-family: var(--font-serif);
-    font-size: clamp(3rem, 6.5vw, 5.75rem);
-    letter-spacing: -0.05em;
-    line-height: 0.9;
+    max-width: 22ch;
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 0.98;
   }
 
   .note-deck {
-    max-width: 50ch;
-    margin-top: 1.5rem;
-    font-family: var(--font-serif);
-    font-size: clamp(1.25rem, 2vw, 1.6rem);
-    letter-spacing: -0.02em;
-    line-height: 1.3;
+    max-width: 52ch;
+    margin-top: 1.25rem;
     color: var(--ink-soft);
+    font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+    line-height: 1.65;
   }
 
   .note-meta {
-    padding-top: 0.35rem;
+    padding: 1.1rem 1.2rem;
+    background: var(--warm);
+    box-shadow: none;
   }
 
   .note-meta > div {
     display: grid;
-    grid-template-columns: 5.5rem minmax(0, 1fr);
-    gap: 1rem;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: 0.75rem;
     padding-block: 0.65rem;
-    border-top: 1px solid var(--line-soft);
+    border-bottom: 1px solid var(--line);
   }
 
   .note-meta > div:first-child {
-    border-top: 1px solid var(--line);
+    padding-top: 0;
+  }
+
+  .note-meta > div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   .note-meta dt {
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.05em;
+    color: var(--muted);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
     line-height: 1.5;
     text-transform: uppercase;
   }
 
   .note-meta dd {
-    font-size: 0.8125rem;
+    color: var(--ink);
+    font-size: 0.78125rem;
     line-height: 1.5;
   }
 
   .note-body-grid {
     display: grid;
-    grid-template-columns: minmax(0, 0.38fr) minmax(0, 1fr);
-    gap: clamp(2.5rem, 6vw, 6rem);
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(2.5rem, 6vw, 5rem);
   }
 
   .note-aside {
     position: sticky;
-    top: 7rem;
+    top: 7.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
     align-self: start;
   }
 
-  .note-aside .mono {
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--charcoal);
-    color: var(--ink-muted);
+  .toc {
+    padding: 1rem 1.1rem;
+    box-shadow: none;
   }
 
-  .note-aside ol {
+  .toc-label {
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+  }
+
+  .toc ol {
     display: flex;
     flex-direction: column;
   }
 
-  .note-aside li {
-    border-bottom: 1px solid var(--line-soft);
+  .toc li {
+    border-bottom: 1px solid var(--line);
   }
 
-  .note-aside li a {
+  .toc li:last-child {
+    border-bottom: 0;
+  }
+
+  .toc a {
     display: block;
-    padding-block: 0.55rem;
-    color: var(--ink-muted);
+    padding-block: 0.5rem;
+    color: var(--muted);
     font-size: 0.75rem;
     line-height: 1.4;
-    transition: color 0.2s ease;
+    transition: color var(--motion-state) var(--ease);
   }
 
-  .note-aside li a:hover {
-    color: var(--cobalt);
+  .toc a:hover {
+    color: var(--ink);
   }
 
   .note-back {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    margin-top: 1.5rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: color 0.2s ease;
-  }
-
-  .note-back svg {
-    width: 0.8rem;
-    height: 0.8rem;
+    min-height: 40px;
+    color: var(--muted);
+    font-size: 0.6875rem;
+    font-weight: 650;
+    transition: color var(--motion-state) var(--ease);
   }
 
   .note-back:hover {
-    color: var(--cobalt);
+    color: var(--primary);
   }
 
-  @media (max-width: 900px) {
+  .note-back svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .note-content {
+    min-width: 0;
+  }
+
+  @media (max-width: 1000px) {
     .note-head-grid,
     .note-body-grid {
       grid-template-columns: 1fr;
-      gap: 2rem;
     }
 
     .note-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0 1.5rem;
+      max-width: 600px;
     }
 
     .note-aside {
       position: static;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--line);
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .note-head h1 {
+      font-size: clamp(2.4rem, 12vw, 3.5rem);
     }
   }
 </style>

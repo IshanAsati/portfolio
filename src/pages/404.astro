@@ -9,37 +9,38 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   noindex={true}
 >
   <section class="not-found">
-    <div class="shell not-found-inner">
-      <div class="not-found-meta">
-        <span>Error 404</span>
-        <span>Not in the index</span>
+    <div class="shell not-found-grid">
+      <div class="not-found-folio panel" aria-hidden="true">
+        <span>404</span>
+        <p class="mono">Not in the index</p>
       </div>
 
-      <div class="not-found-main">
-        <p class="not-found-folio" aria-hidden="true">404</p>
-        <div class="not-found-copy">
-          <p class="eyebrow">A missing page</p>
-          <h1>This page is<br /><em>not in the index.</em></h1>
-          <p>
-            The address may be wrong, the page may have moved, or the work it described may
-            never have been published. All three are possible.
-          </p>
-          <div class="not-found-links">
-            <a class="not-found-primary" href="/">
-              <ArrowLeft aria-hidden="true" stroke-width="1.5" />
-              Return to the index
-            </a>
-            <a class="not-found-secondary" href="/work">
-              Browse the work
-              <ArrowUpRight aria-hidden="true" stroke-width="1.5" />
-            </a>
-          </div>
+      <div class="not-found-copy">
+        <p class="eyebrow">A missing page</p>
+        <h1>
+          This page is<br />
+          <em>not in the index.</em>
+        </h1>
+        <p class="not-found-note">
+          The address may be wrong, the page may have moved, or the work it described may
+          never have been published. All three are possible.
+        </p>
+
+        <div class="not-found-links">
+          <a class="button button--primary" href="/">
+            <ArrowLeft aria-hidden="true" stroke-width="1.6" />
+            Return to the index
+          </a>
+          <a class="button" href="/work">
+            Browse the work
+            <ArrowUpRight aria-hidden="true" stroke-width="1.6" />
+          </a>
         </div>
-      </div>
 
-      <div class="not-found-foot">
-        <p class="mono">ishan.asati / Vol. 01</p>
-        <p class="mono">Nothing here — which is also a kind of answer.</p>
+        <div class="not-found-foot">
+          <p class="mono">ishan.asati / Vol. 01</p>
+          <p class="mono">Nothing here — which is also a kind of answer.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -47,67 +48,65 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <style>
   .not-found {
-    background:
-      repeating-linear-gradient(90deg, transparent 0, transparent 99px, var(--line-soft) 100px),
-      var(--ivory);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .not-found-inner {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: calc(100svh - 5.1rem);
-    padding-block: 1.4rem 1.75rem;
-  }
-
-  .not-found-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-bottom: 0.85rem;
-    border-bottom: 1px solid var(--line);
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
-    letter-spacing: 0.07em;
-    line-height: 1.4;
-    text-transform: uppercase;
-  }
-
-  .not-found-main {
-    display: grid;
-    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
     align-items: center;
-    gap: clamp(2rem, 6vw, 6rem);
-    flex: 1;
-    padding-block: clamp(3rem, 7vw, 6rem);
+    min-height: calc(100svh - 5.5rem);
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .not-found-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.68fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 7vw, 7rem);
   }
 
   .not-found-folio {
-    font-family: var(--font-serif);
-    font-size: clamp(7rem, 22vw, 18rem);
-    letter-spacing: -0.075em;
-    line-height: 0.7;
-    color: var(--stone);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    aspect-ratio: 1;
+    padding: 1.5rem;
+    background:
+      radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 55%),
+      var(--warm);
+    box-shadow: none;
+  }
+
+  .not-found-folio span {
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: clamp(6rem, 17vw, 12rem);
+    font-weight: 500;
+    letter-spacing: -0.09em;
+    line-height: 0.8;
+  }
+
+  .not-found-folio .mono {
+    color: var(--muted);
   }
 
   .not-found-copy h1 {
-    margin-top: 1.25rem;
-    font-family: var(--font-serif);
-    font-size: clamp(2.75rem, 6vw, 5.5rem);
-    letter-spacing: -0.05em;
-    line-height: 0.9;
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 5.4rem);
+    font-weight: 500;
+    letter-spacing: -0.06em;
+    line-height: 0.98;
   }
 
   .not-found-copy h1 em {
-    color: var(--cobalt);
+    color: var(--primary);
+    font-style: normal;
   }
 
-  .not-found-copy > p:not(.eyebrow) {
-    max-width: 42ch;
-    margin-top: 1.5rem;
-    color: var(--ink-soft);
+  .not-found-note {
+    max-width: 46ch;
+    margin-top: 1.35rem;
+    color: var(--muted);
     font-size: 0.9375rem;
     line-height: 1.7;
   }
@@ -115,89 +114,48 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .not-found-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .not-found-primary,
-  .not-found-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
-    letter-spacing: 0.05em;
-    line-height: 1.5;
-    text-transform: uppercase;
-    transition: color 0.2s ease;
-  }
-
-  .not-found-primary svg,
-  .not-found-secondary svg {
-    width: 0.85rem;
-    height: 0.85rem;
-    transition: transform 0.3s var(--ease-out);
-  }
-
-  .not-found-primary {
-    color: var(--charcoal);
-  }
-
-  .not-found-primary svg {
-    color: var(--cobalt);
-  }
-
-  .not-found-secondary {
-    color: var(--ink-muted);
-  }
-
-  .not-found-secondary svg {
-    color: var(--cobalt);
-  }
-
-  .not-found-primary:hover,
-  .not-found-secondary:hover {
-    color: var(--cobalt);
-  }
-
-  .not-found-primary:hover svg {
-    transform: translateX(-0.2rem);
-  }
-
-  .not-found-secondary:hover svg {
-    transform: translate(0.15rem, -0.15rem);
+    gap: 0.6rem;
+    margin-top: 1.75rem;
   }
 
   .not-found-foot {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--line);
-    color: var(--ink-muted);
+    gap: 0.5rem 1.5rem;
+    margin-top: 2rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--border);
   }
 
-  @media (max-width: 820px) {
-    .not-found-inner {
-      min-height: auto;
-    }
+  .not-found-foot .mono {
+    color: var(--muted);
+    font-size: 0.5625rem;
+  }
 
-    .not-found-main {
+  @media (max-width: 900px) {
+    .not-found-grid {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 2rem;
     }
 
     .not-found-folio {
-      font-size: clamp(6rem, 30vw, 10rem);
+      max-width: 360px;
+      aspect-ratio: 16 / 9;
+    }
+
+    .not-found-folio span {
+      font-size: clamp(5rem, 20vw, 8rem);
     }
   }
 
-  @media (max-width: 560px) {
+  @media (max-width: 700px) {
+    .not-found-links .button {
+      width: 100%;
+    }
+
     .not-found-foot {
       flex-direction: column;
-      gap: 0.35rem;
     }
   }
 </style>

@@ -1,12 +1,18 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import planShot from '../assets/projects/atlas-fit/03-plan.png';
-import workoutShot from '../assets/projects/atlas-fit/04-workout.png';
-import bodyShot from '../assets/projects/atlas-fit/06-bodygraph.png';
+import planShot from '../assets/projects/atlas-fit/mobile-plan.png';
+import workoutShot from '../assets/projects/atlas-fit/mobile-session.png';
+import bodyShot from '../assets/projects/atlas-fit/mobile-library.png';
+import atlasLanding from '../assets/projects/atlas/landing-1440.png';
+import atlasPhone from '../assets/projects/atlas/landing-390.png';
+import studyflowDash from '../assets/projects/studyflow/dashboard-1440.png';
+import studyflowPhone from '../assets/projects/studyflow/dashboard-390.png';
+import halcyonBoard from '../assets/projects/halcyon/board-1440.png';
+import halcyonPhone from '../assets/projects/halcyon/now-390.png';
 
 interface Props {
-  kind: 'dermoai' | 'atlas-fit' | 'robotics' | 'programming';
+  kind: 'dermoai' | 'atlas-fit' | 'atlas' | 'studyflow' | 'halcyon' | 'robotics' | 'programming';
   class?: string;
   priority?: boolean;
   caption?: string;
@@ -34,8 +40,8 @@ const atlasShots: Array<{
   },
   {
     src: bodyShot,
-    alt: 'Atlas Fit body screen showing muscle-focused exercise artwork.',
-    label: 'Body',
+    alt: 'Atlas Fit exercise library screen showing the muscle-focused library.',
+    label: 'Library',
     className: 'phone--body',
   },
 ];
@@ -117,7 +123,7 @@ const atlasShots: Array<{
 
   {kind === 'atlas-fit' && (
     <div class="plate plate--atlas">
-      <div class="plate-meta plate-meta--light">
+      <div class="plate-meta">
         <span>Fig. 02 — Product study</span>
         <span>Offline-first PWA</span>
       </div>
@@ -153,9 +159,138 @@ const atlasShots: Array<{
         </div>
       </div>
 
-      <div class="plate-foot plate-foot--light">
+      <div class="plate-foot">
         <span>React · TypeScript · Dexie</span>
         <span>In development</span>
+      </div>
+    </div>
+  )}
+
+  {kind === 'atlas' && (
+    <div class="plate plate--study plate--atlas-app">
+      <div class="plate-meta">
+        <span>Fig. 03 — Study operating system</span>
+        <span>Landing / welcome</span>
+      </div>
+
+      <div class="study-stage study-stage--duo">
+        <div class="study-shot study-shot--wide">
+          <Image
+            src={atlasLanding}
+            alt="Atlas landing page: a study coach that argues back, with a Socratic coaching exchange."
+            widths={[640, 960, 1280]}
+            sizes="(max-width: 700px) 88vw, 760px"
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+          />
+        </div>
+        <div class="study-shot study-shot--phone" aria-hidden="true">
+          <Image
+            src={atlasPhone}
+            alt=""
+            widths={[180, 280, 390]}
+            sizes="180px"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      <div class="study-tags">
+        <span>PDF extraction</span>
+        <span>Streaming coach</span>
+        <span>Confidence model</span>
+      </div>
+
+      <div class="plate-foot">
+        <span>Next.js · DeepSeek · Appwrite</span>
+        <span>Six screens built</span>
+      </div>
+    </div>
+  )}
+
+  {kind === 'studyflow' && (
+    <div class="plate plate--study plate--studyflow">
+      <div class="plate-meta">
+        <span>Fig. 04 — Study companion</span>
+        <span>Dashboard / dark theme</span>
+      </div>
+
+      <div class="study-stage study-stage--duo">
+        <div class="study-shot study-shot--wide">
+          <Image
+            src={studyflowDash}
+            alt="StudyFlow dashboard showing the Pomodoro timer, study statistics and today's tasks."
+            widths={[640, 960, 1280]}
+            sizes="(max-width: 700px) 88vw, 760px"
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+          />
+        </div>
+        <div class="study-shot study-shot--phone" aria-hidden="true">
+          <Image
+            src={studyflowPhone}
+            alt=""
+            widths={[180, 280, 390]}
+            sizes="180px"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      <div class="study-tags">
+        <span>Pomodoro</span>
+        <span>Tasks</span>
+        <span>Analytics</span>
+      </div>
+
+      <div class="plate-foot">
+        <span>React · TypeScript · Appwrite</span>
+        <span>Complete loop</span>
+      </div>
+    </div>
+  )}
+
+  {kind === 'halcyon' && (
+    <div class="plate plate--study plate--halcyon">
+      <div class="plate-meta">
+        <span>Fig. 05 — Focus ritual</span>
+        <span>Board / dark theme</span>
+      </div>
+
+      <div class="study-stage study-stage--duo">
+        <div class="study-shot study-shot--wide">
+          <Image
+            src={halcyonBoard}
+            alt="Halcyon board view with backlog, today, in progress and done columns."
+            widths={[640, 960, 1280]}
+            sizes="(max-width: 700px) 88vw, 760px"
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+          />
+        </div>
+        <div class="study-shot study-shot--phone" aria-hidden="true">
+          <Image
+            src={halcyonPhone}
+            alt=""
+            widths={[180, 280, 390]}
+            sizes="180px"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      <div class="study-tags">
+        <span>Local-first</span>
+        <span>Focus timer</span>
+        <span>Ambient studio</span>
+      </div>
+
+      <div class="plate-foot">
+        <span>Next.js · TypeScript · IndexedDB</span>
+        <span>Account-free</span>
       </div>
     </div>
   )}
@@ -163,7 +298,7 @@ const atlasShots: Array<{
   {kind === 'robotics' && (
     <div class="plate plate--robotics">
       <div class="plate-meta">
-        <span>Fig. 03 — System sketch</span>
+        <span>Fig. 06 — System sketch</span>
         <span>ESP32 / sensors</span>
       </div>
 
@@ -209,7 +344,7 @@ const atlasShots: Array<{
         </g>
 
         <g class="circuit-board">
-          <rect x="345" y="195" width="130" height="110" rx="0" />
+          <rect x="345" y="195" width="130" height="110" rx="12" />
           <text x="410" y="236" text-anchor="middle" class="board-name">ESP32</text>
           <text x="410" y="258" text-anchor="middle" class="board-sub">MICROCONTROLLER</text>
           <g class="board-pins">
@@ -224,35 +359,35 @@ const atlasShots: Array<{
 
         <g class="circuit-nodes">
           <g>
-            <rect x="105" y="132" width="85" height="36" />
+            <rect x="105" y="132" width="85" height="36" rx="10" />
             <text x="147" y="155" text-anchor="middle">PIR</text>
           </g>
           <g>
-            <rect x="105" y="232" width="85" height="36" />
+            <rect x="105" y="232" width="85" height="36" rx="10" />
             <text x="147" y="255" text-anchor="middle">IR</text>
           </g>
           <g>
-            <rect x="105" y="332" width="85" height="36" />
+            <rect x="105" y="332" width="85" height="36" rx="10" />
             <text x="147" y="355" text-anchor="middle">ULTRASONIC</text>
           </g>
           <g>
-            <rect x="630" y="132" width="85" height="36" />
+            <rect x="630" y="132" width="85" height="36" rx="10" />
             <text x="672" y="155" text-anchor="middle">LCD</text>
           </g>
           <g>
-            <rect x="630" y="232" width="85" height="36" />
+            <rect x="630" y="232" width="85" height="36" rx="10" />
             <text x="672" y="255" text-anchor="middle">LEDS</text>
           </g>
           <g>
-            <rect x="630" y="332" width="85" height="36" />
+            <rect x="630" y="332" width="85" height="36" rx="10" />
             <text x="672" y="355" text-anchor="middle">BUZZER</text>
           </g>
           <g>
-            <rect x="220" y="87" width="70" height="30" />
+            <rect x="220" y="87" width="70" height="30" rx="10" />
             <text x="255" y="106" text-anchor="middle">SOUND</text>
           </g>
           <g>
-            <rect x="530" y="390" width="80" height="30" />
+            <rect x="530" y="390" width="80" height="30" rx="10" />
             <text x="570" y="409" text-anchor="middle">BUTTONS</text>
           </g>
         </g>
@@ -275,13 +410,13 @@ const atlasShots: Array<{
   {kind === 'programming' && (
     <div class="plate plate--programming">
       <div class="plate-meta">
-        <span>Fig. 04 — Reserved pages</span>
+        <span>Fig. 07 — Reserved pages</span>
         <span>Python / Pygame</span>
       </div>
 
       <div class="programming-stage" aria-hidden="true">
         <div class="programming-word">
-          <span class="programming-number">04</span>
+          <span class="programming-number">07</span>
           <span class="programming-title">Forth<em>coming</em></span>
         </div>
         <div class="programming-grid">
@@ -313,8 +448,10 @@ const atlasShots: Array<{
   .plate {
     position: relative;
     overflow: hidden;
-    padding: clamp(1.1rem, 2.5vw, 1.75rem);
-    border-radius: var(--radius-img);
+    padding: clamp(0.9rem, 2vw, 1.35rem);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--paper);
   }
 
   .plate-meta,
@@ -323,20 +460,21 @@ const atlasShots: Array<{
     align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
-    font-family: var(--font-mono);
+    color: var(--muted);
+    font-family: var(--font-sans);
     font-size: 0.5625rem;
+    font-weight: 650;
     letter-spacing: 0.07em;
     line-height: 1.45;
     text-transform: uppercase;
   }
 
   .plate-meta {
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.85rem;
   }
 
   .plate-foot {
-    padding-top: 1rem;
+    padding-top: 0.85rem;
     border-top: 1px solid var(--line);
   }
 
@@ -344,30 +482,13 @@ const atlasShots: Array<{
     text-align: right;
   }
 
-  .plate-meta--light,
-  .plate-foot--light {
-    border-color: rgba(243, 240, 232, 0.25);
-    color: rgba(243, 240, 232, 0.92);
-  }
-
   /* DermoAI */
 
   .plate--dermoai {
     background:
-      repeating-linear-gradient(90deg, transparent 0, transparent 79px, rgba(243, 240, 232, 0.045) 80px),
-      repeating-linear-gradient(0deg, transparent 0, transparent 79px, rgba(243, 240, 232, 0.045) 80px),
-      var(--charcoal);
-    color: var(--ivory);
-  }
-
-  .plate--dermoai .plate-meta {
-    border-color: var(--line-light);
-    color: var(--stone);
-  }
-
-  .plate--dermoai .plate-foot {
-    border-color: var(--line-light);
-    color: var(--stone);
+      repeating-linear-gradient(90deg, transparent 0, transparent 79px, rgba(250, 249, 245, 0.04) 80px),
+      repeating-linear-gradient(0deg, transparent 0, transparent 79px, rgba(250, 249, 245, 0.04) 80px),
+      #10100f;
   }
 
   .dermoai-diagram {
@@ -375,7 +496,7 @@ const atlasShots: Array<{
     grid-template-columns: 1fr auto 1fr auto 1fr;
     align-items: center;
     gap: clamp(0.5rem, 1.5vw, 1rem);
-    padding-block: clamp(2rem, 5vw, 3.5rem);
+    padding-block: clamp(1.75rem, 4.5vw, 3.25rem);
   }
 
   .diagram-node {
@@ -386,18 +507,18 @@ const atlasShots: Array<{
   }
 
   .diagram-label {
-    color: var(--cobalt-bright);
-    font-family: var(--font-mono);
+    color: var(--primary);
     font-size: 0.5625rem;
-    letter-spacing: 0.07em;
+    font-weight: 700;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
   }
 
   .diagram-sub {
-    color: var(--stone);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5rem;
-    letter-spacing: 0.04em;
+    font-weight: 650;
+    letter-spacing: 0.05em;
     line-height: 1.4;
     text-transform: uppercase;
   }
@@ -409,14 +530,16 @@ const atlasShots: Array<{
     aspect-ratio: 1;
     max-width: 7.5rem;
     padding: 5px;
-    border: 1px solid var(--line-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
   }
 
   .pixel-grid i {
+    border-radius: 1px;
     background: color-mix(
       in srgb,
-      var(--stone) calc(18% + (var(--i) * 0.42%)),
-      var(--charcoal)
+      var(--muted) calc(18% + (var(--i) * 0.42%)),
+      #10100f
     );
   }
 
@@ -427,13 +550,14 @@ const atlasShots: Array<{
     height: 4rem;
     max-width: 6rem;
     padding-bottom: 2px;
-    border-bottom: 1px solid var(--line-light);
+    border-bottom: 1px solid var(--border);
   }
 
   .model-bars i {
     flex: 1;
     height: calc(30% + (var(--i) * 13%));
-    background: var(--cobalt);
+    border-radius: 2px 2px 0 0;
+    background: var(--primary);
     opacity: calc(0.4 + (var(--i) * 0.15));
   }
 
@@ -444,18 +568,19 @@ const atlasShots: Array<{
     height: 4rem;
     max-width: 8.5rem;
     padding-bottom: 2px;
-    border-bottom: 1px solid var(--line-light);
+    border-bottom: 1px solid var(--border);
   }
 
   .class-bars i {
     flex: 1;
     height: var(--h);
-    background: var(--ivory);
-    opacity: calc(0.5 + (var(--i) * 0.04));
+    border-radius: 2px 2px 0 0;
+    background: var(--ink);
+    opacity: calc(0.3 + (var(--i) * 0.04));
   }
 
   .class-bars i:nth-child(5) {
-    background: var(--cobalt-bright);
+    background: var(--control-highlight);
     opacity: 1;
   }
 
@@ -469,21 +594,22 @@ const atlasShots: Array<{
     width: 3px;
     height: 3px;
     flex: 0 0 auto;
-    background: var(--stone);
+    border-radius: 50%;
+    background: var(--muted);
   }
 
   .link-line {
     flex: 1;
     height: 1px;
-    background: var(--stone);
+    background: var(--border);
   }
 
   .plate-metrics {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
     gap: 1rem;
-    padding-block: clamp(1.25rem, 3vw, 2rem);
-    border-top: 1px solid var(--line-light);
+    padding-block: clamp(1.25rem, 3vw, 1.85rem);
+    border-top: 1px solid var(--line);
   }
 
   .metric {
@@ -494,28 +620,29 @@ const atlasShots: Array<{
   }
 
   .metric-value {
-    font-family: var(--font-serif);
-    font-size: clamp(2.4rem, 6vw, 4.75rem);
-    letter-spacing: -0.045em;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 5vw, 3.9rem);
+    font-weight: 500;
+    letter-spacing: -0.06em;
     line-height: 0.85;
-    color: var(--ivory);
   }
 
   .metric-value span {
-    color: var(--cobalt-bright);
+    color: var(--primary);
     font-size: 0.55em;
     letter-spacing: 0;
   }
 
   .metric-value--small {
-    color: var(--ivory);
+    color: var(--ink);
   }
 
   .metric-label {
-    color: var(--stone);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5rem;
-    letter-spacing: 0.05em;
+    font-weight: 650;
+    letter-spacing: 0.06em;
     line-height: 1.4;
     text-transform: uppercase;
   }
@@ -524,9 +651,8 @@ const atlasShots: Array<{
 
   .plate--atlas {
     background:
-      linear-gradient(rgba(49, 91, 232, 0.92), rgba(49, 91, 232, 0.92)),
-      repeating-linear-gradient(90deg, transparent 0, transparent 59px, rgba(243, 240, 232, 0.12) 60px);
-    color: var(--ivory);
+      radial-gradient(circle at 82% 12%, color-mix(in srgb, var(--primary) 20%, transparent), transparent 42%),
+      var(--warm);
   }
 
   .atlas-stage {
@@ -534,20 +660,20 @@ const atlasShots: Array<{
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: end;
-    gap: clamp(0.5rem, 2vw, 1.5rem);
-    padding: clamp(2rem, 4.5vw, 3.25rem) clamp(0.25rem, 3vw, 2rem) clamp(1.75rem, 4vw, 2.75rem);
+    gap: clamp(0.5rem, 2vw, 1.25rem);
+    padding: clamp(1.75rem, 4vw, 2.75rem) clamp(0.25rem, 3vw, 1.5rem) clamp(1.5rem, 3.5vw, 2.25rem);
   }
 
   .atlas-index {
     position: absolute;
-    top: 1.5rem;
+    top: 1.25rem;
     left: 0;
     display: flex;
     flex-direction: column;
     gap: 0.1rem;
-    color: rgba(243, 240, 232, 0.55);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5rem;
+    font-weight: 600;
     letter-spacing: 0.05em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -574,15 +700,17 @@ const atlasShots: Array<{
   }
 
   .phone-frame {
-    padding: clamp(3px, 0.6vw, 6px);
-    background: var(--ivory);
-    box-shadow: 0 18px 36px rgba(20, 35, 80, 0.22);
+    padding: clamp(3px, 0.6vw, 5px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #0f0f0e;
+    box-shadow: 0 18px 36px #00000052;
   }
 
   .phone-frame :global(img) {
     width: 100%;
     height: auto;
-    border-radius: 1px;
+    border-radius: 10px;
   }
 
   .phone-label {
@@ -590,16 +718,16 @@ const atlasShots: Array<{
     align-items: baseline;
     gap: 0.4rem;
     margin-top: 0.65rem;
-    color: rgba(243, 240, 232, 0.95);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5rem;
-    letter-spacing: 0.05em;
+    font-weight: 650;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
   .phone-label em {
     font-style: normal;
-    color: var(--ivory);
+    color: var(--primary);
   }
 
   .atlas-stamp {
@@ -608,24 +736,94 @@ const atlasShots: Array<{
     bottom: 0.4rem;
     display: flex;
     flex-direction: column;
-    color: rgba(243, 240, 232, 0.55);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5rem;
+    font-weight: 650;
     letter-spacing: 0.06em;
     line-height: 1.45;
     text-align: right;
     text-transform: uppercase;
   }
 
+  /* Screenshot plates */
+
+  .plate--study {
+    background:
+      radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 38%),
+      var(--paper);
+  }
+
+  .study-stage {
+    position: relative;
+    padding-block: clamp(1rem, 2.4vw, 1.6rem);
+  }
+
+  .study-shot {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #0f0f0e;
+    box-shadow: 0 20px 50px #0000004d;
+  }
+
+  .study-shot :global(img) {
+    width: 100%;
+    height: auto;
+  }
+
+  .study-stage--duo {
+    padding-right: clamp(0.5rem, 5vw, 2.75rem);
+  }
+
+  .study-shot--wide {
+    width: 100%;
+  }
+
+  .study-shot--phone {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: clamp(78px, 19%, 150px);
+    transform: rotate(3deg) translateY(-0.25rem);
+    box-shadow: 0 20px 40px #00000070;
+  }
+
+  .study-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding-block: 0 0.95rem;
+  }
+
+  .study-tags span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 26px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: color-mix(in srgb, var(--warm) 80%, transparent);
+    color: var(--muted);
+    font-size: 0.5625rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .study-tags span::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--sage);
+  }
+
   /* Robotics */
 
   .plate--robotics {
     background: var(--paper);
-    color: var(--charcoal);
-  }
-
-  .plate--robotics .plate-meta {
-    color: var(--ink-muted);
   }
 
   .circuit {
@@ -635,60 +833,64 @@ const atlasShots: Array<{
   }
 
   .circuit-grid line {
-    stroke: rgba(37, 37, 37, 0.07);
+    stroke: color-mix(in srgb, var(--ink) 7%, transparent);
     stroke-width: 1;
   }
 
   .circuit-traces path {
     fill: none;
-    stroke: var(--cobalt);
+    stroke: var(--primary);
     stroke-width: 1.25;
   }
 
   .circuit-traces circle {
-    fill: var(--cobalt);
+    fill: var(--primary);
   }
 
   .circuit-board rect {
-    fill: var(--charcoal);
+    fill: var(--ink);
   }
 
   .board-name {
-    fill: var(--ivory);
-    font-family: var(--font-mono);
+    fill: var(--surface);
+    font-family: var(--font-sans);
     font-size: 13px;
+    font-weight: 700;
     letter-spacing: 0.08em;
   }
 
   .board-sub {
-    fill: var(--stone);
-    font-family: var(--font-mono);
+    fill: color-mix(in srgb, var(--surface) 62%, transparent);
+    font-family: var(--font-sans);
     font-size: 5.5px;
+    font-weight: 650;
     letter-spacing: 0.08em;
   }
 
   .board-pins line {
-    stroke: var(--charcoal);
+    stroke: var(--primary);
     stroke-width: 2;
   }
 
   .circuit-nodes rect {
-    fill: var(--ivory);
-    stroke: var(--charcoal);
+    fill: var(--warm);
+    stroke: var(--border);
     stroke-width: 1;
   }
 
   .circuit-nodes text {
-    fill: var(--charcoal);
-    font-family: var(--font-mono);
+    fill: var(--ink);
+    font-family: var(--font-sans);
     font-size: 8px;
+    font-weight: 600;
     letter-spacing: 0.04em;
   }
 
   .circuit-annotations text {
-    fill: var(--ink-muted);
-    font-family: var(--font-mono);
+    fill: var(--muted);
+    font-family: var(--font-sans);
     font-size: 6px;
+    font-weight: 600;
     letter-spacing: 0.08em;
   }
 
@@ -696,13 +898,8 @@ const atlasShots: Array<{
 
   .plate--programming {
     background:
-      repeating-linear-gradient(-45deg, transparent 0, transparent 23px, rgba(37, 37, 37, 0.04) 24px),
-      var(--stone-wash);
-    color: var(--charcoal);
-  }
-
-  .plate--programming .plate-meta {
-    color: var(--ink-muted);
+      repeating-linear-gradient(-45deg, transparent 0, transparent 23px, color-mix(in srgb, var(--ink) 4%, transparent) 24px),
+      var(--warm);
   }
 
   .programming-stage {
@@ -710,7 +907,7 @@ const atlasShots: Array<{
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
     align-items: center;
     gap: clamp(1.5rem, 4vw, 3rem);
-    padding-block: clamp(2.25rem, 5vw, 4rem);
+    padding-block: clamp(2rem, 4.5vw, 3.5rem);
   }
 
   .programming-word {
@@ -720,22 +917,24 @@ const atlasShots: Array<{
   }
 
   .programming-number {
-    color: var(--cobalt);
-    font-family: var(--font-mono);
+    color: var(--primary);
     font-size: 0.625rem;
-    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
   }
 
   .programming-title {
-    font-family: var(--font-serif);
-    font-size: clamp(2.5rem, 6.5vw, 5.25rem);
-    letter-spacing: -0.04em;
-    line-height: 0.86;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 0.9;
   }
 
   .programming-title em {
     display: block;
-    color: var(--cobalt);
+    color: var(--primary);
+    font-style: normal;
   }
 
   .programming-grid {
@@ -749,42 +948,42 @@ const atlasShots: Array<{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: clamp(3.75rem, 7vw, 5.5rem);
-    padding: 0.5rem;
-    border: 1px dashed rgba(37, 37, 37, 0.35);
+    min-height: clamp(3.5rem, 7vw, 5rem);
+    padding: 0.55rem;
+    border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+    border-radius: 12px;
   }
 
   .cell-mark {
-    color: var(--cobalt);
-    font-family: var(--font-mono);
+    color: var(--primary);
     font-size: 0.6rem;
     line-height: 1;
   }
 
   .cell-label {
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.4375rem;
-    letter-spacing: 0.05em;
+    font-weight: 650;
+    letter-spacing: 0.06em;
     line-height: 1.4;
     text-transform: uppercase;
   }
 
   .cell-line {
     position: absolute;
-    top: 1.3rem;
-    right: 0.5rem;
+    top: 1.35rem;
+    right: 0.55rem;
     width: 30%;
     height: 1px;
-    background: rgba(37, 37, 37, 0.18);
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
   }
 
   .artwork-caption {
     margin-top: 0.8rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5625rem;
-    letter-spacing: 0.05em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     line-height: 1.5;
     text-transform: uppercase;
   }
@@ -830,11 +1029,15 @@ const atlasShots: Array<{
       grid-template-columns: 1fr;
       gap: 2rem;
     }
+
+    .study-shot--phone {
+      width: 23%;
+    }
   }
 
   @media (max-width: 480px) {
     .plate {
-      padding: 0.9rem;
+      padding: 0.75rem;
     }
 
     .plate-meta,
@@ -853,6 +1056,11 @@ const atlasShots: Array<{
 
     .circuit-nodes text {
       font-size: 7px;
+    }
+
+    .study-tags span {
+      min-height: 24px;
+      font-size: 0.5rem;
     }
   }
 </style>

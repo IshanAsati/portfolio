@@ -13,32 +13,17 @@ const portrait = `data:image/jpeg;base64,${portraitBuffer.toString('base64')}`;
 
 const shared = `
   @font-face {
-    font-family: "Instrument Serif";
-    src: url("${font('instrument-serif-latin-400.woff2')}") format("woff2");
-    font-weight: 400; font-style: normal;
+    font-family: "Sora";
+    src: url("${font('sora-latin-var.woff2')}") format("woff2");
+    font-weight: 100 800; font-style: normal;
   }
   @font-face {
-    font-family: "Instrument Serif";
-    src: url("${font('instrument-serif-latin-400-italic.woff2')}") format("woff2");
-    font-weight: 400; font-style: italic;
-  }
-  @font-face {
-    font-family: "Inter";
-    src: url("${font('inter-latin-var.woff2')}") format("woff2");
-    font-weight: 100 900; font-style: normal;
-  }
-  @font-face {
-    font-family: "IBM Plex Mono";
-    src: url("${font('ibm-plex-mono-latin-400.woff2')}") format("woff2");
-    font-weight: 400; font-style: normal;
-  }
-  @font-face {
-    font-family: "IBM Plex Mono";
-    src: url("${font('ibm-plex-mono-latin-500.woff2')}") format("woff2");
-    font-weight: 500; font-style: normal;
+    font-family: "Manrope";
+    src: url("${font('manrope-latin-var.woff2')}") format("woff2");
+    font-weight: 200 800; font-style: normal;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #F3F0E8; color: #252525; }
+  body { background: #141413; color: #faf9f5; }
 `;
 
 const ogHtml = `<!doctype html>
@@ -46,63 +31,86 @@ const ogHtml = `<!doctype html>
 ${shared}
   body {
     width: 1200px; height: 630px; overflow: hidden; position: relative;
-    background:
-      repeating-linear-gradient(90deg, transparent 0, transparent 99px, rgba(37,37,37,.055) 100px),
-      #F3F0E8;
-    font-family: "Inter", sans-serif;
+    background: #141413;
+    font-family: "Manrope", sans-serif;
   }
-  .frame { position: absolute; inset: 30px; border: 1px solid rgba(37,37,37,.28); }
-  .corner { position: absolute; width: 14px; height: 14px; border-color: #315BE8; border-style: solid; }
-  .tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-  .tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-  .bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
-  .br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+  .frame { position: absolute; inset: 26px; border: 1px solid #30302c; border-radius: 26px; }
   .masthead {
-    position: absolute; top: 58px; left: 64px; right: 64px;
+    position: absolute; top: 54px; left: 64px; right: 64px;
     display: flex; align-items: flex-start; justify-content: space-between;
-    padding-bottom: 16px; border-bottom: 1px solid rgba(37,37,37,.28);
+    padding-bottom: 18px; border-bottom: 1px solid #30302c;
   }
-  .brand { font-family: "Instrument Serif", serif; font-size: 44px; letter-spacing: -0.045em; line-height: .8; }
-  .brand span { color: #315BE8; }
-  .issue { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #5D584D; text-align: right; line-height: 1.7; }
-  .issue b { display: block; font-weight: 400; color: #252525; }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: "Sora", sans-serif; font-size: 36px; font-weight: 600;
+    letter-spacing: -0.055em; line-height: 1;
+  }
+  .brand .mark { width: 18px; height: 18px; color: #d97757; }
+  .brand .dot { color: #d97757; }
+  .issue {
+    font-size: 11px; font-weight: 650; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #b0aea5; text-align: right; line-height: 1.8;
+  }
+  .issue b { display: block; font-weight: 700; color: #faf9f5; }
   .main {
-    position: absolute; top: 178px; left: 64px; bottom: 104px; width: 690px;
+    position: absolute; top: 196px; left: 64px; bottom: 112px; width: 700px;
     display: flex; flex-direction: column; justify-content: center;
   }
-  .eyebrow { font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #315BE8; margin-bottom: 22px; }
-  .title { font-family: "Instrument Serif", serif; font-weight: 400; font-size: 132px; letter-spacing: -0.055em; line-height: .82; }
-  .title em { font-style: italic; color: #315BE8; }
+  .eyebrow {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 11px; font-weight: 750; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #a9bd8d; margin-bottom: 20px;
+  }
+  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #788c5d; }
+  .title {
+    font-family: "Sora", sans-serif; font-weight: 500;
+    font-size: 110px; letter-spacing: -0.065em; line-height: 0.96;
+  }
+  .title em { font-style: normal; color: #d97757; }
   .bottom {
-    position: absolute; left: 64px; right: 64px; bottom: 48px;
+    position: absolute; left: 64px; right: 64px; bottom: 46px;
     display: flex; align-items: flex-end; justify-content: space-between;
-    padding-top: 16px; border-top: 1px solid rgba(37,37,37,.28);
-    font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #5D584D;
+    padding-top: 16px; border-top: 1px solid #30302c;
+    font-size: 11px; font-weight: 650; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #b0aea5; line-height: 1.8;
   }
-  .bottom b { font-weight: 400; color: #252525; }
-  .portrait-wrap { position: absolute; top: 158px; right: 64px; width: 306px; }
+  .bottom b { font-weight: 700; color: #faf9f5; }
+  .bottom .domain { color: #d97757; }
+  .portrait-wrap { position: absolute; top: 156px; right: 64px; width: 306px; }
   .portrait {
-    position: relative; padding: 8px; border: 1px solid rgba(37,37,37,.3); background: #FAF8F2;
+    position: relative; overflow: hidden; padding: 8px;
+    border: 1px solid #3b3b35; border-radius: 24px; background: #1e1e1b;
   }
-  .portrait img { display: block; width: 100%; height: 352px; object-fit: cover; object-position: center 28%; filter: grayscale(1) contrast(1.05); }
-  .portrait::after { content: ""; position: absolute; inset: 8px; background: #315BE8; mix-blend-mode: multiply; opacity: .15; }
-  .portrait-mark { position: absolute; right: 18px; bottom: 18px; z-index: 1; color: #F3F0E8; font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .12em; text-shadow: 0 1px 8px rgba(37,37,37,.5); }
-  .caption { display: flex; justify-content: space-between; margin-top: 10px; font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #5D584D; }
-  .page-no { font-family: "Instrument Serif", serif; font-size: 30px; font-style: italic; color: #315BE8; }
+  .portrait img {
+    display: block; width: 100%; height: 348px; object-fit: cover; object-position: center 28%;
+    border-radius: 17px; filter: saturate(0.92);
+  }
+  .portrait-mark {
+    position: absolute; right: 22px; bottom: 22px;
+    padding: 6px 10px; border: 1px solid #59423b; border-radius: 100px;
+    background: #352925cc; color: #e8a47f;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+  }
+  .caption {
+    display: flex; justify-content: space-between; margin-top: 10px;
+    font-size: 9px; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: #b0aea5;
+  }
+  .page-no { font-family: "Sora", sans-serif; font-size: 24px; font-weight: 600; letter-spacing: -0.04em; color: #d97757; }
 </style></head>
 <body>
-  <div class="frame">
-    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
-  </div>
+  <div class="frame"></div>
 
   <div class="masthead">
-    <div class="brand">ishan.asati<span>.</span></div>
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 24 24" fill="none"><path d="M12 2.6c.7 4.6 4.1 8 8.7 8.7-4.6.7-8 4.1-8.7 8.7-.7-4.6-4.1-8-8.7-8.7 4.6-.7 8-4.1 8.7-8.7Z" fill="currentColor"/></svg>
+      ishan.asati<span class="dot">.</span>
+    </div>
     <div class="issue"><b>Vol. 01 / 2026</b>Independent portfolio<br>India</div>
   </div>
 
   <div class="main">
     <p class="eyebrow">Student · Developer · Maker</p>
-    <h1 class="title">Ideas<br><em>into things.</em></h1>
+    <h1 class="title">I build to<br><em>understand.</em></h1>
   </div>
 
   <div class="portrait-wrap">
@@ -110,12 +118,12 @@ ${shared}
       <img src="${portrait}" alt="">
       <span class="portrait-mark">IA / 26</span>
     </div>
-    <div class="caption"><span>Fig. A — The author</span><span>Ishan Asati</span></div>
+    <div class="caption"><span>Ishan Asati</span><span class="page-no">01</span></div>
   </div>
 
   <div class="bottom">
-    <span><b>AI / Software / Hardware</b><br>ishan.devs.surf</span>
-    <span class="page-no">01</span>
+    <span><b>AI / Software / Hardware</b><br><span class="domain">ishan.devs.surf</span></span>
+    <span>Build · Observe · Revise</span>
   </div>
 </body></html>`;
 
@@ -124,12 +132,19 @@ const iconHtml = (size) => `<!doctype html>
 ${shared}
   body { width: ${size}px; height: ${size}px; overflow: hidden; }
   .icon {
-    width: 100%; height: 100%; background: #252525; color: #F3F0E8;
-    display: flex; align-items: center; justify-content: center; position: relative;
+    position: relative; width: 100%; height: 100%; background: #141413; color: #faf9f5;
+    display: flex; align-items: center; justify-content: center;
   }
-  .icon span { font-family: "Instrument Serif", serif; font-size: ${Math.round(size * 0.57)}px; letter-spacing: -0.06em; line-height: 1; transform: translateY(${Math.round(size * -0.02)}px); }
-  .icon span::after { content: "."; color: #315BE8; }
-  .icon::before { content: ""; position: absolute; top: ${Math.round(size * 0.12)}px; left: ${Math.round(size * 0.12)}px; right: ${Math.round(size * 0.12)}px; height: 1px; background: rgba(243,240,232,.22); }
+  .icon::before {
+    content: ""; position: absolute; top: ${Math.round(size * 0.1)}px; left: ${Math.round(size * 0.1)}px;
+    right: ${Math.round(size * 0.1)}px; bottom: ${Math.round(size * 0.1)}px;
+    border: 1px solid #3b3b35; border-radius: ${Math.round(size * 0.22)}px;
+  }
+  .icon span {
+    position: relative; font-family: "Sora", sans-serif; font-weight: 600;
+    font-size: ${Math.round(size * 0.5)}px; letter-spacing: -0.07em; line-height: 1;
+  }
+  .icon span::after { content: "."; color: #d97757; }
 </style></head><body><div class="icon"><span>ia</span></div></body></html>`;
 
 const browser = await chromium.launch();

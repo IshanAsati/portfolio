@@ -75,7 +75,8 @@ const hasNotes = notes.length > 0;
             <em>in public.</em>
           </h1>
         </div>
-        <div class="head-note">
+
+        <div class="head-note panel">
           <p>
             Occasional writing about what I am learning: machine learning, local-first
             software, electronics, Linux and the unglamorous parts of building things.
@@ -89,22 +90,24 @@ const hasNotes = notes.length > 0;
   </section>
 
   <section class="notes-body section" aria-labelledby="notes-index-title">
-    <div class="shell notes-grid">
+    <div class="shell notes-layout">
       <aside class="notes-aside">
-        <p class="eyebrow">The index</p>
-        <p class="notes-count">
-          <span>{String(notes.length).padStart(2, '0')}</span>
-          published {notes.length === 1 ? 'entry' : 'entries'}
-        </p>
-        <a class="rss-link" href="/rss.xml">
-          <Rss aria-hidden="true" stroke-width="1.5" />
-          RSS feed
-        </a>
+        <div class="notes-aside-panel panel panel--warm">
+          <p class="eyebrow eyebrow--plain">The index</p>
+          <p class="notes-count">
+            <span>{String(notes.length).padStart(2, '0')}</span>
+            published {notes.length === 1 ? 'entry' : 'entries'}
+          </p>
+          <a class="rss-link" href="/rss.xml">
+            <Rss aria-hidden="true" stroke-width="1.6" />
+            RSS feed
+          </a>
+        </div>
       </aside>
 
       <div class="notes-main">
         {hasNotes ? (
-          <ol class="entry-list" aria-labelledby="notes-index-title">
+          <ol class="entry-list panel" aria-labelledby="notes-index-title">
             {notes.map((note, i) => (
               <li class="entry">
                 <a href={`/notes/${note.id}`}>
@@ -119,13 +122,13 @@ const hasNotes = notes.length > 0;
                     <h2>{note.data.title}</h2>
                     <p>{note.data.description}</p>
                   </div>
-                  <ArrowUpRight class="entry-arrow" aria-hidden="true" stroke-width="1.5" />
+                  <ArrowUpRight class="entry-arrow" aria-hidden="true" stroke-width="1.6" />
                 </a>
               </li>
             ))}
           </ol>
         ) : (
-          <div class="empty-state">
+          <div class="empty-state panel">
             <p class="empty-folio" aria-hidden="true">00</p>
             <div class="empty-copy">
               <p class="mono empty-label">The shelf is empty, on purpose</p>
@@ -143,7 +146,7 @@ const hasNotes = notes.length > 0;
           </div>
         )}
 
-        <div class="planned">
+        <div class="planned panel">
           <div class="planned-head">
             <p class="mono">Planned, not published</p>
             <p>
@@ -161,7 +164,7 @@ const hasNotes = notes.length > 0;
                   <h3>{item.title}</h3>
                   <p>{item.note}</p>
                 </div>
-                <span class="planned-status">Planned</span>
+                <span class="chip">Planned</span>
               </li>
             ))}
           </ol>
@@ -171,14 +174,16 @@ const hasNotes = notes.length > 0;
   </section>
 
   <section class="notes-contact section--tight">
-    <div class="shell notes-contact-grid">
-      <p class="eyebrow">Correspondence</p>
-      <p class="notes-contact-note">
-        If something here is wrong, unclear or worth arguing with, I would like to hear it.
-      </p>
-      <a class="notes-mail" href={`mailto:${site.email}`}>
+    <div class="shell contact-panel panel panel--accent">
+      <div>
+        <p class="eyebrow">Correspondence</p>
+        <p class="notes-contact-note">
+          If something here is wrong, unclear or worth arguing with, I would like to hear it.
+        </p>
+      </div>
+      <a class="button button--primary" href={`mailto:${site.email}`}>
         {site.email}
-        <ArrowUpRight aria-hidden="true" stroke-width="1.25" />
+        <ArrowUpRight aria-hidden="true" stroke-width="1.6" />
       </a>
     </div>
   </section>
@@ -186,8 +191,8 @@ const hasNotes = notes.length > 0;
 
 <style>
   .notes-head {
-    padding-top: 1.75rem;
-    border-bottom: 1px solid var(--line);
+    padding-block: 1.5rem clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--border);
   }
 
   .crumbs {
@@ -196,246 +201,268 @@ const hasNotes = notes.length > 0;
 
   .crumbs ol {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.65rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5625rem;
-    letter-spacing: 0.06em;
+    font-weight: 650;
+    letter-spacing: 0.07em;
     line-height: 1.4;
     text-transform: uppercase;
   }
 
+  .crumbs a {
+    transition: color var(--motion-state) var(--ease);
+  }
+
   .crumbs a:hover {
-    color: var(--cobalt);
+    color: var(--primary);
   }
 
   .crumbs [aria-current] {
-    color: var(--charcoal);
+    color: var(--ink);
   }
 
   .head-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.65fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.55fr);
     align-items: end;
     gap: clamp(2rem, 6vw, 6rem);
-    padding-block: clamp(1.5rem, 3vw, 2rem) clamp(3rem, 6vw, 5rem);
   }
 
   .head-grid h1 {
-    margin-top: 1.25rem;
-    font-family: var(--font-serif);
-    font-size: clamp(3.75rem, 9vw, 8rem);
-    letter-spacing: -0.055em;
-    line-height: 0.86;
+    margin-top: 1.1rem;
+    font-family: var(--font-display);
+    font-size: clamp(3.6rem, 8.5vw, 7.5rem);
+    font-weight: 500;
+    letter-spacing: -0.065em;
+    line-height: 0.92;
   }
 
   .head-grid h1 em {
-    color: var(--cobalt);
+    color: var(--primary);
+    font-style: normal;
   }
 
   .head-note {
+    padding: clamp(1.1rem, 2vw, 1.5rem);
+    background: var(--warm);
+    box-shadow: none;
+  }
+
+  .head-note p {
     max-width: 42ch;
     color: var(--ink-soft);
     font-size: 0.9375rem;
-    line-height: 1.65;
+    line-height: 1.7;
   }
 
   .head-note-detail {
-    margin-top: 1.25rem;
-    color: var(--ink-muted);
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted) !important;
   }
 
-  .notes-body {
-    background: var(--paper);
-  }
-
-  .notes-grid {
+  .notes-layout {
     display: grid;
-    grid-template-columns: minmax(0, 0.38fr) minmax(0, 1fr);
-    gap: clamp(2.5rem, 6vw, 6rem);
+    grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(2rem, 5vw, 4rem);
   }
 
   .notes-aside {
     position: sticky;
-    top: 7rem;
-    align-self: start;
+    top: 7.5rem;
+  }
+
+  .notes-aside-panel {
+    padding: 1.1rem 1.2rem;
+    box-shadow: none;
   }
 
   .notes-count {
-    margin-top: 1.5rem;
-    font-family: var(--font-serif);
-    font-size: 1.4rem;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 550;
+    line-height: 1.5;
   }
 
   .notes-count span {
     display: block;
-    color: var(--cobalt);
-    font-size: clamp(3rem, 5vw, 4.5rem);
-    letter-spacing: -0.04em;
-    line-height: 0.9;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 1;
   }
 
   .rss-link {
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
-    margin-top: 1.5rem;
-    padding-bottom: 0.2rem;
-    border-bottom: 1px solid var(--line);
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transition: color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .rss-link svg {
-    width: 0.8rem;
-    height: 0.8rem;
-    color: var(--cobalt);
+    min-height: 36px;
+    margin-top: 0.85rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.6875rem;
+    font-weight: 650;
+    transition: color var(--motion-state) var(--ease);
   }
 
   .rss-link:hover {
-    border-bottom-color: var(--cobalt);
-    color: var(--cobalt);
+    color: var(--primary);
+  }
+
+  .rss-link svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: var(--primary);
+  }
+
+  .notes-main {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.85rem, 1.6vw, 1.25rem);
+    min-width: 0;
   }
 
   .empty-state {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    align-items: start;
-    gap: clamp(1.5rem, 4vw, 3rem);
-    padding-bottom: clamp(2.5rem, 5vw, 4rem);
-    border-bottom: 1px solid var(--charcoal);
+    gap: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    box-shadow: none;
   }
 
   .empty-folio {
-    color: var(--cobalt);
-    font-family: var(--font-serif);
-    font-size: clamp(4.5rem, 10vw, 8rem);
-    letter-spacing: -0.05em;
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 6vw, 5rem);
+    font-weight: 500;
+    letter-spacing: -0.07em;
     line-height: 0.8;
   }
 
   .empty-label {
-    color: var(--ink-muted);
+    color: var(--muted);
   }
 
   .empty-copy h2 {
-    max-width: 20ch;
-    margin-top: 0.75rem;
-    font-family: var(--font-serif);
-    font-size: clamp(2.25rem, 4.5vw, 3.75rem);
-    letter-spacing: -0.04em;
-    line-height: 0.98;
+    margin-top: 0.65rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 500;
+    letter-spacing: -0.05em;
+    line-height: 1.08;
   }
 
-  .empty-copy > p:not(.empty-label) {
-    max-width: 54ch;
-    margin-top: 1.25rem;
-    color: var(--ink-soft);
-    font-size: 0.9375rem;
+  .empty-copy p:not(.empty-label) {
+    max-width: 56ch;
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-size: 0.875rem;
     line-height: 1.7;
   }
 
   .empty-copy a {
-    color: var(--cobalt);
+    color: var(--primary);
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
 
   .entry-list {
-    border-top: 1px solid var(--charcoal);
+    overflow: hidden;
+    box-shadow: none;
   }
 
-  .entry {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .entry > a {
+  .entry a {
     display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    grid-template-columns: 2.25rem minmax(0, 1fr) 1rem;
     align-items: start;
     gap: 1rem;
-    padding-block: 1.5rem;
-    transition: color 0.2s ease;
+    padding: clamp(1.1rem, 2vw, 1.4rem);
+    border-bottom: 1px solid var(--line);
+    transition: background-color var(--motion-state) var(--ease);
+  }
+
+  .entry:last-child a {
+    border-bottom: 0;
+  }
+
+  .entry a:hover {
+    background: var(--warm);
   }
 
   .entry-number {
-    color: var(--cobalt);
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
+    color: var(--primary);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     line-height: 1.8;
+    font-variant-numeric: tabular-nums;
   }
 
   .entry-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.05em;
-    line-height: 1.4;
-    text-transform: uppercase;
+    gap: 0.35rem 0.85rem;
+    color: var(--muted);
+    font-size: 0.625rem;
+    line-height: 1.5;
   }
 
   .entry-body h2 {
-    margin-top: 0.5rem;
-    font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    letter-spacing: -0.03em;
-    line-height: 1.05;
+    margin-top: 0.45rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
   }
 
   .entry-body p {
-    max-width: 52ch;
-    margin-top: 0.5rem;
-    color: var(--ink-muted);
-    font-size: 0.875rem;
-    line-height: 1.6;
+    max-width: 56ch;
+    margin-top: 0.45rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
+    line-height: 1.65;
   }
 
   .entry-arrow {
     width: 1rem;
     height: 1rem;
-    margin-top: 0.2rem;
-    color: var(--cobalt);
-    transition: transform 0.35s var(--ease-out);
-  }
-
-  .entry > a:hover h2,
-  .entry > a:hover .entry-arrow {
-    color: var(--cobalt);
-  }
-
-  .entry > a:hover .entry-arrow {
-    transform: translate(0.2rem, -0.2rem);
+    margin-top: 0.25rem;
+    color: var(--primary);
   }
 
   .planned {
-    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding: clamp(1.1rem, 2.5vw, 1.5rem);
+    background: var(--warm);
+    box-shadow: none;
   }
 
   .planned-head {
     display: grid;
-    grid-template-columns: minmax(0, 0.45fr) minmax(0, 1fr);
-    gap: 2rem;
-    padding-bottom: 1rem;
+    grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 1rem;
+    padding-bottom: 0.85rem;
     border-bottom: 1px solid var(--line);
   }
 
   .planned-head .mono {
-    color: var(--ink-muted);
+    color: var(--muted);
   }
 
-  .planned-head > p:last-child {
-    color: var(--ink-muted);
-    font-size: 0.8125rem;
+  .planned-head p:not(.mono) {
+    max-width: 52ch;
+    color: var(--muted);
+    font-size: 0.78125rem;
     line-height: 1.6;
   }
 
@@ -446,106 +473,85 @@ const hasNotes = notes.length > 0;
 
   .planned-list li {
     display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
     align-items: start;
-    gap: 1rem;
-    padding-block: 1.2rem;
-    border-bottom: 1px solid var(--line-soft);
+    gap: 0.85rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .planned-list li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
   }
 
   .planned-number {
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
+    color: var(--primary);
     font-size: 0.5625rem;
-    line-height: 1.6;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.7;
+    font-variant-numeric: tabular-nums;
   }
 
   .planned-category {
-    color: var(--ink-muted);
+    color: var(--muted);
   }
 
   .planned-list h3 {
-    margin-top: 0.35rem;
-    font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    margin-top: 0.25rem;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 500;
     letter-spacing: -0.025em;
-    line-height: 1.1;
+    line-height: 1.35;
   }
 
-  .planned-list li p {
-    max-width: 48ch;
-    margin-top: 0.35rem;
-    color: var(--ink-muted);
-    font-size: 0.8125rem;
+  .planned-list p {
+    max-width: 60ch;
+    margin-top: 0.2rem;
+    color: var(--muted);
+    font-size: 0.78125rem;
     line-height: 1.55;
   }
 
-  .planned-status {
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.06em;
-    line-height: 1.6;
-    text-transform: uppercase;
-  }
-
-  .notes-contact {
-    border-top: 1px solid var(--line);
-  }
-
-  .notes-contact-grid {
+  .contact-panel {
     display: grid;
-    grid-template-columns: minmax(0, 0.35fr) minmax(0, 0.8fr) auto;
-    align-items: baseline;
-    gap: clamp(1.5rem, 4vw, 4rem);
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.4rem, 3vw, 2rem);
+    box-shadow: none;
   }
 
   .notes-contact-note {
-    max-width: 42ch;
+    max-width: 56ch;
+    margin-top: 0.65rem;
     color: var(--ink-soft);
     font-size: 0.9375rem;
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
-  .notes-mail {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.5vw, 2rem);
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    transition: color 0.2s ease;
-  }
-
-  .notes-mail svg {
-    width: 1rem;
-    height: 1rem;
-    color: var(--cobalt);
-    transition: transform 0.35s var(--ease-out);
-  }
-
-  .notes-mail:hover {
-    color: var(--cobalt);
-  }
-
-  .notes-mail:hover svg {
-    transform: translate(0.15rem, -0.15rem);
-  }
-
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     .head-grid,
-    .notes-grid {
+    .notes-layout,
+    .contact-panel {
       grid-template-columns: 1fr;
-      gap: 2rem;
+    }
+
+    .head-note {
+      max-width: 620px;
     }
 
     .notes-aside {
       position: static;
+    }
+
+    .notes-aside-panel {
       display: flex;
       flex-wrap: wrap;
-      align-items: baseline;
-      gap: 1rem 2rem;
+      align-items: center;
+      gap: 0.75rem 1.5rem;
     }
 
     .notes-count {
@@ -555,33 +561,28 @@ const hasNotes = notes.length > 0;
     .notes-count span {
       display: inline;
       margin-right: 0.35rem;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0;
+      font-size: 1.5rem;
     }
 
     .rss-link {
       margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
     }
 
-    .notes-contact-grid {
-      grid-template-columns: 1fr;
-      gap: 1rem;
+    .contact-panel .button {
+      justify-self: start;
     }
   }
 
-  @media (max-width: 620px) {
+  @media (max-width: 700px) {
     .head-grid h1 {
-      font-size: clamp(3.25rem, 15vw, 5rem);
+      font-size: clamp(3rem, 15vw, 4.6rem);
     }
 
     .empty-state {
       grid-template-columns: 1fr;
-      gap: 1.25rem;
-    }
-
-    .empty-folio {
-      font-size: 4.5rem;
+      gap: 0.75rem;
     }
 
     .planned-head {
@@ -590,15 +591,25 @@ const hasNotes = notes.length > 0;
     }
 
     .planned-list li {
-      grid-template-columns: 2rem minmax(0, 1fr);
+      grid-template-columns: 1.5rem minmax(0, 1fr);
     }
 
-    .planned-status {
-      grid-column: 2;
+    .planned-list li .chip {
+      display: none;
     }
 
-    .notes-mail {
-      word-break: break-all;
+    .entry a {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+
+    .entry-arrow {
+      display: none;
+    }
+
+    .contact-panel .button {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>

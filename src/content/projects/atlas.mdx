@@ -1,0 +1,135 @@
+---
+title: Atlas
+index: "03"
+year: "2026"
+category: "AI / Study tools"
+filter: ai
+status: "In development"
+summary: "A study operating system that holds a confidence score for every syllabus topic, extracts structure from a PDF, and coaches Socratically with a live streaming model."
+deck: "A study coach that argues back. Atlas watches what you actually know, lets the number decay, and asks the next question instead of handing over the answer."
+order: 3
+featured: true
+cover: atlas
+tools:
+  - Next.js
+  - TypeScript
+  - DeepSeek
+  - Appwrite
+  - PDF extraction
+  - Streaming responses
+repo: "https://github.com/IshanAsati/Atlas"
+demo: "https://atlas-sooty-gamma.vercel.app"
+metrics:
+  - value: "6"
+    label: "Screens built"
+    note: "Dashboard, calendar, focus, graph, progress, onboarding"
+  - value: "Live"
+    label: "Streaming coach"
+    note: "Real DeepSeek call with an offline fallback"
+  - value: "1 PDF"
+    label: "Setup"
+    note: "Syllabus extraction into subjects and topics"
+  - value: "Mocked"
+    label: "Mission planning"
+    note: "Pipeline 2 is still a placeholder"
+---
+
+Atlas is a study operating system for school syllabi. It began from a simple observation: a study plan that ignores what a student actually understands is only a timetable. Atlas keeps a confidence score for each topic, watches that score decay over time, and uses the next conversation to update it.
+
+The public landing page explains the idea. The workspace behind it is still being built, and this entry documents the parts that are real.
+
+## Overview
+
+The product has three connected pipelines:
+
+- **Extraction.** A syllabus PDF is uploaded, parsed and turned into structured subjects and topics.
+- **Mission planning.** The system is meant to turn confidence gaps into a sequence of study missions. This pipeline is still mocked.
+- **Coaching.** A Socratic coach asks questions, looks for the specific misconception behind a wrong answer, and writes the result back into the confidence model.
+
+The screens for the full loop exist: dashboard, calendar, focus mode, learning graph, progress and onboarding. The difference between a screen existing and a pipeline being finished is the part worth stating clearly.
+
+## The coach
+
+The coach is the centre of the product. It is not a chat box that explains a topic on request. It is designed to find the idea a student has wrong and make them see it themselves.
+
+A real exchange on the landing page makes the intended behaviour legible. A student says the magnetic field at the centre of a current-carrying loop gets weaker because the wire is longer. Atlas does not correct the fact. It asks the student to picture the field lines from each segment of the loop and decide whether they point the same way or fight each other.
+
+Only after that does it name the misconception: treating field strength as a function of wire length.
+
+That behaviour is powered by a streaming DeepSeek call, with a rule-based offline fallback. The repository includes a `check:coach` script that must report `LIVE` before a demo, because a streaming coach that silently falls back is not the same product.
+
+## The confidence model
+
+Every topic carries a confidence score. The score is not a grade and it is not a completion percentage. It is a working estimate of how well the student can use the idea now.
+
+Two things make it more than a progress bar:
+
+- **Decay.** Confidence falls over time when a topic is not revisited, so the model reflects memory rather than a one-time answer.
+- **Evidence.** A coaching exchange updates the score from how the student actually answered, not from whether they opened a page.
+
+The learning graph and progress screens expose that model. The aim is to make the system's opinion of the student inspectable, so the next study decision can be argued with rather than obeyed.
+
+## Extraction
+
+The setup promise is one PDF. Atlas accepts a syllabus upload, sends it through DeepSeek, and returns structured subjects and topics with streaming stage updates while the extraction runs.
+
+That work is real. The hosted build is account-gated, and the public landing page is available without an account.
+
+## Screens
+
+All six workspace screens are built:
+
+- **Dashboard** for the current state of the plan.
+- **Calendar** for dated study work.
+- **Focus mode** for a single session.
+- **Graph** for the relationships between topics.
+- **Progress** for the confidence model over time.
+- **Onboarding** for the account and syllabus setup.
+
+The interface uses a neumorphic instrument-panel direction: one pale sheet, lit from the top left, with controls that read as physical parts rather than floating cards. The screenshots on this page come from the landing page, not a redrawn mockup.
+
+## Architecture
+
+```text
+Next.js app
+   ├── DeepSeek → streaming coach + PDF extraction
+   ├── Appwrite → 6 collections + storage
+   ├── Hybrid data layer → mock fallback without a backend
+   └── Six workspace screens
+```
+
+- **Next.js and TypeScript** carry both the front end and the API routes.
+- **DeepSeek** powers the coach and the syllabus extraction.
+- **Appwrite** provides persistence across six collections plus file storage.
+- **A hybrid data layer** lets the app run with or without a backend, which keeps the interface testable before infrastructure exists.
+
+The repository is honest about the split: front end and back end exist, the coach and extraction are live, mission planning is mocked, and spaced repetition and mobile apps are not built.
+
+## What works today
+
+- A public landing page with a real coaching exchange.
+- PDF upload and structured syllabus extraction.
+- A live streaming coach with an offline rule-based fallback.
+- Appwrite persistence and storage.
+- All six workspace screens with their controls wired.
+- A hybrid data layer that runs without a backend.
+
+The hosted build is at [atlas-sooty-gamma.vercel.app](https://atlas-sooty-gamma.vercel.app) and the source is on [GitHub](https://github.com/IshanAsati/Atlas).
+
+## Limitations and next
+
+Atlas is not a finished study product. The honest gaps:
+
+- **Mission planning is mocked.** The system can describe the next mission, but Pipeline 2 does not yet generate the sequence from the confidence model.
+- **Spaced repetition is missing.** Confidence decays, but there is no scheduling algorithm yet that decides when a topic should return.
+- **The hosted workspace is account-gated.** The public landing page is open; the working study loop requires an account.
+- **There is no mobile app.** The interface is responsive, but native study sessions are not built.
+- **The confidence model is a model.** It is a useful estimate, not a measurement of understanding, and the interface should never imply otherwise.
+
+The next work is the unglamorous middle: make mission planning real, connect decay to a review schedule, and test whether the coach's questions actually change what a student knows.
+
+## Reflection
+
+Atlas has been an exercise in separating a convincing demo from a working system. The landing page can show a beautiful coaching exchange. The product only becomes real when extraction, confidence, planning and coaching share one honest data model.
+
+It has also sharpened a rule I want to keep: an AI tutor should not perform certainty. The most useful thing Atlas does is admit what it thinks the student has wrong and ask a better question.

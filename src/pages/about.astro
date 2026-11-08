@@ -1,8 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-import { ArrowUpRight } from '@lucide/astro';
+import { ArrowRight, ArrowUpRight } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ArrowLink from '../components/ArrowLink.astro';
 import portrait from '../assets/ishan-avatar.jpg';
 import { site } from '../config';
 
@@ -57,6 +56,37 @@ const principles = [
   },
 ];
 
+const usedInProjects = [
+  'Python',
+  'PyTorch',
+  'TypeScript',
+  'React',
+  'Vite',
+  'Tailwind CSS',
+  'shadcn/ui',
+  'Dexie / IndexedDB',
+  'ESP32',
+  'Sensors & displays',
+];
+
+const alsoUsing = [
+  'HTML & CSS',
+  'Astro',
+  'Git & GitHub',
+  'Linux / WSL',
+  'VS Code',
+  'Command-line tools',
+];
+
+const learning = [
+  'Systems programming',
+  'Local AI models',
+  'Pygame & game loops',
+  'Computer-vision evaluation',
+  'Embedded systems',
+  'Software architecture',
+];
+
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',
@@ -91,30 +121,32 @@ const schema = {
         <div class="head-copy">
           <p class="eyebrow">The longer version / Vol. 01</p>
           <h1>
-            A student<br />
-            with a wide<br />
-            <em>syllabus.</em>
+            A student with<br />
+            a wide <em>syllabus.</em>
           </h1>
           <p class="head-lede">
             I am Ishan Asati — a student, developer and maker based in India. I am interested
             in how technology works, and in turning that curiosity into things that run.
           </p>
+          <div class="head-chips">
+            <span class="chip chip--sage">India</span>
+            <span class="chip">Student</span>
+            <span class="chip">Building in public</span>
+          </div>
         </div>
 
-        <figure class="about-portrait">
-          <div class="about-portrait-frame">
-            <Image
-              src={portrait}
-              alt="Portrait of Ishan Asati"
-              widths={[320, 480, 640]}
-              sizes="(max-width: 900px) 70vw, 360px"
-              loading="eager"
-            />
-            <span class="portrait-index" aria-hidden="true">IA / 26</span>
-          </div>
+        <figure class="about-portrait panel">
+          <Image
+            src={portrait}
+            alt="Portrait of Ishan Asati"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 900px) 78vw, 380px"
+            loading="eager"
+            fetchpriority="high"
+          />
           <figcaption>
             <span>Ishan Asati</span>
-            <span>India, {site.year}</span>
+            <span>{site.location}, {site.year}</span>
           </figcaption>
         </figure>
       </div>
@@ -125,14 +157,19 @@ const schema = {
     <div class="shell bio-grid">
       <div class="bio-side">
         <p class="eyebrow">01 / The short story</p>
-        <h2 class="bio-title" id="bio-title">Not one<br />discipline.</h2>
+        <h2 class="bio-title" id="bio-title">
+          Not one<br />
+          <em>discipline.</em>
+        </h2>
       </div>
+
       <div class="bio-body">
         <p class="bio-lede">
           I am more interested in understanding systems deeply than in collecting
           achievements. That has taken me across software, machine learning, electronics and
           the spaces in between.
         </p>
+
         <div class="bio-columns">
           <p>
             My interests span artificial intelligence and computer vision, application
@@ -148,7 +185,8 @@ const schema = {
             it is also the interesting one.
           </p>
         </div>
-        <blockquote class="bio-quote">
+
+        <blockquote class="bio-quote panel panel--accent">
           <p>
             “My interests rarely stay in one place, and that's exactly how I like it.”
           </p>
@@ -159,27 +197,30 @@ const schema = {
 
   <section class="interests section" aria-labelledby="interests-title">
     <div class="shell">
-      <header class="interests-head">
+      <header class="section-head">
         <div>
           <p class="eyebrow">02 / Fields of interest</p>
-          <h2 class="interests-title" id="interests-title">
-            Five directions,<br />one <em>curiosity.</em>
+          <h2 id="interests-title">
+            Five directions,<br />
+            one <em>curiosity.</em>
           </h2>
         </div>
-        <p class="interests-note">
+        <p class="section-note">
           <span>In use</span> means the field appears in a project on this site.
           <span>Exploring</span> means I am actively learning, without claiming mastery.
           There are no percentages here because proficiency is not a progress bar.
         </p>
       </header>
 
-      <ol class="interest-list">
+      <ol class="interest-list panel">
         {interests.map((interest) => (
           <li class="interest-row">
             <span class="interest-number">{interest.number}</span>
-            <h3>{interest.title}</h3>
-            <p>{interest.note}</p>
-            <span class:list={['interest-status', interest.status === 'In use' ? 'is-active' : '']}>
+            <div class="interest-body">
+              <h3>{interest.title}</h3>
+              <p>{interest.note}</p>
+            </div>
+            <span class:list={['chip', interest.status === 'In use' ? 'chip--sage' : '']}>
               {interest.status}
             </span>
           </li>
@@ -188,80 +229,66 @@ const schema = {
     </div>
   </section>
 
-  <section class="toolkit-section stone-section section" aria-labelledby="toolkit-title">
+  <section class="toolkit-section section" aria-labelledby="toolkit-title">
     <div class="shell">
-      <header class="toolkit-head">
-        <p class="eyebrow">03 / A working inventory</p>
-        <h2 class="toolkit-title" id="toolkit-title">
-          Tools, not<br /><em>trophies.</em>
-        </h2>
+      <header class="section-head">
+        <div>
+          <p class="eyebrow">03 / A working inventory</p>
+          <h2 id="toolkit-title">
+            Tools, not<br />
+            <em>trophies.</em>
+          </h2>
+        </div>
+        <p class="section-note">
+          This is a living inventory. A tool appears here because I have used it in
+          something, or because I am spending time with it — not because it belongs on a
+          résumé keyword list.
+        </p>
       </header>
 
       <div class="toolkit-grid">
-        <div class="toolkit-column">
+        <div class="toolkit-column panel">
           <p class="mono toolkit-label">Used in projects</p>
           <ul>
-            <li>Python</li>
-            <li>PyTorch</li>
-            <li>TypeScript</li>
-            <li>React</li>
-            <li>Vite</li>
-            <li>Tailwind CSS</li>
-            <li>shadcn/ui</li>
-            <li>Dexie / IndexedDB</li>
-            <li>ESP32</li>
-            <li>Sensors & displays</li>
+            {usedInProjects.map((tool) => <li>{tool}</li>)}
           </ul>
         </div>
 
-        <div class="toolkit-column">
+        <div class="toolkit-column panel">
           <p class="mono toolkit-label">Also working with</p>
           <ul>
-            <li>HTML & CSS</li>
-            <li>Astro</li>
-            <li>Git & GitHub</li>
-            <li>Linux / WSL</li>
-            <li>VS Code</li>
-            <li>Command-line tools</li>
+            {alsoUsing.map((tool) => <li>{tool}</li>)}
           </ul>
         </div>
 
-        <div class="toolkit-column">
+        <div class="toolkit-column panel">
           <p class="mono toolkit-label">Currently learning</p>
           <ul>
-            <li>Systems programming</li>
-            <li>Local AI models</li>
-            <li>Pygame & game loops</li>
-            <li>Computer-vision evaluation</li>
-            <li>Embedded systems</li>
-            <li>Software architecture</li>
+            {learning.map((tool) => <li>{tool}</li>)}
           </ul>
         </div>
       </div>
-
-      <p class="toolkit-note">
-        This is a living inventory. A tool appears here because I have used it in something,
-        or because I am spending time with it — not because it belongs on a résumé keyword
-        list.
-      </p>
     </div>
   </section>
 
   <section class="principles section" aria-labelledby="principles-title">
-    <div class="shell principles-grid">
-      <div class="principles-head">
-        <p class="eyebrow">04 / How I work</p>
-        <h2 class="principles-title" id="principles-title">
-          Three<br /><em>habits.</em>
-        </h2>
-        <p class="principles-note">
+    <div class="shell">
+      <header class="section-head">
+        <div>
+          <p class="eyebrow">04 / How I work</p>
+          <h2 id="principles-title">
+            Three<br />
+            <em>habits.</em>
+          </h2>
+        </div>
+        <p class="section-note">
           Not a manifesto. Just the working rules I keep returning to.
         </p>
-      </div>
+      </header>
 
-      <ol class="principle-list">
+      <ol class="principle-grid">
         {principles.map((principle) => (
-          <li>
+          <li class="principle-card panel">
             <span class="principle-number">{principle.number}</span>
             <h3>{principle.title}</h3>
             <p>{principle.note}</p>
@@ -271,34 +298,44 @@ const schema = {
     </div>
   </section>
 
-  <section class="credentials">
-    <div class="shell credentials-grid">
-      <p class="mono">A note on credentials</p>
-      <p class="credentials-note">
-        I am a student. I do not have years of industry experience, a list of publications or
-        a company to my name, and this site does not pretend otherwise. What it documents is
-        real work at its real stage: research that is research, software that is still being
-        built, and hardware that is still on the bench.
-      </p>
+  <section class="credentials section--tight">
+    <div class="shell">
+      <div class="credentials-panel panel panel--accent">
+        <p class="mono">A note on credentials</p>
+        <p class="credentials-note">
+          I am a student. I do not have years of industry experience, a list of publications
+          or a company to my name, and this site does not pretend otherwise. What it
+          documents is real work at its real stage: research that is research, software that
+          is still being built, and hardware that is still on the bench.
+        </p>
+      </div>
     </div>
   </section>
 
   <section class="contact-strip section--tight">
-    <div class="shell contact-grid">
-      <p class="eyebrow">05 / Continue</p>
-      <a class="contact-link" href="/contact">
-        Say hello
-        <ArrowUpRight aria-hidden="true" stroke-width="1.25" />
-      </a>
-      <ArrowLink href="/work" label="Or read the work" />
+    <div class="shell contact-panel panel">
+      <div>
+        <p class="eyebrow">05 / Continue</p>
+        <h2>Say hello, or<br /><em>read the work.</em></h2>
+      </div>
+      <div class="contact-actions">
+        <a class="button button--primary" href="/contact">
+          Say hello
+          <ArrowUpRight aria-hidden="true" stroke-width="1.6" />
+        </a>
+        <a class="button" href="/work">
+          Read the work
+          <ArrowRight aria-hidden="true" stroke-width="1.6" />
+        </a>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .about-head {
-    padding-top: 1.75rem;
-    border-bottom: 1px solid var(--line);
+    padding-block: 1.5rem clamp(2.5rem, 5vw, 4rem);
+    border-bottom: 1px solid var(--border);
   }
 
   .crumbs {
@@ -307,503 +344,384 @@ const schema = {
 
   .crumbs ol {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.65rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
+    color: var(--muted);
     font-size: 0.5625rem;
-    letter-spacing: 0.06em;
+    font-weight: 650;
+    letter-spacing: 0.07em;
     line-height: 1.4;
     text-transform: uppercase;
   }
 
+  .crumbs a {
+    transition: color var(--motion-state) var(--ease);
+  }
+
   .crumbs a:hover {
-    color: var(--cobalt);
+    color: var(--primary);
   }
 
   .crumbs [aria-current] {
-    color: var(--charcoal);
+    color: var(--ink);
   }
 
   .head-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.5fr);
     align-items: center;
     gap: clamp(2.5rem, 6vw, 6rem);
-    padding-block: clamp(1.5rem, 3vw, 2rem) clamp(3rem, 6vw, 5rem);
   }
 
   .head-copy h1 {
-    margin-top: 1.25rem;
-    font-family: var(--font-serif);
-    font-size: clamp(3.75rem, 8.5vw, 7.5rem);
-    letter-spacing: -0.055em;
-    line-height: 0.86;
+    margin-top: 1.1rem;
+    font-family: var(--font-display);
+    font-size: clamp(3.4rem, 7.5vw, 6.75rem);
+    font-weight: 500;
+    letter-spacing: -0.065em;
+    line-height: 0.95;
   }
 
   .head-copy h1 em {
-    color: var(--cobalt);
+    color: var(--primary);
+    font-style: normal;
   }
 
   .head-lede {
-    max-width: 42ch;
-    margin-top: 1.75rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--line);
-    font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.2vw, 1.75rem);
-    letter-spacing: -0.02em;
-    line-height: 1.3;
+    max-width: 52ch;
+    margin-top: 1.5rem;
     color: var(--ink-soft);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.7;
+  }
+
+  .head-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1.5rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--line);
   }
 
   .about-portrait {
-    width: min(100%, 22rem);
-    justify-self: end;
+    overflow: hidden;
+    padding: 0.6rem;
+    background: var(--warm);
+    box-shadow: none;
   }
 
-  .about-portrait-frame {
-    position: relative;
-    padding: 0.55rem;
-    border: 1px solid var(--line);
-    background: var(--paper);
-  }
-
-  .about-portrait-frame :global(img) {
+  .about-portrait :global(img) {
     width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    object-position: center 28%;
-    filter: grayscale(1) contrast(1.04) brightness(1.02);
-  }
-
-  .about-portrait-frame::after {
-    content: "";
-    position: absolute;
-    inset: 0.55rem;
-    pointer-events: none;
-    background: var(--cobalt);
-    mix-blend-mode: multiply;
-    opacity: 0.13;
-  }
-
-  .portrait-index {
-    position: absolute;
-    right: 1rem;
-    bottom: 1rem;
-    z-index: 1;
-    color: var(--ivory);
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    text-shadow: 0 1px 8px rgba(37, 37, 37, 0.4);
+    border-radius: 14px;
+    filter: saturate(0.9);
   }
 
   .about-portrait figcaption {
     display: flex;
+    align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
-    margin-top: 0.65rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.05em;
+    padding: 0.8rem 0.35rem 0.25rem;
+    color: var(--muted);
+    font-size: 0.5625rem;
+    font-weight: 650;
+    letter-spacing: 0.07em;
     line-height: 1.4;
     text-transform: uppercase;
   }
 
   .bio-grid {
     display: grid;
-    grid-template-columns: minmax(0, 0.55fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr);
+    align-items: start;
     gap: clamp(2.5rem, 6vw, 6rem);
   }
 
-  .bio-title {
-    margin-top: 1.25rem;
-    font-family: var(--font-serif);
-    font-size: clamp(2.75rem, 5.4vw, 4.75rem);
-    letter-spacing: -0.045em;
-    line-height: 0.92;
+  .bio-side {
+    position: sticky;
+    top: 7.5rem;
+  }
+
+  .bio-title,
+  .section-head h2,
+  .contact-panel h2 {
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-size: clamp(2.3rem, 4.4vw, 3.9rem);
+    font-weight: 500;
+    letter-spacing: -0.055em;
+    line-height: 1.02;
+  }
+
+  .bio-title em,
+  .section-head h2 em,
+  .contact-panel h2 em {
+    color: var(--primary);
+    font-style: normal;
   }
 
   .bio-lede {
-    font-family: var(--font-serif);
-    font-size: clamp(1.55rem, 2.5vw, 2.1rem);
-    letter-spacing: -0.025em;
-    line-height: 1.25;
-    color: var(--charcoal);
+    max-width: 56ch;
+    color: var(--ink);
+    font-size: clamp(1.1rem, 1.7vw, 1.3rem);
+    line-height: 1.65;
   }
 
   .bio-columns {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.75rem;
-    margin-top: 1.75rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid var(--line);
-    color: var(--ink-soft);
+    gap: 1.5rem;
+    margin-top: 1.35rem;
+  }
+
+  .bio-columns p {
+    color: var(--muted);
     font-size: 0.9375rem;
-    line-height: 1.7;
+    line-height: 1.75;
   }
 
   .bio-quote {
-    margin-top: 2.5rem;
-    padding: 1.4rem 0 1.4rem 1.5rem;
-    border-left: 1px solid var(--cobalt);
+    margin-top: 1.75rem;
+    padding: 1.2rem 1.35rem;
+    box-shadow: none;
   }
 
   .bio-quote p {
-    max-width: 30ch;
-    font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 2.8vw, 2.25rem);
-    letter-spacing: -0.025em;
-    line-height: 1.16;
-  }
-
-  .interests {
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .interests-head {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
-    align-items: end;
-    gap: clamp(2rem, 6vw, 6rem);
-    padding-bottom: clamp(2.5rem, 5vw, 4rem);
-  }
-
-  .interests-title {
-    margin-top: 1.25rem;
-    font-family: var(--font-serif);
-    font-size: clamp(2.75rem, 5.6vw, 5rem);
-    letter-spacing: -0.045em;
-    line-height: 0.92;
-  }
-
-  .interests-title em {
-    color: var(--cobalt);
-  }
-
-  .interests-note {
     max-width: 40ch;
-    color: var(--ink-muted);
-    font-size: 0.875rem;
-    line-height: 1.65;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.4;
   }
 
-  .interests-note span {
-    color: var(--charcoal);
-    font-family: var(--font-mono);
-    font-size: 0.625rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+  .section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.55fr);
+    align-items: end;
+    gap: clamp(2rem, 5vw, 5rem);
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .section-note {
+    max-width: 46ch;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .section-note span {
+    color: var(--ink);
+    font-weight: 650;
   }
 
   .interest-list {
-    border-top: 1px solid var(--charcoal);
+    padding: 0.35rem clamp(1rem, 2vw, 1.5rem);
+    background: var(--warm);
+    box-shadow: none;
   }
 
   .interest-row {
     display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr) minmax(0, 1.2fr) auto;
-    align-items: baseline;
-    gap: 1.5rem;
-    padding: 1.35rem 0;
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.2rem;
     border-bottom: 1px solid var(--line);
   }
 
-  .interest-number {
-    color: var(--cobalt);
-    font-family: var(--font-mono);
+  .interest-row:last-child {
+    border-bottom: 0;
+  }
+
+  .interest-number,
+  .principle-number {
+    color: var(--primary);
     font-size: 0.625rem;
-    letter-spacing: 0.04em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
   }
 
-  .interest-row h3 {
-    font-family: var(--font-serif);
-    font-size: clamp(1.6rem, 2.6vw, 2.15rem);
-    letter-spacing: -0.03em;
-    line-height: 1.05;
+  .interest-body h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.3;
   }
 
-  .interest-row p {
-    color: var(--ink-muted);
+  .interest-body p {
+    max-width: 60ch;
+    margin-top: 0.3rem;
+    color: var(--muted);
     font-size: 0.8125rem;
-    line-height: 1.55;
-  }
-
-  .interest-status {
-    padding-left: 1rem;
-    color: var(--ink-muted);
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.06em;
-    line-height: 1.4;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .interest-status.is-active {
-    color: var(--cobalt);
-  }
-
-  .interest-status.is-active::before {
-    content: "";
-    display: inline-block;
-    width: 0.35rem;
-    height: 0.35rem;
-    margin-right: 0.4rem;
-    background: var(--cobalt);
-    vertical-align: 0.08em;
-  }
-
-  .toolkit-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 2rem;
-    padding-bottom: clamp(2.5rem, 5vw, 4rem);
-  }
-
-  .toolkit-title {
-    font-family: var(--font-serif);
-    font-size: clamp(2.75rem, 5.4vw, 4.75rem);
-    letter-spacing: -0.045em;
-    line-height: 0.92;
-  }
-
-  .toolkit-title em {
-    color: var(--cobalt);
+    line-height: 1.6;
   }
 
   .toolkit-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(1.5rem, 4vw, 3rem);
-    border-top: 1px solid var(--charcoal);
+    gap: clamp(0.75rem, 1.6vw, 1.1rem);
   }
 
   .toolkit-column {
-    padding-top: 1.25rem;
+    padding: 1.1rem 1.2rem;
+    background: var(--warm);
+    box-shadow: none;
   }
 
   .toolkit-label {
-    padding-bottom: 0.9rem;
+    padding-bottom: 0.65rem;
     border-bottom: 1px solid var(--line);
-    color: var(--ink-muted);
+    color: var(--muted);
   }
 
   .toolkit-column ul {
     display: flex;
     flex-direction: column;
+    margin-top: 0.35rem;
   }
 
   .toolkit-column li {
-    padding-block: 0.5rem;
-    border-bottom: 1px solid var(--line-soft);
-    font-family: var(--font-serif);
-    font-size: clamp(1.15rem, 1.8vw, 1.4rem);
-    letter-spacing: -0.015em;
-    line-height: 1.15;
-  }
-
-  .toolkit-note {
-    max-width: 62ch;
-    margin-top: 2rem;
-    color: var(--ink-muted);
-    font-size: 0.8125rem;
-    line-height: 1.6;
-  }
-
-  .principles-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.55fr) minmax(0, 1.15fr);
-    gap: clamp(2.5rem, 6vw, 6rem);
-  }
-
-  .principles-title {
-    margin-top: 1.25rem;
-    font-family: var(--font-serif);
-    font-size: clamp(2.75rem, 5.4vw, 4.75rem);
-    letter-spacing: -0.045em;
-    line-height: 0.92;
-  }
-
-  .principles-title em {
-    color: var(--cobalt);
-  }
-
-  .principles-note {
-    max-width: 28ch;
-    margin-top: 1.5rem;
-    color: var(--ink-muted);
-    font-size: 0.8125rem;
-    line-height: 1.6;
-  }
-
-  .principle-list {
-    border-top: 1px solid var(--charcoal);
-  }
-
-  .principle-list li {
-    display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr);
-    gap: 0.35rem 1rem;
-    padding-block: 1.35rem;
+    padding-block: 0.45rem;
     border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+    font-size: 0.8125rem;
+    font-weight: 550;
+    line-height: 1.5;
   }
 
-  .principle-number {
-    grid-row: span 2;
-    color: var(--cobalt);
-    font-family: var(--font-mono);
-    font-size: 0.5625rem;
+  .toolkit-column li:last-child {
+    border-bottom: 0;
+  }
+
+  .principle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(0.75rem, 1.6vw, 1.1rem);
+  }
+
+  .principle-card {
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.15rem, 2vw, 1.5rem);
+    background: var(--paper);
+    box-shadow: none;
+  }
+
+  .principle-card h3 {
+    margin-top: 1.35rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
+  }
+
+  .principle-card p {
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-size: 0.8125rem;
     line-height: 1.7;
   }
 
-  .principle-list h3 {
-    font-family: var(--font-serif);
-    font-size: clamp(1.5rem, 2.4vw, 2rem);
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-  }
-
-  .principle-list p {
-    max-width: 52ch;
-    color: var(--ink-muted);
-    font-size: 0.875rem;
-    line-height: 1.6;
-  }
-
-  .credentials {
-    padding-block: clamp(2.5rem, 5vw, 4rem);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .credentials-grid {
+  .credentials-panel {
     display: grid;
-    grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr);
-    gap: clamp(2rem, 6vw, 6rem);
+    grid-template-columns: minmax(0, 0.35fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    box-shadow: none;
   }
 
-  .credentials-grid .mono {
-    color: var(--ink-muted);
+  .credentials-panel .mono {
+    color: var(--primary);
   }
 
   .credentials-note {
-    max-width: 60ch;
-    font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
-    letter-spacing: -0.02em;
-    line-height: 1.35;
+    max-width: 70ch;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.7;
   }
 
-  .contact-grid {
+  .contact-panel {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: clamp(1.5rem, 4vw, 4rem);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.5rem, 3.5vw, 2.5rem);
+    background: var(--warm);
+    box-shadow: none;
   }
 
-  .contact-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    justify-self: start;
-    font-family: var(--font-serif);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    letter-spacing: -0.04em;
-    line-height: 1;
-    transition: color 0.25s ease;
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
   }
 
-  .contact-link svg {
-    width: clamp(1rem, 2vw, 1.4rem);
-    height: clamp(1rem, 2vw, 1.4rem);
-    color: var(--cobalt);
-    transition: transform 0.35s var(--ease-out);
-  }
-
-  .contact-link:hover {
-    color: var(--cobalt);
-  }
-
-  .contact-link:hover svg {
-    transform: translate(0.2rem, -0.2rem);
-  }
-
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
     .head-grid,
     .bio-grid,
-    .principles-grid {
+    .section-head,
+    .credentials-panel,
+    .contact-panel {
       grid-template-columns: 1fr;
-      gap: 2.25rem;
     }
 
     .about-portrait {
+      max-width: 420px;
+    }
+
+    .bio-side {
+      position: static;
+    }
+
+    .toolkit-grid,
+    .principle-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-head {
+      gap: 1.5rem;
+    }
+
+    .contact-actions {
       justify-self: start;
-      width: min(70%, 18rem);
+    }
+  }
+
+  @media (max-width: 700px) {
+    .head-copy h1 {
+      font-size: clamp(2.9rem, 14vw, 4.2rem);
     }
 
     .bio-columns {
       grid-template-columns: 1fr;
-    }
-
-    .interests-head {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .interest-row {
-      grid-template-columns: 2.5rem minmax(0, 1fr) auto;
-    }
-
-    .interest-row p {
-      grid-column: 2 / 4;
-    }
-
-    .toolkit-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .contact-grid {
-      grid-template-columns: 1fr;
-      gap: 1.25rem;
-    }
-  }
-
-  @media (max-width: 620px) {
-    .head-copy h1 {
-      font-size: clamp(3.25rem, 15vw, 5rem);
-    }
-
-    .toolkit-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .toolkit-head {
-      align-items: flex-start;
-      flex-direction: column;
-    }
-
-    .interest-row {
-      grid-template-columns: 2rem minmax(0, 1fr);
-    }
-
-    .interest-status {
-      grid-column: 2;
-      padding-left: 0;
-    }
-
-    .interest-row p {
-      grid-column: 2;
-    }
-
-    .credentials-grid {
-      grid-template-columns: 1fr;
       gap: 1rem;
+    }
+
+    .interest-row {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      gap: 0.75rem;
+      padding-block: 1rem;
+    }
+
+    .interest-row .chip {
+      grid-column: 2;
+      justify-self: start;
+    }
+
+    .contact-actions .button {
+      flex: 1 1 auto;
     }
   }
 </style>

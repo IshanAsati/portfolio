@@ -15,7 +15,7 @@ const projects = defineCollection({
     deck: z.string(),
     order: z.number().default(99),
     featured: z.boolean().default(false),
-    cover: z.enum(['dermoai', 'atlas-fit', 'robotics', 'programming']),
+    cover: z.enum(['dermoai', 'atlas-fit', 'atlas', 'studyflow', 'halcyon', 'robotics', 'programming']),
     tools: z.array(z.string()).default([]),
     repo: z.url().optional(),
     demo: z.url().optional(),
