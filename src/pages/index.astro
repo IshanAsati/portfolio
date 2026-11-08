@@ -1,28 +1,73 @@
 ---
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import { ArrowRight, ArrowUpRight } from '@lucide/astro';
+import { ArrowDown, ArrowRight, ArrowUpRight } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectArtwork from '../components/ProjectArtwork.astro';
 import portrait from '../assets/ishan-avatar.jpg';
 import { site } from '../config';
 
 const allProjects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const byId = Object.fromEntries(allProjects.map((project) => [project.id, project]));
 
-// The homepage features three entries by id. Everything else appears in the index panel.
 const featuredIds = ['dermoai', 'atlas', 'halcyon'];
 const featured = featuredIds
-  .map((id) => allProjects.find((project) => project.id === id))
+  .map((id) => byId[id])
   .filter((project) => project !== undefined);
 
-const indexProjects = allProjects.filter((project) => !featuredIds.includes(project.id));
-
-// Featured cards show two facts each. DermoAI's headline percentages are already
-// drawn into its artwork plate, so the card shows its class count and recognition instead.
+// Featured stories show two facts each. DermoAI's headline percentages are
+// already drawn into its artwork plate, so its story shows the class count and
+// the competition result instead of repeating the numbers a third time.
 const featureMetricIndexes: Record<string, [number, number]> = {
   dermoai: [2, 3],
   atlas: [0, 1],
-  halcyon: [0, 3],
+  halcyon: [0, 1],
+};
+
+const chapters = [
+  { id: 'prologue', number: '00', title: 'Prologue', note: 'A note before the work' },
+  { id: 'question', number: '01', title: 'The question', note: 'Why any of this' },
+  { id: 'work', number: '02', title: 'The work', note: 'Three projects, three edges' },
+  { id: 'method', number: '03', title: 'The method', note: 'The honest ledger' },
+  { id: 'syllabus', number: '04', title: 'The syllabus', note: 'What I am learning now' },
+  { id: 'margin', number: '05', title: 'The margin', note: 'Notes, and the empty shelf' },
+];
+
+const storyNotes: Record<
+  string,
+  { kicker: string; headline: string; body: string[]; caseLabel: string; external?: string; externalLabel?: string }
+> = {
+  dermoai: {
+    kicker: 'Research study · 2026',
+    headline: 'A score is not a system.',
+    body: [
+      'DermoAI classifies skin images into twelve categories. It uses a ConvNeXt-Base backbone, a classification head adapted to the problem, and test-time augmentation at inference. It placed first in the DAV ML Khanna machine learning competition.',
+      'None of that makes it a medical device. The project is a research study, evaluated within itself: 82.79% reported accuracy and 87.30% cancer-class sensitivity. The distance between those numbers and a system that deserves trust is the actual subject of the work.',
+    ],
+    caseLabel: 'Read the DermoAI study',
+    external: 'https://github.com/IshanAsati/dermoai-final',
+    externalLabel: 'Repository',
+  },
+  atlas: {
+    kicker: 'Study operating system · In development',
+    headline: 'The plan that argues back.',
+    body: [
+      'Atlas keeps a confidence score for every syllabus topic, lets that score decay, and asks the next question instead of handing over the answer. A syllabus PDF is extracted into subjects and topics; a streaming coach handles the conversation.',
+      'The screens for the full loop exist. The mission-planning pipeline is still mocked, and this entry says so. A demo that hid that difference would be a different, less useful product.',
+    ],
+    caseLabel: 'Read the Atlas case study',
+    external: 'https://atlas-sooty-gamma.vercel.app',
+    externalLabel: 'Live demo',
+  },
+  halcyon: {
+    kicker: 'Focus workspace · Complete build',
+    headline: 'Make room for one thing.',
+    body: [
+      'Halcyon is a local-first focus workspace: a timer with room to breathe, a dated schedule you can argue with, a place for stray thoughts, a four-voice sequencer and a weekly almanac.',
+      'It has six destinations and no account. Everything lives in the browser. The completeness is the point — a quiet tool that asks for nothing beyond the next session.',
+    ],
+    caseLabel: 'Read the Halcyon case study',
+  },
 };
 
 const explorations = [
@@ -88,1207 +133,1728 @@ const schema = {
     url: site.url,
   },
 };
-
-const dialTicks = Array.from({ length: 12 }, (_, i) => i * 30);
 ---
 
 <BaseLayout schema={schema}>
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="shell hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow">Ishan Asati / student, developer, maker</p>
+  <div class="edition">
+    <!-- Cover -->
+    <section class="cover" aria-labelledby="cover-title">
+      <div class="shell cover-grid">
+        <div class="cover-copy">
+          <p class="issue-line">
+            <span>{site.issue}</span>
+            <span>Issue {site.year}</span>
+            <span>{site.location}</span>
+          </p>
 
-        <h1 id="hero-title">
-          I build to<br />
-          <em>understand.</em>
-        </h1>
+          <h1 id="cover-title">
+            I build<br />
+            to <em>understand.</em>
+          </h1>
 
-        <p class="hero-lede">
-          I am interested in how technology works — from the systems beneath our software
-          to the models learning from data, and the electronics meeting the physical world.
-          Most of what I know has arrived through projects that were slightly beyond me at
-          the start.
-        </p>
+          <p class="cover-deck">
+            Notes from a student who learns by making things: a skin-image classifier,
+            a study coach that argues back, a quieter place to focus, and a few circuits
+            on the bench.
+          </p>
 
-        <div class="hero-actions">
-          <a class="button button--primary" href="/work">
-            Explore the work
-            <ArrowRight aria-hidden="true" stroke-width="1.6" />
-          </a>
-          <a class="button" href="/about">
-            About me
-          </a>
-        </div>
-
-        <div class="hero-chips">
-          <span class="chip chip--sage">Based in India</span>
-          <span class="chip">AI · software · hardware</span>
-          <span class="chip">Building in public</span>
-        </div>
-      </div>
-
-      <aside class="hero-panel panel" aria-label="At a glance">
-        <div class="hero-panel-top">
-          <span class="mono">Now / Vol. 01</span>
-          <span class="chip chip--accent">{site.year}</span>
-        </div>
-
-        <div class="dial" aria-hidden="true">
-          <svg viewBox="0 0 240 240" fill="none">
-            <circle class="dial-track" cx="120" cy="120" r="95" />
-            <circle class="dial-arc" cx="120" cy="120" r="95" />
-            {dialTicks.map((angle) => (
-              <line
-                class:list={['dial-tick', { 'is-major': angle % 90 === 0 }]}
-                x1="120"
-                y1="18"
-                x2="120"
-                y2={angle % 90 === 0 ? '32' : '27'}
-                transform={`rotate(${angle} 120 120)`}
-              />
-            ))}
-          </svg>
-          <div class="dial-center">
-            <span class="dial-monogram">IA</span>
-            <span class="dial-year">26</span>
-          </div>
-        </div>
-
-        <p class="hero-panel-caption">A working index, not a finished record.</p>
-
-        <dl class="hero-facts">
-          <div>
-            <dt>Practice</dt>
-            <dd>AI, software, hardware</dd>
-          </div>
-          <div>
-            <dt>Method</dt>
-            <dd>Build, observe, revise</dd>
-          </div>
-          <div>
-            <dt>Status</dt>
-            <dd>Student, building in public</dd>
-          </div>
-        </dl>
-      </aside>
-    </div>
-  </section>
-
-  <section class="selected section" id="selected-work" aria-labelledby="selected-title">
-    <div class="shell">
-      <header class="section-head">
-        <div>
-          <p class="eyebrow eyebrow--cobalt">01 / Selected work</p>
-          <h2 id="selected-title">
-            Three projects,<br />
-            three <em>edges.</em>
-          </h2>
-        </div>
-        <p class="section-note">
-          A research study, a study operating system and a focus workspace. Different
-          surfaces, one question: how does this work, and what can I make with it?
-        </p>
-      </header>
-
-      <div class="feature-stack">
-        {featured.map((project, i) => (
-          <article class:list={['feature-card', 'panel', { 'is-reversed': i % 2 === 1 }]}>
-            <a class="feature-media" href={`/work/${project.id}`} aria-label={`View the ${project.data.title} case study`}>
-              <ProjectArtwork kind={project.data.cover} />
+          <div class="cover-actions">
+            <a class="button button--primary" href="#prologue">
+              Begin reading
+              <ArrowDown aria-hidden="true" stroke-width="1.5" />
             </a>
-
-            <div class="feature-body">
-              <div class="feature-topline">
-                <span class="index-number">{project.data.index}</span>
-                <span class="chip">{project.data.category}</span>
-                <span class="chip chip--accent">{project.data.status}</span>
-              </div>
-
-              <h3><a href={`/work/${project.id}`}>{project.data.title}</a></h3>
-              <p class="feature-deck">{project.data.deck}</p>
-
-              <dl class="feature-metrics">
-                {(featureMetricIndexes[project.id] ?? [0, 1]).map(
-                  (metricIndex) => project.data.metrics[metricIndex],
-                ).filter((metric) => metric !== undefined).map((metric) => (
-                  <div>
-                    <dt>{metric.label}</dt>
-                    <dd>{metric.value}</dd>
-                  </div>
-                ))}
-              </dl>
-
-              <div class="feature-foot">
-                <a class="button" href={`/work/${project.id}`}>
-                  Read the case study
-                  <ArrowRight aria-hidden="true" stroke-width="1.6" />
-                </a>
-                <span class="mono feature-year">{project.data.year}</span>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div class="index-panel panel">
-        <div class="index-panel-head">
-          <p class="mono">Also in the index</p>
-          <a class="link-line" href="/work">
-            All entries
-            <ArrowRight aria-hidden="true" stroke-width="1.6" />
-          </a>
+            <a class="cover-link" href="/work">
+              The full index
+              <ArrowUpRight aria-hidden="true" stroke-width="1.4" />
+            </a>
+          </div>
         </div>
 
-        <div class="index-links">
-          {indexProjects.map((project) => (
-            <a class="index-link" href={`/work/${project.id}`}>
-              <span class="index-link-number">{project.data.index}</span>
-              <span class="index-link-title">{project.data.title}</span>
-              <span class="index-link-category">{project.data.category}</span>
-              <span class="chip">{project.data.status}</span>
-              <ArrowUpRight aria-hidden="true" stroke-width="1.6" />
+        <figure class="cover-portrait">
+          <Image
+            src={portrait}
+            alt="Portrait of Ishan Asati"
+            widths={[320, 480, 640]}
+            sizes="(max-width: 900px) 70vw, 320px"
+            loading="eager"
+            decoding="async"
+          />
+          <figcaption>
+            <span>Ishan Asati</span>
+            <span>{site.location} / {site.year}</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="shell cover-foot">
+        <p>Words and work by Ishan Asati</p>
+        <p>Six chapters, one working record</p>
+        <p class="scroll-cue">
+          Scroll
+          <span aria-hidden="true"><i /></span>
+        </p>
+      </div>
+    </section>
+
+    <!-- Prologue -->
+    <section class="prologue" id="prologue" data-chapter="prologue" aria-labelledby="prologue-title">
+      <div class="shell prologue-grid">
+        <aside class="prologue-folio" aria-hidden="true">
+          <p class="folio">00</p>
+          <p class="folio-label">Prologue</p>
+        </aside>
+
+        <div class="prologue-body" data-reveal>
+          <p class="eyebrow">A note before the work</p>
+
+          <h2 id="prologue-title">
+            There is a kind of learning that only happens when something has to run.
+          </h2>
+
+          <p class="dropcap" data-reveal>
+            Most of what I know arrived through projects that were slightly beyond me at
+            the start. A model that had to classify images. A study plan that had to
+            survive a real week. A timer that had to be quiet enough to use. The making
+            came first; the understanding followed.
+          </p>
+
+          <p data-reveal>
+            I am a student in India, working across artificial intelligence, software and
+            the physical edge of computing. I do not have a single stack, and I have
+            stopped treating that as a flaw. The through-line is a preference for
+            understanding the whole system — and for making ideas into something that runs.
+          </p>
+
+          <blockquote data-reveal>
+            <p>“Build, observe, revise. Then say plainly what is real and what is still a sketch.”</p>
+          </blockquote>
+
+          <div class="contents" data-reveal>
+            <div class="contents-head">
+              <p class="contents-label">Contents</p>
+              <p class="contents-meta">{site.issue} / {site.year}</p>
+            </div>
+
+            <ol class="contents-list">
+              {chapters.map((chapter) => (
+                <li>
+                  <a href={`#${chapter.id}`}>
+                    <span class="contents-number">{chapter.number}</span>
+                    <span class="contents-title">{chapter.title}</span>
+                    <span class="contents-dots" aria-hidden="true" />
+                    <span class="contents-note">{chapter.note}</span>
+                  </a>
+                </li>
+              ))}
+              <li>
+                <a href="#correspondence">
+                  <span class="contents-number">—</span>
+                  <span class="contents-title">Epilogue</span>
+                  <span class="contents-dots" aria-hidden="true" />
+                  <span class="contents-note">Correspondence</span>
+                </a>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter one -->
+    <section class="chapter" id="question" data-chapter="question" aria-labelledby="question-title">
+      <div class="shell">
+        <header class="chapter-head" data-reveal>
+          <p class="chapter-number" aria-hidden="true">01</p>
+          <div class="chapter-heading">
+            <p class="eyebrow">Chapter one</p>
+            <h2 id="question-title">Curiosity, kept<br />in the open.</h2>
+          </div>
+          <p class="chapter-deck">
+            I am less interested in collecting disciplines than in following a question
+            until it becomes a thing that works.
+          </p>
+        </header>
+
+        <div class="chapter-cols">
+          <div class="chapter-prose" data-reveal>
+            <p class="lede">
+              I move between machine learning, software engineering and embedded systems
+              because the questions do.
+            </p>
+            <p>
+              A vision model raises questions about data and trust. A study tool raises
+              questions about memory and attention. A circuit raises questions about
+              timing, voltage and the gap between a diagram and a wire.
+            </p>
+            <p>
+              The interests rarely stay in one place. That is how I like it. The point was
+              never to look like someone who has arrived. It was to keep the questions
+              close enough to work on.
+            </p>
+          </div>
+
+          <aside class="chapter-margin" data-reveal>
+            <p class="margin-label">At a glance</p>
+            <dl class="margin-list">
+              <div>
+                <dt>Currently</dt>
+                <dd>Student, building in public</dd>
+              </div>
+              <div>
+                <dt>Based in</dt>
+                <dd>{site.location}</dd>
+              </div>
+              <div>
+                <dt>Working across</dt>
+                <dd>AI, software, hardware</dd>
+              </div>
+              <div>
+                <dt>Preferred method</dt>
+                <dd>Build, observe, revise</dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter two: the work -->
+    <section class="chapter chapter--work" id="work" data-chapter="work" aria-labelledby="work-title">
+      <div class="shell">
+        <header class="chapter-head" data-reveal>
+          <p class="chapter-number" aria-hidden="true">02</p>
+          <div class="chapter-heading">
+            <p class="eyebrow">Chapter two</p>
+            <h2 id="work-title">Three things,<br />built to find out.</h2>
+          </div>
+          <p class="chapter-deck">
+            Each began with a question that a plan alone could not answer.
+          </p>
+        </header>
+
+        <div class="stories">
+          {featured.map((project, i) => {
+            const story = storyNotes[project.id];
+            const metrics = featureMetricIndexes[project.id]
+              .map((index) => project.data.metrics[index])
+              .filter((metric) => metric !== undefined);
+
+            return (
+              <article class:list={['story', { 'story--reverse': i % 2 === 1 }]} data-reveal>
+                <p class="story-index" aria-hidden="true">02.{i + 1}</p>
+
+                <div class="story-copy">
+                  <p class="story-kicker">{story.kicker}</p>
+                  <h3>{story.headline}</h3>
+                  <p class="story-deck">{project.data.deck}</p>
+
+                  <div class="story-body">
+                    {story.body.map((paragraph) => <p>{paragraph}</p>)}
+                  </div>
+
+                  <dl class="story-facts">
+                    {metrics.map((metric) => (
+                      <div>
+                        <dt>{metric.label}</dt>
+                        <dd>{metric.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+
+                  <div class="story-links">
+                    <a class="story-link" href={`/work/${project.id}`}>
+                      {story.caseLabel}
+                      <ArrowRight aria-hidden="true" stroke-width="1.4" />
+                    </a>
+                    {story.external && (
+                      <a
+                        class="story-link story-link--quiet"
+                        href={story.external}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                      >
+                        {story.externalLabel}
+                        <ArrowUpRight aria-hidden="true" stroke-width="1.4" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                <figure class="story-plate">
+                  <ProjectArtwork kind={project.data.cover} />
+                  <figcaption>
+                    <span>Fig. {project.data.index} — {project.data.title}</span>
+                    <span>{project.data.status}</span>
+                  </figcaption>
+                </figure>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    <!-- Chapter three: method -->
+    <section class="chapter" id="method" data-chapter="method" aria-labelledby="method-title">
+      <div class="shell">
+        <header class="chapter-head" data-reveal>
+          <p class="chapter-number" aria-hidden="true">03</p>
+          <div class="chapter-heading">
+            <p class="eyebrow">Chapter three</p>
+            <h2 id="method-title">Build. Observe.<br />Revise.</h2>
+          </div>
+          <p class="chapter-deck">
+            A portfolio is more useful when it says where each thing actually stands.
+          </p>
+        </header>
+
+        <div class="method-intro" data-reveal>
+          <p class="lede">
+            The ledger below is the whole index, not a highlight reel.
+          </p>
+          <p>
+            Two entries are complete builds. Two are in development. One is a research
+            study. One collects prototypes and concepts. One is deliberately empty. The
+            status column is the most honest sentence on this page.
+          </p>
+        </div>
+
+        <div class="ledger" data-reveal>
+          <div class="ledger-row ledger-head" aria-hidden="true">
+            <span>No.</span>
+            <span>Entry</span>
+            <span>Field</span>
+            <span>Status</span>
+            <span>Year</span>
+          </div>
+
+          {allProjects.map((project) => (
+            <a class="ledger-row" href={`/work/${project.id}`}>
+              <span class="ledger-number">{project.data.index}</span>
+              <span class="ledger-title">{project.data.title}</span>
+              <span class="ledger-field">{project.data.category}</span>
+              <span class="ledger-status">{project.data.status}</span>
+              <span class="ledger-year">{project.data.year}</span>
             </a>
           ))}
         </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="about section" aria-labelledby="about-title">
-    <div class="shell about-grid">
-      <figure class="about-portrait panel">
-        <Image
-          src={portrait}
-          alt="Portrait of Ishan Asati"
-          widths={[320, 480, 640]}
-          sizes="(max-width: 900px) 82vw, 380px"
-          loading="lazy"
-          decoding="async"
-        />
-        <figcaption>
-          <span>Ishan Asati</span>
-          <span>{site.location} / {site.year}</span>
-        </figcaption>
-      </figure>
-
-      <div class="about-copy">
-        <p class="eyebrow">02 / About</p>
-        <h2 id="about-title">
-          A student, still<br />
-          collecting <em>disciplines.</em>
-        </h2>
-
-        <p class="about-lede">
-          I am more interested in understanding systems deeply than in collecting
-          achievements. That has taken me across software, machine learning, electronics
-          and the spaces in between.
-        </p>
-
-        <p>
-          My interests rarely stay in one place, and that is how I like it. The through-line
-          is not a single stack. It is a preference for understanding the whole system —
-          and for making ideas into something that runs.
-        </p>
-
-        <dl class="about-facts">
-          <div>
-            <dt>Currently</dt>
-            <dd>Student, building in public</dd>
-          </div>
-          <div>
-            <dt>Based in</dt>
-            <dd>India</dd>
-          </div>
-          <div>
-            <dt>Working across</dt>
-            <dd>AI, software, hardware</dd>
-          </div>
-          <div>
-            <dt>Preferred method</dt>
-            <dd>Build, observe, revise</dd>
-          </div>
-        </dl>
-
-        <a class="button" href="/about">
-          The longer version
-          <ArrowRight aria-hidden="true" stroke-width="1.6" />
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="exploring section" aria-labelledby="exploring-title">
-    <div class="shell exploring-grid">
-      <div class="exploring-head">
-        <p class="eyebrow">03 / Currently exploring</p>
-        <h2 id="exploring-title">
-          The syllabus<br />
-          is <em>self-set.</em>
-        </h2>
-        <p class="exploring-note">
-          A working list, not a skill chart. <span>In use</span> means it appears in
-          something I have built. <span>Exploring</span> means I am still learning my way
-          around it.
+        <p class="ledger-foot" data-reveal>
+          <span>Seven entries</span>
+          <span>Every status stated as it is</span>
+          <a href="/work">
+            Open the index
+            <ArrowRight aria-hidden="true" stroke-width="1.4" />
+          </a>
         </p>
       </div>
+    </section>
 
-      <ol class="exploring-list panel">
-        {explorations.map((item) => (
-          <li class="exploring-row">
-            <span class="exploring-number">{item.number}</span>
-            <div class="exploring-body">
-              <h3>{item.title}</h3>
-              <p>{item.note}</p>
-            </div>
-            <span class:list={['chip', item.status === 'In use' ? 'chip--sage' : '']}>
-              {item.status}
-            </span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
+    <!-- Chapter four: syllabus -->
+    <section class="chapter" id="syllabus" data-chapter="syllabus" aria-labelledby="syllabus-title">
+      <div class="shell">
+        <header class="chapter-head" data-reveal>
+          <p class="chapter-number" aria-hidden="true">04</p>
+          <div class="chapter-heading">
+            <p class="eyebrow">Chapter four</p>
+            <h2 id="syllabus-title">A syllabus<br />I set myself.</h2>
+          </div>
+          <p class="chapter-deck">
+            <em>In use</em> means it appears in something I have built.
+            <em>Exploring</em> means I am still learning my way around it.
+          </p>
+        </header>
 
-  <section class="notes section" aria-labelledby="notes-title">
-    <div class="shell notes-grid">
-      <div class="notes-head">
-        <p class="eyebrow">04 / Notes</p>
-        <h2 id="notes-title">
-          A place for<br />
-          <em>thinking aloud.</em>
-        </h2>
-        <p class="notes-deck">
-          Writing takes longer than building. When there is something worth saying — and
-          worth standing behind — it will appear here.
-        </p>
+        <ol class="syllabus" data-reveal>
+          {explorations.map((item) => (
+            <li class="syllabus-row">
+              <span class="syllabus-number" aria-hidden="true">{item.number}</span>
+              <div class="syllabus-body">
+                <h3>{item.title}</h3>
+                <p>{item.note}</p>
+              </div>
+              <span class:list={['tag', { 'tag--active': item.status === 'In use' }]}>
+                {item.status}
+              </span>
+            </li>
+          ))}
+        </ol>
       </div>
+    </section>
 
-      <div class="notes-panel panel">
-        <div class="notes-empty">
-          <span class="notes-folio" aria-hidden="true">00</span>
-          <div>
-            <p class="mono notes-label">The shelf is empty, on purpose</p>
-            <h3>No notes are published yet.</h3>
-            <p>
-              I would rather publish nothing than publish something manufactured to fill a
-              page. The first entries will appear when they are actually written, edited
-              and worth your time.
+    <!-- Chapter five: margin -->
+    <section class="chapter" id="margin" data-chapter="margin" aria-labelledby="margin-title">
+      <div class="shell">
+        <header class="chapter-head" data-reveal>
+          <p class="chapter-number" aria-hidden="true">05</p>
+          <div class="chapter-heading">
+            <p class="eyebrow">Chapter five</p>
+            <h2 id="margin-title">The margin.</h2>
+          </div>
+          <p class="chapter-deck">
+            Notes, when there is something worth standing behind.
+          </p>
+        </header>
+
+        <div class="margin-grid">
+          <div class="margin-statement" data-reveal>
+            <p class="lede">
+              The shelf is empty on purpose.
             </p>
-            <a class="link-line" href="/notes">
+            <p>
+              Writing takes longer than building. I would rather publish nothing than
+              publish something manufactured to fill a page. The first entries will appear
+              when they are actually written, edited and worth your time.
+            </p>
+            <a class="story-link" href="/notes">
               Visit the notes index
-              <ArrowRight aria-hidden="true" stroke-width="1.6" />
+              <ArrowRight aria-hidden="true" stroke-width="1.4" />
             </a>
           </div>
-        </div>
 
-        <div class="planned">
-          <p class="mono notes-label">Planned, not published</p>
-          <ol>
-            {plannedNotes.map((note) => (
-              <li>
-                <span class="planned-number">{note.number}</span>
-                <div>
-                  <h4>{note.title}</h4>
-                  <p>{note.note}</p>
-                </div>
-                <span class="chip">Planned</span>
-              </li>
-            ))}
-          </ol>
+          <div class="planned" data-reveal>
+            <div class="planned-head">
+              <p class="margin-label">Planned, not published</p>
+              <span class="planned-count">03</span>
+            </div>
+            <ol class="planned-list">
+              {plannedNotes.map((note) => (
+                <li>
+                  <span class="planned-number">{note.number}</span>
+                  <div>
+                    <h3>{note.title}</h3>
+                    <p>{note.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="correspondence section--tight" aria-labelledby="correspondence-title">
-    <div class="shell correspondence-panel panel panel--accent">
-      <div>
-        <p class="eyebrow">05 / Correspondence</p>
-        <h2 id="correspondence-title">
-          A question, a correction,<br />
-          or a <em>half-formed idea?</em>
-        </h2>
-      </div>
-      <div class="correspondence-body">
-        <p>
-          Email is a real inbox, read by a real person. It is the best place to start a
-          conversation about a project, a shared interest or something this site got wrong.
-        </p>
-        <div class="correspondence-actions">
-          <a class="button button--primary" href={`mailto:${site.email}`}>
-            Say hello
-            <ArrowUpRight aria-hidden="true" stroke-width="1.6" />
+    <!-- Epilogue -->
+    <section class="epilogue" id="correspondence" aria-labelledby="epilogue-title">
+      <div class="shell epilogue-grid">
+        <div data-reveal>
+          <p class="eyebrow">Epilogue</p>
+          <h2 id="epilogue-title">
+            A question,<br />
+            a correction, or a<br />
+            <em>half-formed idea?</em>
+          </h2>
+        </div>
+
+        <div class="epilogue-body" data-reveal>
+          <p>
+            Email is a real inbox, read by a real person. It is the best place to start a
+            conversation about a project, a shared interest or something this site got wrong.
+          </p>
+          <a class="epilogue-mail" href={`mailto:${site.email}`}>
+            {site.email}
+            <ArrowUpRight aria-hidden="true" stroke-width="1.3" />
           </a>
-          <a class="button button--ghost" href="/contact">Contact page</a>
+          <a class="story-link story-link--quiet" href="/contact">
+            The contact page
+            <ArrowRight aria-hidden="true" stroke-width="1.4" />
+          </a>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- Chapter rail -->
+    <nav class="chapter-rail" aria-label="Chapters">      {chapters.map((chapter) => (
+        <a
+          class="rail-link"
+          href={`#${chapter.id}`}
+          data-rail={chapter.id}
+          aria-label={`Chapter ${chapter.number}: ${chapter.title}`}
+        >
+          <span>{chapter.number}</span>
+          <i aria-hidden="true" />
+        </a>
+      ))}
+    </nav>
+  </div>
 </BaseLayout>
 
 <style>
-  .hero {
-    padding-block: clamp(2.5rem, 6vw, 5.5rem) clamp(3rem, 6vw, 5.5rem);
+  .edition {
+    overflow: clip;
+  }
+
+  /* ---------- Cover ---------- */
+
+  .cover {
+    padding-top: clamp(1.5rem, 3vw, 2.5rem);
     border-bottom: 1px solid var(--border);
   }
 
-  .hero-grid {
+  .cover-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.62fr);
-    align-items: center;
-    gap: clamp(2.5rem, 6vw, 6rem);
-  }
-
-  .hero-copy {
-    min-width: 0;
-    animation: hero-rise 0.9s var(--ease-out) both;
-  }
-
-  .hero-copy h1 {
-    margin-top: 1.1rem;
-    font-family: var(--font-display);
-    font-size: clamp(3.6rem, 8.5vw, 7.5rem);
-    font-weight: 500;
-    letter-spacing: -0.065em;
-    line-height: 0.94;
-  }
-
-  .hero-copy h1 em {
-    color: var(--primary);
-    font-style: normal;
-  }
-
-  .hero-lede {
-    max-width: 54ch;
-    margin-top: 1.75rem;
-    color: var(--ink-soft);
-    font-size: clamp(1rem, 1.4vw, 1.125rem);
-    line-height: 1.7;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem;
-    margin-top: 2rem;
-  }
-
-  .hero-chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding-top: 1.4rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .hero-panel {
-    display: flex;
-    flex-direction: column;
-    padding: clamp(1.1rem, 2vw, 1.5rem);
-    animation: hero-rise 0.9s 0.1s var(--ease-out) both;
-  }
-
-  .hero-panel-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-bottom: 0.9rem;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .hero-panel-top .mono {
-    color: var(--muted);
-  }
-
-  .dial {
-    position: relative;
-    width: min(100%, 270px);
-    margin: clamp(1rem, 3vw, 1.75rem) auto 0;
-    aspect-ratio: 1;
-  }
-
-  .dial svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  .dial-track {
-    stroke: var(--line);
-    stroke-width: 1.5;
-  }
-
-  .dial-arc {
-    stroke: var(--primary);
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-dasharray: 415 182;
-    transform: rotate(-90deg);
-    transform-origin: 120px 120px;
-  }
-
-  .dial-tick {
-    stroke: color-mix(in srgb, var(--muted) 52%, transparent);
-    stroke-width: 1.5;
-  }
-
-  .dial-tick.is-major {
-    stroke: var(--ink);
-    stroke-width: 2;
-  }
-
-  .dial-center {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.15rem;
-  }
-
-  .dial-monogram {
-    font-family: var(--font-display);
-    font-size: clamp(2.6rem, 5vw, 3.8rem);
-    font-weight: 600;
-    letter-spacing: -0.06em;
-    line-height: 1;
-  }
-
-  .dial-year {
-    color: var(--primary);
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    line-height: 1;
-  }
-
-  .hero-panel-caption {
-    margin-top: 0.35rem;
-    color: var(--muted);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    line-height: 1.5;
-    text-align: center;
-    text-transform: uppercase;
-  }
-
-  .hero-facts {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1.35rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .hero-facts > div {
-    display: grid;
-    grid-template-columns: 5.25rem minmax(0, 1fr);
-    gap: 0.85rem;
-    padding-block: 0.65rem;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .hero-facts > div:last-child {
-    border-bottom: 0;
-  }
-
-  .hero-facts dt {
-    color: var(--muted);
-    font-size: 0.625rem;
-    font-weight: 650;
-    letter-spacing: 0.08em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-
-  .hero-facts dd {
-    color: var(--ink);
-    font-size: 0.78125rem;
-    font-weight: 550;
-    line-height: 1.5;
-  }
-
-  .section-head {
-    display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.55fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.5fr);
     align-items: end;
-    gap: clamp(2rem, 5vw, 5rem);
-    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+    gap: clamp(2rem, 6vw, 5rem);
+    padding-block: clamp(2.25rem, 6vw, 5rem) clamp(2.5rem, 5vw, 4rem);
   }
 
-  .section-head h2,
-  .about-copy h2,
-  .exploring-head h2,
-  .notes-head h2,
-  .correspondence-panel h2 {
-    margin-top: 1rem;
-    font-family: var(--font-display);
-    font-size: clamp(2.3rem, 4.6vw, 4rem);
-    font-weight: 500;
-    letter-spacing: -0.055em;
-    line-height: 1.02;
-  }
-
-  .section-head h2 em,
-  .about-copy h2 em,
-  .exploring-head h2 em,
-  .notes-head h2 em,
-  .correspondence-panel h2 em {
-    color: var(--primary);
-    font-style: normal;
-  }
-
-  .section-note {
-    max-width: 44ch;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.875rem;
-    line-height: 1.7;
-  }
-
-  .feature-stack {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(1rem, 2vw, 1.5rem);
-  }
-
-  .feature-card {
-    display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
-    gap: clamp(1.25rem, 3vw, 2.5rem);
-    padding: clamp(0.85rem, 1.6vw, 1.15rem);
-    transition:
-      border-color var(--motion-state) var(--ease),
-      transform 320ms var(--ease);
-  }
-
-  .feature-card:hover {
-    border-color: var(--control-border);
-  }
-
-  .feature-card.is-reversed .feature-media {
-    order: 2;
-  }
-
-  .feature-media {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    border-radius: 14px;
-    transition: transform 420ms var(--ease);
-  }
-
-  .feature-media:hover {
-    transform: translateY(-3px);
-  }
-
-  .feature-media :global(.plate) {
-    width: 100%;
-    border-color: var(--line);
-  }
-
-  .feature-body {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    padding: clamp(0.5rem, 2vw, 1.5rem) clamp(0.35rem, 1.5vw, 1rem);
-  }
-
-  .feature-topline {
+  .issue-line {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.45rem;
-    margin-bottom: 1.1rem;
-  }
-
-  .feature-body h3 {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 4vw, 3.4rem);
-    font-weight: 500;
-    letter-spacing: -0.06em;
-    line-height: 1;
-  }
-
-  .feature-body h3 a {
-    transition: color var(--motion-state) var(--ease);
-  }
-
-  .feature-body h3 a:hover {
-    color: var(--primary);
-  }
-
-  .feature-deck {
-    max-width: 42ch;
-    margin-top: 1rem;
-    color: var(--ink-soft);
-    font-size: 0.9375rem;
-    line-height: 1.7;
-  }
-
-  .feature-metrics {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin-top: auto;
-    padding-top: 1.5rem;
-  }
-
-  .feature-metrics > div {
-    padding: 0.85rem 0.95rem;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--warm);
-  }
-
-  .feature-metrics dt {
+    gap: 0.4rem 1.1rem;
     color: var(--muted);
-    font-size: 0.5625rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    line-height: 1.45;
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.16em;
+    line-height: 1.5;
     text-transform: uppercase;
-  }
-
-  .feature-metrics dd {
-    margin-top: 0.3rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.3rem, 2.3vw, 1.85rem);
-    font-weight: 500;
-    letter-spacing: -0.045em;
-    line-height: 1;
-  }
-
-  .feature-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1.35rem;
-    padding-top: 1.1rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .feature-year {
-    color: var(--muted);
-  }
-
-  .index-panel {
-    margin-top: clamp(1rem, 2vw, 1.5rem);
-    padding: clamp(1.1rem, 2vw, 1.5rem);
-    background: var(--warm);
-    box-shadow: none;
-  }
-
-  .index-panel-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .index-panel-head .mono {
-    color: var(--muted);
-  }
-
-  .index-panel-head .link-line {
-    min-height: 36px;
-    color: var(--ink);
-  }
-
-  .index-links {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .index-link {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr) minmax(0, 0.85fr) auto 1rem;
-    align-items: center;
-    gap: 1rem;
-    min-height: 58px;
-    padding-block: 0.7rem;
-    border-bottom: 1px solid var(--line);
-    transition: color var(--motion-state) var(--ease);
-  }
-
-  .index-link:last-child {
-    border-bottom: 0;
-  }
-
-  .index-link:hover {
-    color: var(--primary);
-  }
-
-  .index-link-number {
-    color: var(--primary);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
     font-variant-numeric: tabular-nums;
   }
 
-  .index-link-title {
-    font-family: var(--font-display);
-    font-size: clamp(1.05rem, 2vw, 1.35rem);
-    font-weight: 500;
-    letter-spacing: -0.03em;
-    line-height: 1.2;
+  .issue-line span + span::before {
+    margin-right: 1.1rem;
+    color: color-mix(in srgb, var(--muted) 45%, transparent);
+    content: "/";
   }
 
-  .index-link-category {
-    color: var(--muted);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: 1.4;
-    text-transform: uppercase;
-  }
-
-  .index-link .chip {
-    justify-self: end;
-  }
-
-  .index-link svg {
-    width: 1rem;
-    height: 1rem;
-    color: var(--muted);
-    transition:
-      color var(--motion-state) var(--ease),
-      transform 220ms var(--ease);
-  }
-
-  .index-link:hover svg {
+  .issue-line span:first-child {
     color: var(--primary);
+  }
+
+  .cover h1 {
+    margin-top: 1.5rem;
+    font-size: clamp(3.5rem, 9.4vw, 8.75rem);
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+    text-wrap: initial;
+  }
+
+  .cover h1 em {
+    color: var(--primary);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .cover-deck {
+    max-width: 46ch;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    color: var(--ink-soft);
+    font-size: clamp(1.05rem, 1.5vw, 1.22rem);
+    line-height: 1.72;
+  }
+
+  .cover-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.75rem;
+    margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  }
+
+  .cover-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 180ms var(--ease);
+  }
+
+  .cover-link svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: var(--primary);
+    transition: transform 200ms var(--ease);
+  }
+
+  .cover-link:hover {
+    color: var(--ink);
+  }
+
+  .cover-link:hover svg {
     transform: translate(2px, -2px);
   }
 
-  .about-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
-    align-items: center;
-    gap: clamp(2.5rem, 6vw, 6rem);
+  .cover-portrait {
+    margin: 0;
   }
 
-  .about-portrait {
-    overflow: hidden;
-    padding: 0.65rem;
-    background: var(--warm);
-    box-shadow: none;
-  }
-
-  .about-portrait :global(img) {
+  .cover-portrait :global(img) {
     width: 100%;
-    border-radius: 14px;
-    filter: saturate(0.9);
+    border: 1px solid var(--border);
+    filter: grayscale(1) contrast(1.05);
+    transition: filter 500ms var(--ease);
   }
 
-  .about-portrait figcaption {
+  .cover-portrait:hover :global(img) {
+    filter: grayscale(0) contrast(1);
+  }
+
+  .cover-portrait figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.6rem;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .cover-foot {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .cover-foot p:nth-child(2) {
+    text-align: center;
+  }
+
+  .scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    justify-self: end;
+  }
+
+  .scroll-cue span {
+    position: relative;
+    display: block;
+    width: 38px;
+    height: 1px;
+    overflow: hidden;
+    background: var(--line);
+  }
+
+  .scroll-cue i {
+    position: absolute;
+    inset: 0;
+    background: var(--primary);
+    animation: scroll-line 2.8s var(--ease) infinite;
+  }
+
+  @keyframes scroll-line {
+    0% {
+      transform: translateX(-100%);
+    }
+    55%,
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* ---------- Prologue ---------- */
+
+  .prologue {
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .prologue-grid {
+    display: grid;
+    grid-template-columns: clamp(4rem, 8vw, 7rem) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: start;
+  }
+
+  .prologue-folio {
+    position: sticky;
+    top: 8rem;
+  }
+
+  .folio {
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.05em;
+    line-height: 0.8;
+  }
+
+  .folio-label {
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+  }
+
+  .prologue-body {
+    max-width: 68ch;
+  }
+
+  .prologue h2 {
+    margin-top: 1.1rem;
+    font-size: clamp(2rem, 4.6vw, 3.9rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.06;
+    text-wrap: balance;
+  }
+
+  .prologue-body > p {
+    margin-top: 1.35rem;
+    color: var(--ink-soft);
+    font-size: clamp(1rem, 1.3vw, 1.1rem);
+    line-height: 1.8;
+  }
+
+  .dropcap::first-letter {
+    float: left;
+    margin: 0.1em 0.13em 0 0;
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: 4.9em;
+    font-weight: 400;
+    line-height: 0.78;
+  }
+
+  .prologue blockquote {
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    padding: 0 0 0 clamp(1.25rem, 3vw, 2.25rem);
+    border-left: 1px solid var(--primary);
+  }
+
+  .prologue blockquote p {
+    max-width: 26ch;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 2.5rem);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.22;
+  }
+
+  .contents {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--border);
+  }
+
+  .contents-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.8rem 0.35rem 0.25rem;
-    color: var(--muted);
-    font-size: 0.5625rem;
-    font-weight: 650;
-    letter-spacing: 0.07em;
-    line-height: 1.4;
-    text-transform: uppercase;
-  }
-
-  .about-copy h2 {
-    max-width: 18ch;
-  }
-
-  .about-lede {
-    max-width: 54ch;
-    margin-top: 1.6rem;
-    color: var(--ink);
-    font-size: clamp(1.05rem, 1.6vw, 1.2rem);
-    line-height: 1.65;
-  }
-
-  .about-copy > p:not(.eyebrow):not(.about-lede) {
-    max-width: 58ch;
-    margin-top: 1rem;
-    color: var(--muted);
-    font-size: 0.9375rem;
-    line-height: 1.7;
-  }
-
-  .about-facts {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1px;
-    margin-block: 1.75rem;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: var(--border);
-    overflow: hidden;
-  }
-
-  .about-facts > div {
-    padding: 0.9rem 1rem;
-    background: var(--paper);
-  }
-
-  .about-facts dt {
-    color: var(--muted);
-    font-size: 0.5625rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    line-height: 1.45;
-    text-transform: uppercase;
-  }
-
-  .about-facts dd {
-    margin-top: 0.25rem;
-    font-size: 0.8125rem;
-    font-weight: 550;
-    line-height: 1.5;
-  }
-
-  .exploring-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
-    align-items: start;
-    gap: clamp(2.5rem, 6vw, 6rem);
-  }
-
-  .exploring-head {
-    position: sticky;
-    top: 7.5rem;
-  }
-
-  .exploring-note {
-    max-width: 40ch;
-    margin-top: 1.35rem;
-    color: var(--muted);
-    font-size: 0.875rem;
-    line-height: 1.7;
-  }
-
-  .exploring-note span {
-    color: var(--ink);
-    font-weight: 650;
-  }
-
-  .exploring-list {
-    padding: 0.35rem clamp(1rem, 2vw, 1.5rem);
-    background: var(--warm);
-    box-shadow: none;
-  }
-
-  .exploring-row {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 1rem;
-    padding-block: 1.15rem;
+    padding-block: 0.85rem;
     border-bottom: 1px solid var(--line);
   }
 
-  .exploring-row:last-child {
-    border-bottom: 0;
+  .contents-label,
+  .contents-meta,
+  .margin-label {
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
-  .exploring-number {
+  .contents-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contents-list li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .contents-list a {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr) minmax(2rem, 5rem) minmax(0, 0.9fr);
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.85rem;
+    transition: color 180ms var(--ease);
+  }
+
+  .contents-number {
     color: var(--primary);
-    font-size: 0.625rem;
-    font-weight: 700;
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
     letter-spacing: 0.08em;
     font-variant-numeric: tabular-nums;
   }
 
-  .exploring-body h3 {
+  .contents-title {
     font-family: var(--font-display);
-    font-size: 1.05rem;
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    line-height: 1.3;
+    font-size: clamp(1.05rem, 1.7vw, 1.32rem);
+    font-weight: 450;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
   }
 
-  .exploring-body p {
-    max-width: 48ch;
-    margin-top: 0.3rem;
+  .contents-dots {
+    height: 1px;
+    background: repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--muted) 45%, transparent) 0 2px,
+      transparent 2px 6px
+    );
+    transform: translateY(-3px);
+  }
+
+  .contents-note {
     color: var(--muted);
     font-size: 0.8125rem;
-    line-height: 1.55;
+    line-height: 1.5;
   }
 
-  .notes-grid {
+  .contents-list a:hover .contents-title {
+    color: var(--primary);
+  }
+
+  /* ---------- Chapter furniture ---------- */
+
+  .chapter {
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chapter-head {
     display: grid;
-    grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
-    align-items: start;
-    gap: clamp(2.5rem, 6vw, 6rem);
+    grid-template-columns: clamp(4rem, 8vw, 7rem) minmax(0, 1fr) minmax(0, 0.52fr);
+    align-items: end;
+    gap: clamp(1.25rem, 4vw, 3.5rem);
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
   }
 
-  .notes-deck {
-    max-width: 38ch;
-    margin-top: 1.35rem;
-    color: var(--muted);
-    font-size: 0.875rem;
-    line-height: 1.7;
-  }
-
-  .notes-panel {
-    overflow: hidden;
-    box-shadow: none;
-  }
-
-  .notes-empty {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 1.25rem;
-    padding: clamp(1.25rem, 2.5vw, 1.75rem);
-  }
-
-  .notes-folio {
+  .chapter-number {
     color: var(--primary);
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 4vw, 3.5rem);
-    font-weight: 500;
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
     letter-spacing: -0.06em;
-    line-height: 0.85;
+    line-height: 0.72;
   }
 
-  .notes-label {
-    color: var(--muted);
+  .chapter-heading h2 {
+    margin-top: 0.9rem;
+    font-size: clamp(2.2rem, 5vw, 4.35rem);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 1.01;
   }
 
-  .notes-empty h3 {
-    margin-top: 0.55rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.35rem, 2.4vw, 1.75rem);
-    font-weight: 500;
-    letter-spacing: -0.04em;
-    line-height: 1.15;
-  }
-
-  .notes-empty p:not(.notes-label) {
-    max-width: 52ch;
-    margin-top: 0.7rem;
-    color: var(--muted);
-    font-size: 0.875rem;
-    line-height: 1.65;
-  }
-
-  .notes-empty .link-line {
-    margin-top: 0.5rem;
-  }
-
-  .planned {
-    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  .chapter-deck {
+    padding-top: 1rem;
     border-top: 1px solid var(--line);
-    background: var(--warm);
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
   }
 
-  .planned ol {
-    display: flex;
-    flex-direction: column;
-    margin-top: 0.75rem;
+  .chapter-deck em {
+    color: var(--ink);
+    font-style: italic;
   }
 
-  .planned li {
+  .chapter-cols {
     display: grid;
-    grid-template-columns: 2rem minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 0.85rem;
-    padding-block: 0.85rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .chapter-prose {
+    max-width: 62ch;
+  }
+
+  .lede {
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.32;
+  }
+
+  .chapter-prose p + p,
+  .method-intro p + p,
+  .margin-statement p + p {
+    margin-top: 1.1rem;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+
+  .chapter-margin {
+    padding-top: 1rem;
     border-top: 1px solid var(--line);
   }
 
-  .planned li:first-child {
-    border-top: 0;
-    padding-top: 0;
+  .margin-list {
+    margin-top: 1.2rem;
+    border-top: 1px solid var(--line);
   }
 
-  .planned li:last-child {
+  .margin-list > div {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .margin-list dt {
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    text-transform: uppercase;
+  }
+
+  .margin-list dd {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  /* ---------- Stories ---------- */
+
+  .stories {
+    border-top: 1px solid var(--border);
+  }
+
+  .story {
+    display: grid;
+    grid-template-columns: clamp(4rem, 8vw, 7rem) minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: start;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    padding-block: clamp(3rem, 6vw, 5.5rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .story:last-child {
+    border-bottom: 0;
     padding-bottom: 0;
   }
 
-  .planned-number {
+  .story-index {
     color: var(--primary);
+    font-family: var(--font-sans);
     font-size: 0.5625rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    line-height: 1.7;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
     font-variant-numeric: tabular-nums;
+    padding-top: 0.45rem;
   }
 
-  .planned h4 {
-    font-family: var(--font-display);
-    font-size: 0.9375rem;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.35;
+  .story-copy {
+    max-width: 46ch;
   }
 
-  .planned p {
-    margin-top: 0.2rem;
+  .story-kicker {
     color: var(--muted);
-    font-size: 0.78125rem;
-    line-height: 1.55;
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    text-transform: uppercase;
   }
 
-  .correspondence-panel {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
-    align-items: center;
-    gap: clamp(2rem, 5vw, 5rem);
-    padding: clamp(1.5rem, 4vw, 3rem);
-    background:
-      radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--primary) 14%, transparent), transparent 42%),
-      var(--primary-soft);
+  .story-copy h3 {
+    margin-top: 0.85rem;
+    font-size: clamp(1.9rem, 3.6vw, 3.15rem);
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
   }
 
-  .correspondence-body p {
-    max-width: 48ch;
+  .story-deck {
+    margin-top: 1rem;
     color: var(--ink-soft);
-    font-size: 0.9375rem;
-    line-height: 1.7;
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    font-style: italic;
+    line-height: 1.45;
   }
 
-  .correspondence-actions {
+  .story-body p {
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  .story-facts {
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .story-facts > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .story-facts dt {
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .story-facts dd {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 450;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    text-align: right;
+  }
+
+  .story-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.65rem;
+    align-items: center;
+    gap: 0.5rem 1.5rem;
     margin-top: 1.35rem;
   }
 
-  @keyframes hero-rise {
-    from {
-      opacity: 0;
-      transform: translateY(1.25rem);
+  .story-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 180ms var(--ease);
+  }
+
+  .story-link svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: var(--primary);
+    transition: transform 200ms var(--ease);
+  }
+
+  .story-link:hover {
+    color: var(--primary);
+  }
+
+  .story-link:hover svg {
+    transform: translateX(3px);
+  }
+
+  .story-link--quiet {
+    color: var(--muted);
+  }
+
+  .story-link--quiet svg {
+    color: inherit;
+  }
+
+  .story-plate {
+    margin: 0;
+  }
+
+  .story-plate figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.65rem;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.09em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .story--reverse .story-copy {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .story--reverse .story-plate {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .story--reverse .story-index {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* ---------- Method ---------- */
+
+  .method-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    max-width: none;
+    margin-bottom: clamp(2.25rem, 4vw, 3.25rem);
+  }
+
+  .method-intro p:last-child {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  .ledger {
+    border-top: 1px solid var(--border);
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1.15fr) minmax(0, 0.95fr) minmax(0, 0.65fr) 4.5rem;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.95rem;
+    border-bottom: 1px solid var(--line);
+    transition: color 180ms var(--ease);
+  }
+
+  .ledger-head {
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .ledger-row:not(.ledger-head):hover {
+    color: var(--primary);
+  }
+
+  .ledger-number {
+    color: var(--primary);
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ledger-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 450;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+  }
+
+  .ledger-field,
+  .ledger-status,
+  .ledger-year {
+    color: var(--muted);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  .ledger-year {
+    text-align: right;
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ledger-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.1rem;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .ledger-foot a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    color: var(--ink);
+  }
+
+  .ledger-foot a svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    color: var(--primary);
+  }
+
+  .ledger-foot a:hover {
+    color: var(--primary);
+  }
+
+  /* ---------- Syllabus ---------- */
+
+  .syllabus {
+    border-top: 1px solid var(--border);
+  }
+
+  .syllabus-row {
+    display: grid;
+    grid-template-columns: clamp(3rem, 6vw, 4.5rem) minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 1.25rem;
+    padding-block: 1.35rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .syllabus-number {
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .syllabus-body h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    font-weight: 450;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  .syllabus-body p {
+    max-width: 58ch;
+    margin-top: 0.35rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .tag--active {
+    border-color: var(--primary-border);
+    color: var(--primary);
+  }
+
+  /* ---------- Margin ---------- */
+
+  .margin-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  .margin-statement {
+    position: sticky;
+    top: 8rem;
+  }
+
+  .margin-statement .story-link {
+    margin-top: 1rem;
+  }
+
+  .planned {
+    border-top: 1px solid var(--border);
+  }
+
+  .planned-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.8rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .planned-count {
+    color: var(--primary);
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .planned-list li {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .planned-number {
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
+    letter-spacing: 0.08em;
+    line-height: 1.8;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .planned-list h3 {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 450;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+  }
+
+  .planned-list p {
+    margin-top: 0.25rem;
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  /* ---------- Epilogue ---------- */
+
+  .epilogue {
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+    background: var(--warm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .epilogue-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    align-items: end;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .epilogue h2 {
+    margin-top: 1rem;
+    font-size: clamp(2.3rem, 5.4vw, 4.75rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .epilogue h2 em {
+    color: var(--primary);
+    font-style: italic;
+  }
+
+  .epilogue-body {
+    max-width: 44ch;
+  }
+
+  .epilogue-body > p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  .epilogue-mail {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1.35rem;
+    padding-bottom: 0.15rem;
+    border-bottom: 1px solid var(--primary);
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 450;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    transition: color 180ms var(--ease);
+  }
+
+  .epilogue-mail svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: var(--primary);
+  }
+
+  .epilogue-mail:hover {
+    color: var(--primary);
+  }
+
+  .epilogue-body .story-link {
+    display: flex;
+    width: fit-content;
+    margin-top: 0.35rem;
+  }
+
+  /* ---------- Chapter rail ---------- */
+
+  .chapter-rail {
+    display: none;
+  }
+
+  /* ---------- Reveals ---------- */
+
+  :global(html.js) [data-reveal] {
+    opacity: 0;
+    transform: translateY(1.1rem);
+    transition:
+      opacity 0.85s var(--ease-out),
+      transform 0.85s var(--ease-out);
+  }
+
+  :global(html.js) [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ---------- Responsive ---------- */
+
+  @media (min-width: 1400px) {
+    .chapter-rail {
+      position: fixed;
+      z-index: 20;
+      top: 50%;
+      left: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      transform: translateY(-50%);
     }
-    to {
+
+    .rail-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 22px;
+      color: var(--muted);
+      font-family: var(--font-sans);
+      font-size: 0.5rem;
+      letter-spacing: 0.1em;
+      line-height: 1;
+      opacity: 0.5;
+      font-variant-numeric: tabular-nums;
+      transition: opacity 200ms var(--ease), color 200ms var(--ease);
+    }
+
+    .rail-link i {
+      display: block;
+      width: 14px;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0.35);
+      transform-origin: left center;
+      transition: transform 260ms var(--ease);
+    }
+
+    .rail-link:hover,
+    .rail-link.is-active {
+      color: var(--primary);
       opacity: 1;
-      transform: translateY(0);
+    }
+
+    .rail-link:hover i,
+    .rail-link.is-active i {
+      transform: scaleX(1);
     }
   }
 
   @media (max-width: 1000px) {
-    .hero-grid,
-    .about-grid,
-    .exploring-grid,
-    .notes-grid,
-    .correspondence-panel,
-    .section-head {
+    .cover-grid,
+    .chapter-head,
+    .chapter-cols,
+    .method-intro,
+    .margin-grid,
+    .epilogue-grid {
       grid-template-columns: 1fr;
     }
 
-    .hero-grid {
-      gap: 2.5rem;
+    .cover-portrait {
+      max-width: 340px;
     }
 
-    .hero-panel {
-      max-width: 520px;
+    .chapter-head {
+      gap: 1.25rem;
     }
 
-    .section-head {
-      gap: 1.5rem;
+    .chapter-number {
+      line-height: 0.8;
     }
 
-    .section-note {
-      max-width: 56ch;
+    .chapter-deck {
+      max-width: 52ch;
     }
 
-    .feature-card,
-    .feature-card.is-reversed {
-      grid-template-columns: 1fr;
+    .story,
+    .story--reverse {
+      grid-template-columns: clamp(2rem, 6vw, 3rem) minmax(0, 1fr);
+      gap: 1.25rem;
     }
 
-    .feature-card.is-reversed .feature-media {
-      order: 0;
-    }
-
-    .feature-body {
-      padding: 0.5rem 0.25rem 0.75rem;
-    }
-
-    .about-portrait {
-      max-width: 460px;
-    }
-
-    .exploring-head {
-      position: static;
-    }
-  }
-
-  @media (max-width: 700px) {
-    .hero-copy h1 {
-      font-size: clamp(3.1rem, 15vw, 4.8rem);
-    }
-
-    .hero-actions .button,
-    .correspondence-actions .button {
-      flex: 1 1 auto;
-    }
-
-    .feature-metrics {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .feature-foot {
-      flex-wrap: wrap;
-    }
-
-    .feature-foot .button {
-      width: 100%;
-    }
-
-    .index-link {
-      grid-template-columns: 1.75rem minmax(0, 1fr) auto;
-      gap: 0.5rem 0.75rem;
-    }
-
-    .index-link-category {
-      grid-column: 2 / 3;
-      font-size: 0.5625rem;
-    }
-
-    .index-link .chip {
-      display: none;
-    }
-
-    .index-link svg {
-      grid-column: 3;
+    .story-copy,
+    .story--reverse .story-copy {
+      grid-column: 2;
       grid-row: 1;
     }
 
-    .about-facts {
-      grid-template-columns: 1fr;
-    }
-
-    .exploring-row {
-      grid-template-columns: 1.75rem minmax(0, 1fr);
-      gap: 0.75rem;
-    }
-
-    .exploring-row .chip {
+    .story-plate,
+    .story--reverse .story-plate {
       grid-column: 2;
+      grid-row: 2;
+      margin-top: 1.5rem;
+    }
+
+    .story--reverse .story-index {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .margin-statement {
+      position: static;
+    }
+
+    .method-intro {
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .cover-foot {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .cover-foot p:nth-child(2) {
+      text-align: left;
+    }
+
+    .scroll-cue {
       justify-self: start;
     }
 
-    .notes-empty {
+    .prologue-grid {
       grid-template-columns: 1fr;
+    }
+
+    .prologue-folio {
+      position: static;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    .folio {
+      font-size: 2.5rem;
+    }
+
+    .folio-label {
+      margin-top: 0;
+      writing-mode: horizontal-tb;
+    }
+
+    .contents-list a {
+      grid-template-columns: 2rem minmax(0, 1fr) auto;
       gap: 0.75rem;
     }
 
-    .planned li {
-      grid-template-columns: 1.5rem minmax(0, 1fr);
+    .contents-dots {
+      display: none;
     }
 
-    .planned li .chip {
+    .contents-note {
+      text-align: right;
+      font-size: 0.75rem;
+    }
+
+    .story,
+    .story--reverse {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .story-index,
+    .story--reverse .story-index {
+      grid-column: 1;
+      grid-row: 1;
+      margin-bottom: 0.65rem;
+      padding-top: 0;
+    }
+
+    .story-copy,
+    .story--reverse .story-copy {
+      grid-column: 1;
+      grid-row: 2;
+      max-width: none;
+    }
+
+    .story-plate,
+    .story--reverse .story-plate {
+      grid-column: 1;
+      grid-row: 3;
+      margin-top: 1.75rem;
+    }
+
+    .ledger-row {
+      grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+      gap: 0.75rem;
+    }
+
+    .ledger-head span:nth-child(3),
+    .ledger-head span:nth-child(5),
+    .ledger-field,
+    .ledger-year {
       display: none;
+    }
+
+    .ledger-title {
+      font-size: 1.15rem;
+    }
+
+    .ledger-status {
+      text-align: right;
+      font-size: 0.75rem;
+    }
+
+    .syllabus-row {
+      grid-template-columns: 2.25rem minmax(0, 1fr);
+      gap: 0.85rem;
+    }
+
+    .syllabus-row .tag {
+      grid-column: 2;
+      justify-self: start;
+      margin-top: 0.35rem;
+    }
+
+    .story-plate figcaption {
+      font-size: 0.45rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .cover h1 {
+      font-size: clamp(3.2rem, 15vw, 4.6rem);
+    }
+
+    .cover-actions .button {
+      width: 100%;
+    }
+
+    .cover-actions {
+      gap: 0.5rem;
+    }
+
+    .prologue h2 {
+      font-size: 1.95rem;
+    }
+
+    .chapter-heading h2 {
+      font-size: clamp(2rem, 8vw, 2.8rem);
+    }
+
+    .story-copy h3 {
+      font-size: 1.9rem;
+    }
+
+    .story-deck {
+      font-size: 1.05rem;
+    }
+
+    .story-facts > div {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.15rem;
+    }
+
+    .story-facts dd {
+      text-align: left;
+    }
+
+    .epilogue h2 {
+      font-size: clamp(2rem, 8.5vw, 2.9rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(html.js) [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+
+    .scroll-cue i {
+      animation: none;
+      transform: none;
     }
   }
 </style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Reveal editorial blocks as they enter the reading column.
+  const revealItems = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    revealItems.forEach((item) => item.classList.add('is-in'));
+  } else {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-in');
+          revealObserver.unobserve(entry.target);
+        });
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.06 },
+    );
+
+    revealItems.forEach((item) => revealObserver.observe(item));
+  }
+
+  // Chapter rail follows the section currently under the reading eye-line.
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-chapter]'));
+  const railLinks = new Map(
+    Array.from(document.querySelectorAll<HTMLElement>('[data-rail]')).map((link) => [
+      link.dataset.rail ?? '',
+      link,
+    ]),
+  );
+
+  if (sections.length && railLinks.size) {
+    let railFrame = 0;
+
+    const updateRail = () => {
+      railFrame = 0;
+      const line = window.scrollY + window.innerHeight * 0.35;
+      let current = sections[0];
+
+      for (const section of sections) {
+        if (section.offsetTop <= line) current = section;
+      }
+
+      railLinks.forEach((link, id) => {
+        link.classList.toggle('is-active', id === current?.dataset.chapter);
+      });
+    };
+
+    const queueRail = () => {
+      if (!railFrame) railFrame = window.requestAnimationFrame(updateRail);
+    };
+
+    updateRail();
+    window.addEventListener('scroll', queueRail, { passive: true });
+    window.addEventListener('resize', queueRail);
+  }
+</script>

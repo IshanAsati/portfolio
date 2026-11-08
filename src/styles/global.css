@@ -1,83 +1,122 @@
 @import "tailwindcss";
 
+/*
+  The portfolio is set like a printed feature: Fraunces for display,
+  Newsreader for reading, IBM Plex Mono for the apparatus (folios,
+  captions, navigational labels).
+*/
+
 @font-face {
-  font-family: "Sora";
+  font-family: "Fraunces";
   font-style: normal;
-  font-weight: 100 800;
+  font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/sora-latin-var.woff2") format("woff2-variations");
+  src: url("/fonts/fraunces-latin-var.woff2") format("woff2-variations");
 }
 
 @font-face {
-  font-family: "Manrope";
+  font-family: "Fraunces";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/fraunces-latin-var-italic.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Newsreader";
   font-style: normal;
   font-weight: 200 800;
   font-display: swap;
-  src: url("/fonts/manrope-latin-var.woff2") format("woff2-variations");
+  src: url("/fonts/newsreader-latin-var.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("/fonts/newsreader-latin-var-italic.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-mono-latin-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-mono-latin-500.woff2") format("woff2");
 }
 
 @theme {
-  --color-surface: #141413;
-  --color-paper: #1e1e1b;
-  --color-warm: #22221f;
-  --color-ink: #faf9f5;
-  --color-muted: #b0aea5;
-  --color-primary: #d97757;
-  --color-sage: #788c5d;
-  --color-apricot: #d99b70;
-  --color-border: #3b3b35;
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --color-surface: #131110;
+  --color-paper: #1b1816;
+  --color-warm: #211d1a;
+  --color-ink: #f4efe6;
+  --color-muted: #a49b8c;
+  --color-primary: #cf5a3c;
+  --color-sage: #8d9a6b;
+  --color-apricot: #c9a06a;
+  --color-border: #3a342e;
+  --font-sans: "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 :root {
   color-scheme: dark;
-  --surface: #141413;
-  --paper: #1e1e1b;
-  --warm: #22221f;
-  --ink: #faf9f5;
-  --muted: #b0aea5;
-  --primary: #d97757;
-  --primary-dark: #c26043;
-  --primary-soft: #352925;
-  --control-highlight: #e8a47f;
-  --control-border: #4a4a43;
-  --primary-border: #59423b;
-  --sage: #788c5d;
-  --apricot: #d99b70;
-  --border: #3b3b35;
-  --line: #30302c;
-  --on-primary: #201711;
-  --radius: 20px;
-  --radius-sm: 12px;
-  --shadow: 0 12px 28px #0000003d, 0 1px 3px #00000052;
-  --shadow-lg: 0 28px 80px #00000059, 0 2px 8px #0000003d;
+  --surface: #131110;
+  --paper: #1b1816;
+  --warm: #211d1a;
+  --ink: #f4efe6;
+  --muted: #a49b8c;
+  --primary: #cf5a3c;
+  --primary-dark: #ac452b;
+  --primary-soft: #32211b;
+  --control-highlight: #e79a78;
+  --control-border: #4b423a;
+  --primary-border: #5d3d31;
+  --sage: #8d9a6b;
+  --apricot: #c9a06a;
+  --border: #3a342e;
+  --line: #2c2621;
+  --on-primary: #131110;
+  --radius: 4px;
+  --radius-sm: 3px;
+  --shadow: 0 1px 0 #00000026;
+  --shadow-lg: 0 30px 90px #00000066;
   --motion-press: 120ms;
   --motion-state: 220ms;
   --ease: cubic-bezier(.2, .8, .2, 1);
   --ease-out: cubic-bezier(.22, 1, .36, 1);
 
-  /* Legacy aliases kept so every page inherits the dark system. */
+  /* Legacy aliases kept so every page inherits the new system. */
   --ivory: var(--surface);
   --charcoal: var(--ink);
   --cobalt: var(--primary);
   --stone: var(--muted);
-  --ink-soft: #d6d3ca;
+  --ink-soft: #d9d1c4;
   --ink-muted: var(--muted);
-  --line-soft: #2a2a27;
-  --line-light: #4a4a43;
-  --line-light-soft: #35352f;
+  --line-soft: #26211d;
+  --line-light: #4b423a;
+  --line-light-soft: #35302b;
   --stone-wash: var(--warm);
   --cobalt-wash: var(--primary-soft);
   --cobalt-bright: var(--control-highlight);
-  --font-serif: var(--font-display);
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-text: "Newsreader", Georgia, serif;
+  --font-sans: "IBM Plex Mono", ui-monospace, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --page-max: 1264px;
   --gutter: clamp(1.25rem, 4vw, 3.25rem);
   --section-pad: clamp(4.75rem, 8vw, 7.5rem);
-  --radius-img: 14px;
+  --radius-img: 2px;
 }
 
 *,
@@ -98,10 +137,11 @@ body {
   min-width: 320px;
   background: var(--surface);
   color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 450;
-  line-height: 1.6;
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  font-optical-sizing: auto;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -194,9 +234,10 @@ h4,
 h5,
 h6 {
   font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 1.15;
+  font-weight: 450;
+  font-optical-sizing: auto;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
   text-wrap: balance;
 }
 
@@ -242,9 +283,9 @@ hr {
 
 .display {
   font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  line-height: 1.04;
+  font-weight: 420;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
 }
 
 .mono {
@@ -275,7 +316,6 @@ hr {
   width: 6px;
   height: 6px;
   flex: 0 0 auto;
-  border-radius: 50%;
   background: var(--sage);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--sage) 10%, transparent);
 }
@@ -378,15 +418,15 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 5px 10px;
+  padding: 4px 8px;
   border: 1px solid var(--border);
-  border-radius: 100px;
-  background: color-mix(in srgb, var(--paper) 74%, transparent);
+  border-radius: 2px;
+  background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: 0.625rem;
-  font-weight: 650;
-  letter-spacing: 0.06em;
+  font-size: 0.5625rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   line-height: 1.2;
   text-transform: uppercase;
   white-space: nowrap;
@@ -394,10 +434,9 @@ hr {
 
 .tag::before {
   content: "";
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   flex: 0 0 auto;
-  border-radius: 50%;
   background: var(--sage);
 }
 
@@ -444,7 +483,7 @@ hr {
   left: 0.75rem;
   z-index: 10000;
   padding: 0.75rem 1.2rem;
-  border-radius: 10px;
+  border-radius: 2px;
   background: var(--ink);
   color: var(--surface);
   font-family: var(--font-sans);
@@ -486,22 +525,25 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 30px;
-  padding: 0 11px;
+  min-height: 26px;
+  padding: 0 9px;
   border: 1px solid var(--border);
-  border-radius: 100px;
-  background: var(--paper);
+  border-radius: 2px;
+  background: transparent;
   color: var(--muted);
-  font-size: 0.6875rem;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 0.5625rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   line-height: 1;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
 .chip--accent {
   border-color: var(--primary-border);
   background: var(--primary-soft);
-  color: var(--primary);
+  color: var(--control-highlight);
 }
 
 .chip--sage {
@@ -515,15 +557,18 @@ hr {
   align-items: center;
   justify-content: center;
   gap: 13px;
-  min-height: 48px;
-  padding: 0 22px;
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  background: var(--paper);
+  min-height: 46px;
+  padding: 0 20px;
+  border: 1px solid var(--control-border);
+  border-radius: 2px;
+  background: transparent;
   color: var(--ink);
-  font-size: 0.8125rem;
-  font-weight: 650;
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.09em;
   line-height: 1.2;
+  text-transform: uppercase;
   transition:
     background-color var(--motion-state) var(--ease),
     border-color var(--motion-state) var(--ease),
@@ -555,33 +600,24 @@ hr {
 }
 
 .button--primary {
-  min-height: 54px;
-  padding-inline: 26px;
+  min-height: 50px;
+  padding-inline: 24px;
   border-color: var(--primary);
-  background-image: linear-gradient(105deg, var(--primary-dark) 0%, var(--primary) 34%, var(--control-highlight) 50%, var(--primary) 66%, var(--primary-dark) 100%);
-  background-size: 240% 100%;
-  background-position: 0 50%;
+  background: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 4px 10px color-mix(in srgb, var(--primary) 16%, transparent);
-  font-size: 0.8125rem;
-  font-weight: 750;
-  transition:
-    background-position 560ms cubic-bezier(.16, 1, .3, 1),
-    border-color 180ms var(--ease),
-    box-shadow 240ms var(--ease),
-    transform 160ms cubic-bezier(.16, 1, .3, 1);
+  font-weight: 500;
 }
 
 .button--primary:hover {
-  border-color: var(--primary-dark);
-  background-position: 100% 50%;
+  border-color: #d96b4e;
+  background: #d96b4e;
   color: var(--on-primary);
-  box-shadow: 0 12px 24px color-mix(in srgb, var(--primary) 24%, transparent);
-  transform: translate3d(0, -2px, 0);
+  box-shadow: none;
+  transform: translateY(-1px);
 }
 
 .button--primary:active {
-  transform: translate3d(0, 0, 0) scale(.985);
+  transform: none;
 }
 
 .button--ghost {
@@ -609,9 +645,9 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 4px;
+  padding: 3px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 3px;
   background: var(--warm);
 }
 
@@ -619,14 +655,17 @@ hr {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 0 15px;
+  min-height: 38px;
+  padding: 0 14px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 2px;
   background: transparent;
   color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-family: var(--font-sans);
+  font-size: 0.5625rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -639,8 +678,8 @@ hr {
   border-color: var(--border);
   background: var(--paper);
   color: var(--ink);
-  box-shadow: 0 2px 5px #0000003d;
-  font-weight: 700;
+  box-shadow: none;
+  font-weight: 500;
 }
 
 /* ---------- Long-form reading ---------- */
@@ -691,11 +730,11 @@ hr {
 .prose-case h3 {
   margin-top: 2.5rem;
   color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: -0.015em;
-  line-height: 1.5;
+  font-family: var(--font-text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
 }
 
 .prose-case p,
@@ -777,8 +816,8 @@ hr {
   margin-block: 2.5rem;
   padding: 1.5rem 1.75rem;
   border: 1px solid var(--primary-border);
-  border-left: 3px solid var(--primary);
-  border-radius: 4px 16px 16px 4px;
+  border-left: 2px solid var(--primary);
+  border-radius: 3px;
   background: var(--primary-soft);
   color: var(--ink);
   font-family: var(--font-display);
@@ -811,7 +850,7 @@ hr {
 .prose-case code {
   padding: 0.15em 0.38em;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 2px;
   background: var(--warm);
   color: var(--control-highlight);
   font-family: var(--font-sans);
@@ -823,7 +862,7 @@ hr {
   overflow-x: auto;
   padding: 1.35rem;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 3px;
   background: #10100f;
   color: var(--ink-soft);
   font-size: 0.82rem;
@@ -868,8 +907,8 @@ hr {
   margin-block: 2rem;
   padding: 1.25rem 1.4rem;
   border: 1px solid var(--primary-border);
-  border-left: 3px solid var(--primary);
-  border-radius: 4px 14px 14px 4px;
+  border-left: 2px solid var(--primary);
+  border-radius: 3px;
   background: var(--primary-soft);
 }
 
@@ -881,7 +920,7 @@ hr {
 
 .prose-case .notice-label {
   margin-bottom: 0.5rem;
-  color: var(--primary);
+  color: var(--control-highlight);
   font-family: var(--font-sans);
   font-size: 0.5625rem;
   font-weight: 700;
@@ -919,7 +958,7 @@ hr {
   width: 100%;
   height: auto;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 2px;
   background: var(--warm);
 }
 

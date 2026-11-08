@@ -318,7 +318,7 @@ const schema = {
   .card-art {
     display: block;
     overflow: hidden;
-    border-radius: 14px;
+    border-radius: 2px;
     transition: transform 420ms var(--ease);
   }
 
@@ -486,6 +486,17 @@ const schema = {
 
     .filter-copy {
       padding-left: 0;
+    }
+
+    .segmented {
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .segmented button {
+      flex: 1 1 calc(33.333% - 3px);
+      min-width: 0;
+      padding-inline: 6px;
     }
 
     .project-grid {
