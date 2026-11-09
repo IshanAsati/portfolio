@@ -132,8 +132,9 @@ const entries = [
   }
 
   .motion-bar {
+    position: relative;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: clamp(1rem, 3vw, 2.5rem);
     width: min(100%, 1500px);
@@ -167,10 +168,14 @@ const entries = [
   }
 
   .motion-nav {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: clamp(0.75rem, 2vw, 1.75rem);
+    transform: translate(-50%, -50%);
   }
 
   .motion-link {
@@ -206,6 +211,7 @@ const entries = [
   }
 
   .motion-meta {
+    justify-self: end;
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -224,6 +230,7 @@ const entries = [
   }
 
   .motion-actions {
+    justify-self: end;
     display: flex;
     align-items: center;
     gap: 0.4rem;
