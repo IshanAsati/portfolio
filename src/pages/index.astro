@@ -1,10 +1,20 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { ArrowDown, ArrowRight, ArrowUpRight } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectArtwork from '../components/ProjectArtwork.astro';
+import DotGrid from '../components/framer/DotGrid.astro';
+import DitheringHover from '../components/framer/DitheringHover.astro';
+import InkBleed from '../components/framer/InkBleed.astro';
+import FloatingPillNav from '../components/framer/FloatingPillNav.astro';
+import AsymmetricTabs from '../components/framer/AsymmetricTabs.astro';
+import PeelableStickers from '../components/framer/PeelableStickers.astro';
+import Docket from '../components/framer/Docket.astro';
 import portrait from '../assets/ishan-avatar.jpg';
+import atlasFitPlan from '../assets/projects/atlas-fit/desktop-plan.png';
+import atlasFitProgress from '../assets/projects/atlas-fit/desktop-progress.png';
+import studyflowAnalytics from '../assets/projects/studyflow/analytics-1440.png';
+import halcyonAlmanac from '../assets/projects/halcyon/almanac-1440.png';
 import { site } from '../config';
 
 const allProjects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -33,9 +43,22 @@ const chapters = [
   { id: 'margin', number: '05', title: 'The margin', note: 'Notes, and the empty shelf' },
 ];
 
+const railChapters = [
+  ...chapters,
+  { id: 'correspondence', number: '—', title: 'Epilogue', note: 'Correspondence' },
+];
+
 const storyNotes: Record<
   string,
-  { kicker: string; headline: string; body: string[]; caseLabel: string; external?: string; externalLabel?: string }
+  {
+    kicker: string;
+    headline: string;
+    body: string[];
+    caseLabel: string;
+    caveat?: string;
+    external?: string;
+    externalLabel?: string;
+  }
 > = {
   dermoai: {
     kicker: 'Research study · 2026',
@@ -45,6 +68,7 @@ const storyNotes: Record<
       'None of that makes it a medical device. The project is a research study, evaluated within itself: 82.79% reported accuracy and 87.30% cancer-class sensitivity. The distance between those numbers and a system that deserves trust is the actual subject of the work.',
     ],
     caseLabel: 'Read the DermoAI study',
+    caveat: 'Research prototype — not clinically validated.',
     external: 'https://github.com/IshanAsati/dermoai-final',
     externalLabel: 'Repository',
   },
@@ -121,6 +145,75 @@ const plannedNotes = [
   },
 ];
 
+const methodTabs = [
+  {
+    tab: 'Build first',
+    eyebrow: 'First move',
+    title: 'Make the smallest real thing.',
+    description:
+      'Every entry here started as something small enough to run: a classifier on a real dataset, a plan screen with a real week behind it, a timer quiet enough to leave open. Building first turns an opinion into evidence.',
+    image: atlasFitPlan,
+    imageAlt: 'The Atlas Fit desktop plan screen, showing a generated training week.',
+    facts: [{ label: 'Practised in', value: 'Atlas Fit, Halcyon' }],
+  },
+  {
+    tab: 'Observe',
+    eyebrow: 'Second move',
+    title: 'Watch what actually happens.',
+    description:
+      'A score, a week that survives contact with a calendar, a circuit that misreads its sensor — each one returns something the plan could not predict. Observation is where the interesting failure usually lives.',
+    image: studyflowAnalytics,
+    imageAlt: 'The StudyFlow analytics screen, charting focus sessions over time.',
+    facts: [{ label: 'Practised in', value: 'DermoAI evaluation' }],
+  },
+  {
+    tab: 'Revise',
+    eyebrow: 'Third move',
+    title: 'Let the evidence change the plan.',
+    description:
+      'When a result contradicts the design, the design moves. Atlas Fit generates plans deterministically on purpose. Atlas labels its mocked pipeline as mocked. DermoAI keeps its caveat above its own numbers.',
+    image: atlasFitProgress,
+    imageAlt: 'The Atlas Fit progress screen, showing logged training history.',
+    facts: [{ label: 'Practised in', value: 'Atlas, Atlas Fit' }],
+  },
+  {
+    tab: 'State plainly',
+    eyebrow: 'Last move',
+    title: 'Say where it actually stands.',
+    description:
+      'Complete build, in development, research study, prototypes and concepts, reserved entry. A status line is more useful than a highlight reel, and it is the part of this site least likely to change quietly.',
+    image: halcyonAlmanac,
+    imageAlt: 'The Halcyon weekly almanac screen, summarising the week behind.',
+    facts: [{ label: 'Practised in', value: 'Every entry in the docket' }],
+  },
+];
+
+const syllabusStickers = [
+  { label: 'Machine learning', sub: 'In use', tone: 'coral' as const, material: 'paper' as const, x: 24, y: 20, rotate: -6, width: 166 },
+  { label: 'Software engineering', sub: 'In use', tone: 'sage' as const, material: 'vinyl' as const, x: 63, y: 15, rotate: 4, width: 180 },
+  { label: 'Hardware & robotics', sub: 'Exploring', tone: 'apricot' as const, material: 'foil' as const, x: 78, y: 45, rotate: -3, width: 162 },
+  { label: 'Systems & open source', sub: 'Exploring', tone: 'steel' as const, material: 'vinyl' as const, x: 32, y: 58, rotate: 3, width: 174 },
+  { label: 'Creative programming', sub: 'Exploring', tone: 'rose' as const, material: 'paper' as const, x: 64, y: 78, rotate: -5, width: 168 },
+];
+
+const docketEntries = allProjects.map((project) => ({
+  id: project.id,
+  index: project.data.index,
+  title: project.data.title,
+  category: project.data.category,
+  status: project.data.status,
+  year: project.data.year,
+  deck: project.data.summary,
+  href: `/work/${project.id}`,
+}));
+
+const pillChapters = railChapters.map((chapter) => ({
+  id: chapter.id,
+  number: chapter.number,
+  label: chapter.title,
+}));
+
+
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -136,9 +229,15 @@ const schema = {
 ---
 
 <BaseLayout schema={schema}>
+  <FloatingPillNav items={pillChapters} label="Chapters" />
+
   <div class="edition">
     <!-- Cover -->
     <section class="cover" aria-labelledby="cover-title">
+      <div class="cover-field" aria-hidden="true">
+        <DotGrid color="#cf5a3c" size={1.8} spacing={28} impact={150} opacity={0.45} />
+      </div>
+
       <div class="shell cover-grid">
         <div class="cover-copy">
           <p class="issue-line">
@@ -147,10 +246,16 @@ const schema = {
             <span>{site.location}</span>
           </p>
 
-          <h1 id="cover-title">
-            I build<br />
-            to <em>understand.</em>
-          </h1>
+          <InkBleed
+            tag="h1"
+            id="cover-title"
+            lines={['I build', 'to understand.']}
+            accent="understand."
+            class="cover-title"
+            trigger="load"
+            delay={0.15}
+            stagger={0.09}
+          />
 
           <p class="cover-deck">
             Notes from a student who learns by making things: a skin-image classifier,
@@ -158,32 +263,45 @@ const schema = {
             on the bench.
           </p>
 
+          <div class="cover-work">
+            <p class="cover-work-label">Selected work</p>
+            <ul class="cover-work-list">
+              {featured.map((project) => (
+                <li>
+                  <a class="cover-work-item" href={`/work/${project.id}`}>
+                    <span class="cover-work-title">{project.data.title}</span>
+                    <span class="cover-work-status">{project.data.status}</span>
+                    <ArrowUpRight aria-hidden="true" stroke-width="1.4" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <div class="cover-actions">
-            <a class="button button--primary" href="#prologue">
+            <a class="button" href="#prologue">
               Begin reading
               <ArrowDown aria-hidden="true" stroke-width="1.5" />
             </a>
-            <a class="cover-link" href="/work">
-              The full index
-              <ArrowUpRight aria-hidden="true" stroke-width="1.4" />
+            <a class="button" href="#work">
+              See the work
+              <ArrowRight aria-hidden="true" stroke-width="1.5" />
             </a>
           </div>
         </div>
 
-        <figure class="cover-portrait">
-          <Image
-            src={portrait}
-            alt="Portrait of Ishan Asati"
-            widths={[320, 480, 640]}
-            sizes="(max-width: 900px) 70vw, 320px"
-            loading="eager"
-            decoding="async"
-          />
-          <figcaption>
-            <span>Ishan Asati</span>
-            <span>{site.location} / {site.year}</span>
-          </figcaption>
-        </figure>
+        <DitheringHover
+          image={portrait}
+          alt="Portrait of Ishan Asati"
+          class="cover-portrait"
+          ratio="4 / 5"
+          sizes="(max-width: 900px) 70vw, 340px"
+          widths={[320, 480, 640]}
+          priority={true}
+          dotSize={4}
+          lens={210}
+          caption={`Ishan Asati — ${site.location}, ${site.year}`}
+        />
       </div>
 
       <div class="shell cover-foot">
@@ -229,29 +347,29 @@ const schema = {
             <p>“Build, observe, revise. Then say plainly what is real and what is still a sketch.”</p>
           </blockquote>
 
-          <div class="contents" data-reveal>
-            <div class="contents-head">
-              <p class="contents-label">Contents</p>
-              <p class="contents-meta">{site.issue} / {site.year}</p>
+          <div class="toc" data-reveal>
+            <div class="toc-head">
+              <p class="toc-label">Contents</p>
+              <p class="toc-meta">{site.issue} / {site.year}</p>
             </div>
 
-            <ol class="contents-list">
+            <ol class="toc-list">
               {chapters.map((chapter) => (
                 <li>
                   <a href={`#${chapter.id}`}>
-                    <span class="contents-number">{chapter.number}</span>
-                    <span class="contents-title">{chapter.title}</span>
-                    <span class="contents-dots" aria-hidden="true" />
-                    <span class="contents-note">{chapter.note}</span>
+                    <span class="toc-number">{chapter.number}</span>
+                    <span class="toc-title">{chapter.title}</span>
+                    <span class="toc-dots" aria-hidden="true" />
+                    <span class="toc-note">{chapter.note}</span>
                   </a>
                 </li>
               ))}
               <li>
                 <a href="#correspondence">
-                  <span class="contents-number">—</span>
-                  <span class="contents-title">Epilogue</span>
-                  <span class="contents-dots" aria-hidden="true" />
-                  <span class="contents-note">Correspondence</span>
+                  <span class="toc-number">—</span>
+                  <span class="toc-title">Epilogue</span>
+                  <span class="toc-dots" aria-hidden="true" />
+                  <span class="toc-note">Correspondence</span>
                 </a>
               </li>
             </ol>
@@ -267,7 +385,12 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">01</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter one</p>
-            <h2 id="question-title">Curiosity, kept<br />in the open.</h2>
+            <InkBleed
+              tag="h2"
+              id="question-title"
+              lines={['Curiosity, kept', 'in the open.']}
+              accent="open"
+            />
           </div>
           <p class="chapter-deck">
             I am less interested in collecting disciplines than in following a question
@@ -325,7 +448,12 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">02</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter two</p>
-            <h2 id="work-title">Three things,<br />built to find out.</h2>
+            <InkBleed
+              tag="h2"
+              id="work-title"
+              lines={['Three things,', 'built to find out.']}
+              accent="find"
+            />
           </div>
           <p class="chapter-deck">
             Each began with a question that a plan alone could not answer.
@@ -356,10 +484,15 @@ const schema = {
                     {metrics.map((metric) => (
                       <div>
                         <dt>{metric.label}</dt>
-                        <dd>{metric.value}</dd>
+                        <dd>
+                          <span class="story-fact-value">{metric.value}</span>
+                          {metric.note && <span class="story-fact-note">{metric.note}</span>}
+                        </dd>
                       </div>
                     ))}
                   </dl>
+
+                  {story.caveat && <p class="story-caveat">{story.caveat}</p>}
 
                   <div class="story-links">
                     <a class="story-link" href={`/work/${project.id}`}>
@@ -375,6 +508,7 @@ const schema = {
                       >
                         {story.externalLabel}
                         <ArrowUpRight aria-hidden="true" stroke-width="1.4" />
+                        <span class="sr-only"> (opens in a new tab)</span>
                       </a>
                     )}
                   </div>
@@ -391,6 +525,17 @@ const schema = {
             );
           })}
         </div>
+
+        <div class="docket-block" data-reveal>
+          <div class="docket-intro">
+            <p class="eyebrow">The whole index</p>
+            <p class="docket-lede">
+              Three stories above, and seven entries in the record — including the ones
+              still being built and the shelf left empty on purpose.
+            </p>
+          </div>
+          <Docket entries={docketEntries} label="The full project docket" />
+        </div>
       </div>
     </section>
 
@@ -401,7 +546,12 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">03</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter three</p>
-            <h2 id="method-title">Build. Observe.<br />Revise.</h2>
+            <InkBleed
+              tag="h2"
+              id="method-title"
+              lines={['Build. Observe.', 'Revise.']}
+              accent="Revise."
+            />
           </div>
           <p class="chapter-deck">
             A portfolio is more useful when it says where each thing actually stands.
@@ -410,43 +560,18 @@ const schema = {
 
         <div class="method-intro" data-reveal>
           <p class="lede">
-            The ledger below is the whole index, not a highlight reel.
+            The docket above is the whole index, not a highlight reel.
           </p>
           <p>
-            Two entries are complete builds. Two are in development. One is a research
-            study. One collects prototypes and concepts. One is deliberately empty. The
-            status column is the most honest sentence on this page.
+            The docket in the previous chapter carries every entry and its status. These
+            four moves describe how the work gets made — and what happens when a result
+            disagrees with the plan.
           </p>
         </div>
 
-        <div class="ledger" data-reveal>
-          <div class="ledger-row ledger-head" aria-hidden="true">
-            <span>No.</span>
-            <span>Entry</span>
-            <span>Field</span>
-            <span>Status</span>
-            <span>Year</span>
-          </div>
-
-          {allProjects.map((project) => (
-            <a class="ledger-row" href={`/work/${project.id}`}>
-              <span class="ledger-number">{project.data.index}</span>
-              <span class="ledger-title">{project.data.title}</span>
-              <span class="ledger-field">{project.data.category}</span>
-              <span class="ledger-status">{project.data.status}</span>
-              <span class="ledger-year">{project.data.year}</span>
-            </a>
-          ))}
+        <div class="method-tabs" data-reveal>
+          <AsymmetricTabs items={methodTabs} label="The method, in four moves" />
         </div>
-
-        <p class="ledger-foot" data-reveal>
-          <span>Seven entries</span>
-          <span>Every status stated as it is</span>
-          <a href="/work">
-            Open the index
-            <ArrowRight aria-hidden="true" stroke-width="1.4" />
-          </a>
-        </p>
       </div>
     </section>
 
@@ -457,7 +582,12 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">04</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter four</p>
-            <h2 id="syllabus-title">A syllabus<br />I set myself.</h2>
+            <InkBleed
+              tag="h2"
+              id="syllabus-title"
+              lines={['A syllabus', 'I set myself.']}
+              accent="myself."
+            />
           </div>
           <p class="chapter-deck">
             <em>In use</em> means it appears in something I have built.
@@ -465,20 +595,29 @@ const schema = {
           </p>
         </header>
 
-        <ol class="syllabus" data-reveal>
-          {explorations.map((item) => (
-            <li class="syllabus-row">
-              <span class="syllabus-number" aria-hidden="true">{item.number}</span>
-              <div class="syllabus-body">
-                <h3>{item.title}</h3>
-                <p>{item.note}</p>
-              </div>
-              <span class:list={['tag', { 'tag--active': item.status === 'In use' }]}>
-                {item.status}
-              </span>
-            </li>
-          ))}
-        </ol>
+        <div class="syllabus-grid" data-reveal>
+          <ol class="syllabus">
+            {explorations.map((item) => (
+              <li class="syllabus-row">
+                <span class="syllabus-number" aria-hidden="true">{item.number}</span>
+                <div class="syllabus-body">
+                  <h3>{item.title}</h3>
+                  <p>{item.note}</p>
+                </div>
+                <span class:list={['tag', { 'tag--active': item.status === 'In use' }]}>
+                  {item.status}
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          <PeelableStickers
+            stickers={syllabusStickers}
+            title="On the desk"
+            note="Areas of practice, not a finished syllabus."
+            ariaHidden={true}
+          />
+        </div>
       </div>
     </section>
 
@@ -489,7 +628,7 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">05</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter five</p>
-            <h2 id="margin-title">The margin.</h2>
+            <InkBleed tag="h2" id="margin-title" lines={['The margin.']} />
           </div>
           <p class="chapter-deck">
             Notes, when there is something worth standing behind.
@@ -506,10 +645,6 @@ const schema = {
               publish something manufactured to fill a page. The first entries will appear
               when they are actually written, edited and worth your time.
             </p>
-            <a class="story-link" href="/notes">
-              Visit the notes index
-              <ArrowRight aria-hidden="true" stroke-width="1.4" />
-            </a>
           </div>
 
           <div class="planned" data-reveal>
@@ -534,15 +669,16 @@ const schema = {
     </section>
 
     <!-- Epilogue -->
-    <section class="epilogue" id="correspondence" aria-labelledby="epilogue-title">
+    <section class="epilogue" id="correspondence" data-chapter="correspondence" aria-labelledby="epilogue-title">
       <div class="shell epilogue-grid">
         <div data-reveal>
           <p class="eyebrow">Epilogue</p>
-          <h2 id="epilogue-title">
-            A question,<br />
-            a correction, or a<br />
-            <em>half-formed idea?</em>
-          </h2>
+          <InkBleed
+            tag="h2"
+            id="epilogue-title"
+            lines={['A question,', 'a correction,', 'or a half-formed idea?']}
+            accent="idea?"
+          />
         </div>
 
         <div class="epilogue-body" data-reveal>
@@ -562,19 +698,7 @@ const schema = {
       </div>
     </section>
 
-    <!-- Chapter rail -->
-    <nav class="chapter-rail" aria-label="Chapters">      {chapters.map((chapter) => (
-        <a
-          class="rail-link"
-          href={`#${chapter.id}`}
-          data-rail={chapter.id}
-          aria-label={`Chapter ${chapter.number}: ${chapter.title}`}
-        >
-          <span>{chapter.number}</span>
-          <i aria-hidden="true" />
-        </a>
-      ))}
-    </nav>
+    <div class="pill-clearance" aria-hidden="true"></div>
   </div>
 </BaseLayout>
 
@@ -583,11 +707,32 @@ const schema = {
     overflow: clip;
   }
 
+  .pill-clearance {
+    height: clamp(3.5rem, 6vw, 5rem);
+  }
+
   /* ---------- Cover ---------- */
 
   .cover {
+    position: relative;
+    isolation: isolate;
     padding-top: clamp(1.5rem, 3vw, 2.5rem);
     border-bottom: 1px solid var(--border);
+  }
+
+  .cover-field {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.9;
+    -webkit-mask-image: radial-gradient(120% 90% at 30% 18%, #000 0%, transparent 72%);
+    mask-image: radial-gradient(120% 90% at 30% 18%, #000 0%, transparent 72%);
+  }
+
+  .cover-grid,
+  .cover-foot {
+    position: relative;
+    z-index: 1;
   }
 
   .cover-grid {
@@ -604,7 +749,7 @@ const schema = {
     gap: 0.4rem 1.1rem;
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.16em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -621,7 +766,7 @@ const schema = {
     color: var(--primary);
   }
 
-  .cover h1 {
+  .cover :global(h1) {
     margin-top: 1.5rem;
     font-size: clamp(3.5rem, 9.4vw, 8.75rem);
     font-weight: 400;
@@ -630,7 +775,7 @@ const schema = {
     text-wrap: initial;
   }
 
-  .cover h1 em {
+  .cover :global(h1 em) {
     color: var(--primary);
     font-style: italic;
     font-weight: 400;
@@ -652,60 +797,85 @@ const schema = {
     margin-top: clamp(1.6rem, 3vw, 2.4rem);
   }
 
-  .cover-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
+  .cover-actions .button {
+    min-height: 50px;
+    padding-inline: 22px;
+  }
+
+  .cover-work {
+    margin-top: clamp(1.5rem, 3vw, 2rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .cover-work-label {
+    padding-top: 0.8rem;
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5625rem;
-    letter-spacing: 0.1em;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
     text-transform: uppercase;
+  }
+
+  .cover-work-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 1.5rem;
+    margin-top: 0.35rem;
+  }
+
+  .cover-work-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.1rem 0.5rem;
+    min-height: 44px;
+    padding-block: 0.45rem;
+    border-bottom: 1px solid var(--line);
     transition: color 180ms var(--ease);
   }
 
-  .cover-link svg {
-    width: 0.85rem;
-    height: 0.85rem;
+  .cover-work-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 450;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+
+  .cover-work-status {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .cover-work-item svg {
+    grid-column: 2;
+    grid-row: 1;
+    width: 0.8rem;
+    height: 0.8rem;
     color: var(--primary);
     transition: transform 200ms var(--ease);
   }
 
-  .cover-link:hover {
-    color: var(--ink);
+  .cover-work-item:hover .cover-work-title,
+  .cover-work-item:focus-visible .cover-work-title {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
-  .cover-link:hover svg {
+  .cover-work-item:hover svg {
     transform: translate(2px, -2px);
   }
 
   .cover-portrait {
-    margin: 0;
-  }
-
-  .cover-portrait :global(img) {
     width: 100%;
-    border: 1px solid var(--border);
-    filter: grayscale(1) contrast(1.05);
-    transition: filter 500ms var(--ease);
-  }
-
-  .cover-portrait:hover :global(img) {
-    filter: grayscale(0) contrast(1);
-  }
-
-  .cover-portrait figcaption {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 0.6rem;
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    line-height: 1.5;
-    text-transform: uppercase;
+    margin: 0;
   }
 
   .cover-foot {
@@ -717,7 +887,7 @@ const schema = {
     border-top: 1px solid var(--line);
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.1em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -794,7 +964,7 @@ const schema = {
     margin-top: 0.85rem;
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     writing-mode: vertical-rl;
@@ -847,12 +1017,12 @@ const schema = {
     line-height: 1.22;
   }
 
-  .contents {
+  .toc {
     margin-top: clamp(2.5rem, 5vw, 4rem);
     border-top: 1px solid var(--border);
   }
 
-  .contents-head {
+  .toc-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -861,26 +1031,26 @@ const schema = {
     border-bottom: 1px solid var(--line);
   }
 
-  .contents-label,
-  .contents-meta,
+  .toc-label,
+  .toc-meta,
   .margin-label {
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
-  .contents-list {
+  .toc-list {
     display: flex;
     flex-direction: column;
   }
 
-  .contents-list li {
+  .toc-list li {
     border-bottom: 1px solid var(--line);
   }
 
-  .contents-list a {
+  .toc-list a {
     display: grid;
     grid-template-columns: 2.25rem minmax(0, 1fr) minmax(2rem, 5rem) minmax(0, 0.9fr);
     align-items: baseline;
@@ -889,15 +1059,15 @@ const schema = {
     transition: color 180ms var(--ease);
   }
 
-  .contents-number {
+  .toc-number {
     color: var(--primary);
     font-family: var(--font-sans);
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.08em;
     font-variant-numeric: tabular-nums;
   }
 
-  .contents-title {
+  .toc-title {
     font-family: var(--font-display);
     font-size: clamp(1.05rem, 1.7vw, 1.32rem);
     font-weight: 450;
@@ -905,7 +1075,7 @@ const schema = {
     line-height: 1.2;
   }
 
-  .contents-dots {
+  .toc-dots {
     height: 1px;
     background: repeating-linear-gradient(
       to right,
@@ -915,13 +1085,13 @@ const schema = {
     transform: translateY(-3px);
   }
 
-  .contents-note {
+  .toc-note {
     color: var(--muted);
     font-size: 0.8125rem;
     line-height: 1.5;
   }
 
-  .contents-list a:hover .contents-title {
+  .toc-list a:hover .toc-title {
     color: var(--primary);
   }
 
@@ -950,7 +1120,7 @@ const schema = {
     line-height: 0.72;
   }
 
-  .chapter-heading h2 {
+  .chapter-heading :global(h2) {
     margin-top: 0.9rem;
     font-size: clamp(2.2rem, 5vw, 4.35rem);
     font-weight: 400;
@@ -1020,7 +1190,7 @@ const schema = {
   .margin-list dt {
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.1em;
     line-height: 1.6;
     text-transform: uppercase;
@@ -1054,7 +1224,7 @@ const schema = {
   .story-index {
     color: var(--primary);
     font-family: var(--font-sans);
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.1em;
     line-height: 1.5;
     font-variant-numeric: tabular-nums;
@@ -1068,8 +1238,8 @@ const schema = {
   .story-kicker {
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
-    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
     line-height: 1.6;
     text-transform: uppercase;
   }
@@ -1115,19 +1285,46 @@ const schema = {
   .story-facts dt {
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.1em;
     line-height: 1.5;
     text-transform: uppercase;
   }
 
   .story-facts dd {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
     font-family: var(--font-display);
     font-size: 1.15rem;
     font-weight: 450;
     font-variant-numeric: tabular-nums;
     line-height: 1.2;
     text-align: right;
+  }
+
+  .story-fact-note {
+    max-width: 28ch;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  .story-caveat {
+    margin-top: 0.9rem;
+    padding: 0.65rem 0.8rem;
+    border-left: 2px solid var(--primary);
+    background: color-mix(in srgb, var(--primary) 8%, transparent);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    letter-spacing: 0.03em;
+    line-height: 1.55;
   }
 
   .story-links {
@@ -1145,8 +1342,9 @@ const schema = {
     min-height: 44px;
     color: var(--ink);
     font-family: var(--font-sans);
-    font-size: 0.5625rem;
-    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     transition: color 180ms var(--ease);
   }
@@ -1160,6 +1358,8 @@ const schema = {
 
   .story-link:hover {
     color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
   }
 
   .story-link:hover svg {
@@ -1185,7 +1385,7 @@ const schema = {
     margin-top: 0.65rem;
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.09em;
     line-height: 1.5;
     text-transform: uppercase;
@@ -1222,98 +1422,41 @@ const schema = {
     line-height: 1.8;
   }
 
-  .ledger {
+  .method-tabs {
+    margin-top: clamp(0.5rem, 2vw, 1rem);
+  }
+
+  /* ---------- Docket ---------- */
+
+  .docket-block {
+    margin-top: clamp(3rem, 7vw, 5.5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
     border-top: 1px solid var(--border);
   }
 
-  .ledger-row {
+  .docket-intro {
     display: grid;
-    grid-template-columns: 2.75rem minmax(0, 1.15fr) minmax(0, 0.95fr) minmax(0, 0.65fr) 4.5rem;
-    align-items: baseline;
-    gap: 1rem;
-    padding-block: 0.95rem;
-    border-bottom: 1px solid var(--line);
-    transition: color 180ms var(--ease);
+    grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
+    align-items: end;
+    gap: 1rem 2rem;
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
   }
 
-  .ledger-head {
+  .docket-lede {
+    max-width: 62ch;
     color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .ledger-row:not(.ledger-head):hover {
-    color: var(--primary);
-  }
-
-  .ledger-number {
-    color: var(--primary);
-    font-family: var(--font-sans);
-    font-size: 0.5625rem;
-    letter-spacing: 0.08em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .ledger-title {
-    font-family: var(--font-display);
-    font-size: 1.35rem;
-    font-weight: 450;
-    letter-spacing: -0.015em;
-    line-height: 1.2;
-  }
-
-  .ledger-field,
-  .ledger-status,
-  .ledger-year {
-    color: var(--muted);
-    font-size: 0.8125rem;
-    line-height: 1.45;
-  }
-
-  .ledger-year {
-    text-align: right;
-    font-family: var(--font-sans);
-    font-size: 0.5625rem;
-    letter-spacing: 0.08em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .ledger-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
-    margin-top: 1.1rem;
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-
-  .ledger-foot a {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 36px;
-    color: var(--ink);
-  }
-
-  .ledger-foot a svg {
-    width: 0.8rem;
-    height: 0.8rem;
-    color: var(--primary);
-  }
-
-  .ledger-foot a:hover {
-    color: var(--primary);
+    font-size: 0.95rem;
+    line-height: 1.8;
   }
 
   /* ---------- Syllabus ---------- */
+
+  .syllabus-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
 
   .syllabus {
     border-top: 1px solid var(--border);
@@ -1373,10 +1516,6 @@ const schema = {
     top: 8rem;
   }
 
-  .margin-statement .story-link {
-    margin-top: 1rem;
-  }
-
   .planned {
     border-top: 1px solid var(--border);
   }
@@ -1393,7 +1532,7 @@ const schema = {
   .planned-count {
     color: var(--primary);
     font-family: var(--font-sans);
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.08em;
     font-variant-numeric: tabular-nums;
   }
@@ -1409,7 +1548,7 @@ const schema = {
   .planned-number {
     color: var(--muted);
     font-family: var(--font-sans);
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.08em;
     line-height: 1.8;
     font-variant-numeric: tabular-nums;
@@ -1445,7 +1584,7 @@ const schema = {
     gap: clamp(2rem, 6vw, 5rem);
   }
 
-  .epilogue h2 {
+  .epilogue :global(h2) {
     margin-top: 1rem;
     font-size: clamp(2.3rem, 5.4vw, 4.75rem);
     font-weight: 400;
@@ -1453,7 +1592,7 @@ const schema = {
     line-height: 1;
   }
 
-  .epilogue h2 em {
+  .epilogue :global(h2 em) {
     color: var(--primary);
     font-style: italic;
   }
@@ -1499,12 +1638,6 @@ const schema = {
     margin-top: 0.35rem;
   }
 
-  /* ---------- Chapter rail ---------- */
-
-  .chapter-rail {
-    display: none;
-  }
-
   /* ---------- Reveals ---------- */
 
   :global(html.js) [data-reveal] {
@@ -1522,63 +1655,21 @@ const schema = {
 
   /* ---------- Responsive ---------- */
 
-  @media (min-width: 1400px) {
-    .chapter-rail {
-      position: fixed;
-      z-index: 20;
-      top: 50%;
-      left: 0.9rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.55rem;
-      transform: translateY(-50%);
-    }
-
-    .rail-link {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      min-height: 22px;
-      color: var(--muted);
-      font-family: var(--font-sans);
-      font-size: 0.5rem;
-      letter-spacing: 0.1em;
-      line-height: 1;
-      opacity: 0.5;
-      font-variant-numeric: tabular-nums;
-      transition: opacity 200ms var(--ease), color 200ms var(--ease);
-    }
-
-    .rail-link i {
-      display: block;
-      width: 14px;
-      height: 1px;
-      background: currentColor;
-      transform: scaleX(0.35);
-      transform-origin: left center;
-      transition: transform 260ms var(--ease);
-    }
-
-    .rail-link:hover,
-    .rail-link.is-active {
-      color: var(--primary);
-      opacity: 1;
-    }
-
-    .rail-link:hover i,
-    .rail-link.is-active i {
-      transform: scaleX(1);
-    }
-  }
-
   @media (max-width: 1000px) {
     .cover-grid,
     .chapter-head,
     .chapter-cols,
     .method-intro,
     .margin-grid,
-    .epilogue-grid {
+    .epilogue-grid,
+    .docket-intro,
+    .syllabus-grid {
       grid-template-columns: 1fr;
+    }
+
+    .docket-intro {
+      gap: 0.6rem;
+      align-items: start;
     }
 
     .cover-portrait {
@@ -1664,18 +1755,23 @@ const schema = {
       writing-mode: horizontal-tb;
     }
 
-    .contents-list a {
+    .toc-list a {
       grid-template-columns: 2rem minmax(0, 1fr) auto;
       gap: 0.75rem;
     }
 
-    .contents-dots {
+    .toc-dots {
       display: none;
     }
 
-    .contents-note {
+    .toc-note {
       text-align: right;
       font-size: 0.75rem;
+    }
+
+    .cover-work-list {
+      grid-template-columns: 1fr;
+      gap: 0;
     }
 
     .story,
@@ -1706,27 +1802,6 @@ const schema = {
       margin-top: 1.75rem;
     }
 
-    .ledger-row {
-      grid-template-columns: 1.75rem minmax(0, 1fr) auto;
-      gap: 0.75rem;
-    }
-
-    .ledger-head span:nth-child(3),
-    .ledger-head span:nth-child(5),
-    .ledger-field,
-    .ledger-year {
-      display: none;
-    }
-
-    .ledger-title {
-      font-size: 1.15rem;
-    }
-
-    .ledger-status {
-      text-align: right;
-      font-size: 0.75rem;
-    }
-
     .syllabus-row {
       grid-template-columns: 2.25rem minmax(0, 1fr);
       gap: 0.85rem;
@@ -1739,12 +1814,12 @@ const schema = {
     }
 
     .story-plate figcaption {
-      font-size: 0.45rem;
+      font-size: 0.6875rem;
     }
   }
 
   @media (max-width: 560px) {
-    .cover h1 {
+    .cover :global(h1) {
       font-size: clamp(3.2rem, 15vw, 4.6rem);
     }
 
@@ -1760,7 +1835,7 @@ const schema = {
       font-size: 1.95rem;
     }
 
-    .chapter-heading h2 {
+    .chapter-heading :global(h2) {
       font-size: clamp(2rem, 8vw, 2.8rem);
     }
 
@@ -1782,8 +1857,15 @@ const schema = {
       text-align: left;
     }
 
-    .epilogue h2 {
+    .epilogue :global(h2) {
       font-size: clamp(2rem, 8.5vw, 2.9rem);
+    }
+  }
+
+  @media (max-width: 380px) {
+    .cover :global(h1) {
+      font-size: clamp(2.6rem, 13.5vw, 3.3rem);
+      line-height: 0.98;
     }
   }
 
@@ -1821,40 +1903,5 @@ const schema = {
     );
 
     revealItems.forEach((item) => revealObserver.observe(item));
-  }
-
-  // Chapter rail follows the section currently under the reading eye-line.
-  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-chapter]'));
-  const railLinks = new Map(
-    Array.from(document.querySelectorAll<HTMLElement>('[data-rail]')).map((link) => [
-      link.dataset.rail ?? '',
-      link,
-    ]),
-  );
-
-  if (sections.length && railLinks.size) {
-    let railFrame = 0;
-
-    const updateRail = () => {
-      railFrame = 0;
-      const line = window.scrollY + window.innerHeight * 0.35;
-      let current = sections[0];
-
-      for (const section of sections) {
-        if (section.offsetTop <= line) current = section;
-      }
-
-      railLinks.forEach((link, id) => {
-        link.classList.toggle('is-active', id === current?.dataset.chapter);
-      });
-    };
-
-    const queueRail = () => {
-      if (!railFrame) railFrame = window.requestAnimationFrame(updateRail);
-    };
-
-    updateRail();
-    window.addEventListener('scroll', queueRail, { passive: true });
-    window.addEventListener('resize', queueRail);
   }
 </script>

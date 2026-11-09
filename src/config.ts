@@ -2,7 +2,7 @@ export const site = {
   name: 'Ishan Asati',
   brand: 'ishan.asati',
   wordmark: 'ishan.asati.',
-  title: 'Ishan Asati — Ideas into things.',
+  title: 'Ishan Asati — I build to understand.',
   description:
     'Ishan Asati is a student, developer and maker in India, exploring artificial intelligence, software engineering and embedded systems. A portfolio of projects, experiments and notes.',
   url: 'https://ishan.smartfools.in',
@@ -11,7 +11,7 @@ export const site = {
   location: 'India',
   issue: 'Vol. 01',
   year: 2026,
-  tagline: 'Ideas into things.',
+  tagline: 'I build to understand.',
 } as const;
 
 export const navigation = [

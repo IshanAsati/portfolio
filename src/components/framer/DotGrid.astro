@@ -1,0 +1,262 @@
+---
+/**
+ * Dot Grid BG — an Astro-native rebuild of the Framer component.
+ * A quiet field of dots that leans toward the pointer and orbits in place.
+ */
+interface Props {
+  class?: string;
+  color?: string;
+  size?: number;
+  spacing?: number;
+  speed?: number;
+  impact?: number;
+  scale?: number;
+  opacity?: number;
+}
+
+const {
+  class: className = '',
+  color = '#cf5a3c',
+  size = 2,
+  spacing = 26,
+  speed = 0.7,
+  impact = 130,
+  scale = 2.1,
+  opacity = 0.55,
+} = Astro.props;
+---
+
+<div
+  class:list={['dot-grid', className]}
+  data-dot-grid
+  data-color={color}
+  data-size={size}
+  data-spacing={spacing}
+  data-speed={speed}
+  data-impact={impact}
+  data-scale={scale}
+  data-opacity={opacity}
+>
+  <canvas aria-hidden="true"></canvas>
+</div>
+
+<style>
+  .dot-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .dot-grid canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  type Dot = {
+    bx: number;
+    by: number;
+    phase: number;
+    speed: number;
+    ascension: number;
+    inclination: number;
+  };
+
+  const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const smoothstep = (value: number) => {
+    const t = clamp(value);
+    return t * t * (3 - 2 * t);
+  };
+
+  const parseRgb = (value: string) => {
+    const hex = value.trim().match(/^#?([0-9a-f]{3,8})$/i);
+    if (hex) {
+      let raw = hex[1];
+      if (raw.length === 3 || raw.length === 4) {
+        raw = raw
+          .slice(0, 3)
+          .split('')
+          .map((char) => char + char)
+          .join('');
+      }
+      const numeric = Number.parseInt(raw.slice(0, 6), 16);
+      return {
+        r: (numeric >> 16) & 255,
+        g: (numeric >> 8) & 255,
+        b: numeric & 255,
+      };
+    }
+
+    const rgb = value.match(/[\d.]+/g);
+    if (rgb && rgb.length >= 3) {
+      return { r: Number(rgb[0]), g: Number(rgb[1]), b: Number(rgb[2]) };
+    }
+
+    return { r: 207, g: 90, b: 60 };
+  };
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-dot-grid]').forEach((root) => {
+    const canvas = root.querySelector<HTMLCanvasElement>('canvas');
+    if (!canvas) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    const color = parseRgb(root.dataset.color ?? '#cf5a3c');
+    const dotSize = Number(root.dataset.size ?? 2);
+    const spacing = Math.max(12, Number(root.dataset.spacing ?? 26));
+    const orbitSpeed = Number(root.dataset.speed ?? 0.7);
+    const impactRadius = Number(root.dataset.impact ?? 130);
+    const scaleOnHover = Number(root.dataset.scale ?? 2.1);
+    const baseOpacity = Number(root.dataset.opacity ?? 0.55);
+    const surface = root.parentElement ?? root;
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let dots: Dot[] = [];
+    let mouse = { x: -9999, y: -9999 };
+    let hovering = false;
+    let frame = 0;
+    let lastFrame = 0;
+    let angle = 0;
+    let visible = true;
+
+    const build = () => {
+      dots = [];
+      const columns = Math.ceil(width / spacing) + 2;
+      const rows = Math.ceil(height / spacing) + 2;
+      const offsetX = (width - (columns - 1) * spacing) / 2;
+      const offsetY = (height - (rows - 1) * spacing) / 2;
+
+      for (let row = 0; row < rows; row += 1) {
+        for (let column = 0; column < columns; column += 1) {
+          const bx = offsetX + column * spacing;
+          const by = offsetY + row * spacing;
+          const seed = column * 73.17 + row * 41.93;
+          dots.push({
+            bx,
+            by,
+            phase: ((seed * 1.618) % (Math.PI * 2)) + 0,
+            speed: 0.72 + (Math.sin(seed * 0.7) + 1) * 0.22,
+            ascension: ((seed * 0.31) % (Math.PI * 2)) + 0,
+            inclination: 0.34 + (Math.cos(seed * 0.43) + 1) * 0.16,
+          });
+        }
+      }
+    };
+
+    const resize = () => {
+      const rect = root.getBoundingClientRect();
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      build();
+      draw(performance.now(), true);
+    };
+
+    const draw = (time: number, force = false) => {
+      if (!force && !visible) return;
+
+      const delta = lastFrame ? Math.min(50, time - lastFrame) : 16;
+      lastFrame = time;
+      angle += reducedMotion ? 0 : (delta / 1000) * orbitSpeed;
+
+      context.clearRect(0, 0, width, height);
+
+      let needsAnother = false;
+
+      for (const dot of dots) {
+        const dx = dot.bx - mouse.x;
+        const dy = dot.by - mouse.y;
+        const distance = Math.hypot(dx, dy);
+        const influence = hovering ? smoothstep(1 - distance / impactRadius) : 0;
+        const orbitRadius = influence * spacing * 0.42;
+        const theta = angle * dot.speed + dot.phase;
+        const cosA = Math.cos(dot.ascension);
+        const sinA = Math.sin(dot.ascension);
+        const cosI = Math.cos(dot.inclination);
+        const sinI = Math.sin(dot.inclination);
+        const localX = Math.cos(theta);
+        const localY = Math.sin(theta) * cosI;
+        const localZ = Math.sin(theta) * sinI;
+        const offsetX = (localX * cosA - localY * sinA) * orbitRadius;
+        const offsetY = (localX * sinA + localY * cosA) * orbitRadius;
+        const depth = 0.78 + 0.22 * ((localZ + 1) / 2);
+        const scale = (1 + (scaleOnHover - 1) * influence) * depth;
+        const alpha = Math.min(1, baseOpacity * (0.42 + 0.58 * influence) * depth);
+        const x = dot.bx + offsetX;
+        const y = dot.by + offsetY;
+
+        context.beginPath();
+        context.arc(x, y, Math.max(0.4, (dotSize / 2) * scale), 0, Math.PI * 2);
+        context.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
+        context.fill();
+
+        if (influence > 0.001) needsAnother = true;
+      }
+
+      if (needsAnother && !reducedMotion && visible) {
+        frame = window.requestAnimationFrame(draw);
+      } else {
+        frame = 0;
+      }
+    };
+
+    const kick = () => {
+      if (reducedMotion || frame) return;
+      lastFrame = 0;
+      frame = window.requestAnimationFrame(draw);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = root.getBoundingClientRect();
+      mouse = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      hovering = true;
+      kick();
+    };
+
+    const onPointerLeave = () => {
+      hovering = false;
+      mouse = { x: -9999, y: -9999 };
+      kick();
+    };
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(root);
+
+    if (reducedMotion) {
+      resize();
+    } else {
+      surface.addEventListener('pointermove', onPointerMove as EventListener, { passive: true });
+      surface.addEventListener('pointerleave', onPointerLeave, { passive: true });
+      surface.addEventListener('pointercancel', onPointerLeave, { passive: true });
+      resize();
+    }
+
+    if ('IntersectionObserver' in window) {
+      const visibility = new IntersectionObserver(
+        ([entry]) => {
+          visible = entry.isIntersecting;
+          if (visible) kick();
+        },
+        { rootMargin: '120px' },
+      );
+      visibility.observe(root);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      visible = !document.hidden;
+      if (visible) kick();
+    });
+  });
+</script>

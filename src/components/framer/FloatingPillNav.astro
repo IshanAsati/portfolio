@@ -1,0 +1,294 @@
+---
+/**
+ * Floating Pill Navigation — an Astro-native rebuild of the Framer component.
+ * A glass chapter bar with an active pill that travels between sections.
+ */
+interface Item {
+  id: string;
+  number: string;
+  label: string;
+}
+
+interface Props {
+  items: Item[];
+  label?: string;
+  class?: string;
+}
+
+const { items, label = 'Chapters', class: className = '' } = Astro.props;
+---
+
+<nav class:list={['pill-nav', 'is-hidden', className]} aria-label={label} data-pill-nav>
+  <span class="pill-surface" aria-hidden="true"></span>
+  <span class="pill-active" aria-hidden="true" data-pill-active></span>
+  {items.map((item) => (
+    <a
+      class="pill-link"
+      href={`#${item.id}`}
+      data-pill={item.id}
+      aria-label={`${item.number === '—' ? 'Epilogue' : `Chapter ${item.number}`}: ${item.label}`}
+    >
+      <span class="pill-number">{item.number}</span>
+      <span class="pill-label">{item.label}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  .pill-nav {
+    position: fixed;
+    z-index: 40;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    max-width: calc(100vw - 1.5rem);
+    padding: 5px;
+    border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--paper) 86%, transparent);
+    box-shadow:
+      0 18px 50px -18px #000000cc,
+      inset 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    transform: translateX(-50%);
+    transition:
+      opacity 240ms var(--ease),
+      transform 320ms var(--ease-out);
+  }
+
+  .pill-nav.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 1.2rem);
+  }
+
+  .pill-surface {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(120% 160% at 20% 0%, color-mix(in srgb, var(--primary) 9%, transparent), transparent 60%),
+      linear-gradient(180deg, color-mix(in srgb, var(--ink) 5%, transparent), transparent 70%);
+    pointer-events: none;
+  }
+
+  .pill-active {
+    position: absolute;
+    z-index: 0;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    border-radius: 999px;
+    background: var(--primary);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--control-highlight) 45%, transparent);
+    transition:
+      transform 420ms var(--ease-out),
+      width 420ms var(--ease-out),
+      opacity 200ms linear;
+    opacity: 0;
+  }
+
+  .pill-nav.has-active .pill-active {
+    opacity: 1;
+  }
+
+  .pill-link {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 0 13px;
+    border-radius: 999px;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 200ms var(--ease);
+  }
+
+  .pill-number {
+    color: color-mix(in srgb, var(--muted) 60%, transparent);
+    font-size: 0.625rem;
+    font-variant-numeric: tabular-nums;
+    transition: color 200ms var(--ease);
+  }
+
+  .pill-link:hover,
+  .pill-link:focus-visible {
+    color: var(--ink);
+  }
+
+  .pill-link.is-active {
+    color: var(--on-primary);
+  }
+
+  .pill-link.is-active .pill-number {
+    color: color-mix(in srgb, var(--on-primary) 65%, transparent);
+  }
+
+  @media (max-width: 760px) {
+    .pill-nav {
+      gap: 0;
+      padding: 4px;
+    }
+
+    .pill-link {
+      min-width: 42px;
+      justify-content: center;
+      padding: 0 10px;
+    }
+
+    .pill-number {
+      color: var(--muted);
+      font-size: 0.6875rem;
+      font-weight: 600;
+    }
+
+    .pill-link.is-active .pill-number {
+      color: var(--on-primary);
+    }
+
+    .pill-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .pill-active {
+      top: 4px;
+      bottom: 4px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .pill-link {
+      min-width: 38px;
+      padding: 0 8px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill-nav,
+    .pill-active {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-pill-nav]');
+  const indicator = nav?.querySelector<HTMLElement>('[data-pill-active]');
+  const links = nav
+    ? Array.from(nav.querySelectorAll<HTMLAnchorElement>('[data-pill]'))
+    : [];
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-chapter]'));
+  const footer = document.querySelector<HTMLElement>('[data-reveal-footer]');
+
+  if (nav && indicator && links.length) {
+    let frame = 0;
+    let activeId = '';
+    let footerVisible = false;
+
+    const placeIndicator = (link: HTMLAnchorElement) => {
+      const navRect = nav.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      const styles = getComputedStyle(nav);
+      const padLeft = Number.parseFloat(styles.paddingLeft) || 0;
+      const padTop = Number.parseFloat(styles.paddingTop) || 0;
+      const padBottom = Number.parseFloat(styles.paddingBottom) || 0;
+
+      indicator.style.width = `${linkRect.width}px`;
+      indicator.style.top = `${padTop}px`;
+      indicator.style.bottom = `${padBottom}px`;
+      indicator.style.transform = `translateX(${linkRect.left - navRect.left - nav.clientLeft - padLeft}px)`;
+    };
+
+    const setActive = (id: string) => {
+      if (!id || id === activeId) {
+        if (id) placeIndicator(links.find((link) => link.dataset.pill === id) ?? links[0]);
+        return;
+      }
+
+      activeId = id;
+      nav.classList.add('has-active');
+      links.forEach((link) => {
+        const isActive = link.dataset.pill === id;
+        link.classList.toggle('is-active', isActive);
+        if (isActive) {
+          link.setAttribute('aria-current', 'location');
+          placeIndicator(link);
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    const update = () => {
+      frame = 0;
+      const pastCover = window.scrollY > Math.min(window.innerHeight * 0.55, 520);
+      nav.classList.toggle('is-hidden', !pastCover || footerVisible);
+      if (!sections.length) return;
+
+      const line = window.innerHeight * 0.38;
+      let current: HTMLElement | null = null;
+
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= line) current = section;
+      }
+
+      if (current?.dataset.chapter) {
+        setActive(current.dataset.chapter);
+      } else if (sections[0]?.dataset.chapter) {
+        setActive(sections[0].dataset.chapter);
+      }
+    };
+
+    const queue = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', () => {
+      queue();
+      const link = links.find((item) => item.dataset.pill === activeId);
+      if (link) placeIndicator(link);
+    });
+
+    links.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (!link.dataset.pill) return;
+        setActive(link.dataset.pill);
+      });
+    });
+
+    if (footer && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          footerVisible = entry.isIntersecting;
+          queue();
+        },
+        { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
+      );
+      observer.observe(footer);
+    }
+
+    update();
+    window.addEventListener('load', queue);
+  }
+</script>

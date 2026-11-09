@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import MotionOverlayMenu from '../components/framer/MotionOverlayMenu.astro';
+import RevealFooter from '../components/framer/RevealFooter.astro';
 import { site } from '../config';
 
 interface Props {
@@ -98,10 +98,10 @@ const structuredData = schema
   </head>
   <body id="top" class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header />
+    <MotionOverlayMenu />
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    <RevealFooter />
   </body>
 </html>

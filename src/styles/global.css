@@ -304,7 +304,7 @@ hr {
   gap: 9px;
   color: var(--sage);
   font-family: var(--font-sans);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 750;
   letter-spacing: 0.16em;
   line-height: 1.5;
@@ -424,7 +424,7 @@ hr {
   background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-weight: 400;
   letter-spacing: 0.08em;
   line-height: 1.2;
@@ -532,7 +532,7 @@ hr {
   background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-weight: 400;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -564,7 +564,7 @@ hr {
   background: transparent;
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.09em;
   line-height: 1.2;

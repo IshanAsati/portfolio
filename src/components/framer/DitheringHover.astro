@@ -1,0 +1,399 @@
+---
+/**
+ * Dithering Hover — an Astro-native rebuild of the Framer component.
+ * The image stays quiet until the pointer opens a dithered lens in the grain.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  class?: string;
+  ratio?: string;
+  sizes?: string;
+  widths?: number[];
+  priority?: boolean;
+  dotSize?: number;
+  lens?: number;
+  caption?: string;
+}
+
+const {
+  image,
+  alt,
+  class: className = '',
+  ratio = '4 / 5',
+  sizes = '(max-width: 700px) 82vw, 360px',
+  widths = [320, 480, 640, 820],
+  priority = false,
+  dotSize = 4,
+  lens = 190,
+  caption,
+} = Astro.props;
+---
+
+<figure class:list={['dither-frame', className]} style={`--dither-ratio: ${ratio}`} data-dither-frame data-dot-size={dotSize} data-lens={lens}>
+  <div class="dither-media">
+    <Image
+      src={image}
+      alt={alt}
+      widths={widths}
+      sizes={sizes}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+      data-dither-image
+    />
+    <canvas aria-hidden="true" data-dither-canvas></canvas>
+    <span class="dither-corner" aria-hidden="true"></span>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .dither-frame {
+    margin: 0;
+  }
+
+  .dither-media {
+    position: relative;
+    aspect-ratio: var(--dither-ratio);
+    overflow: hidden;
+    background: var(--warm);
+    border: 1px solid var(--border);
+    isolation: isolate;
+  }
+
+  .dither-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(0.45) contrast(1.06) saturate(0.85);
+    transform: scale(1.001);
+  }
+
+  .dither-media canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms var(--ease);
+  }
+
+  .dither-frame.is-dithering .dither-media canvas {
+    opacity: 1;
+  }
+
+  .dither-corner {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 44px;
+    height: 44px;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, transparent 49.5%, color-mix(in srgb, var(--ink) 20%, transparent) 50%, transparent 51%),
+      linear-gradient(135deg, transparent 50%, var(--warm) 50%);
+    opacity: 0.7;
+    mix-blend-mode: screen;
+  }
+
+  figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.6rem;
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+</style>
+
+<script>
+  const BAYER_8 = [
+    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38,
+    60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25,
+    15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21,
+  ].map((value) => value / 64);
+
+  const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-dither-frame]').forEach((frame) => {
+    const media = frame.querySelector<HTMLElement>('.dither-media');
+    const image = frame.querySelector<HTMLImageElement>('[data-dither-image]');
+    const canvas = frame.querySelector<HTMLCanvasElement>('[data-dither-canvas]');
+    if (!media || !image || !canvas) return;
+
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    if (!context) return;
+
+    const dotSize = Number(frame.dataset.dotSize ?? 4);
+    const lensSize = Number(frame.dataset.lens ?? 190);
+    const target = { x: 0, y: 0 };
+    const smooth = { x: 0, y: 0 };
+    const radius = { value: 0, target: 0 };
+    let ready = false;
+    let hovering = false;
+    let hasPositioned = false;
+    let frameId = 0;
+    let width = 0;
+    let height = 0;
+
+    const copyImage = () => {
+      if (!ready) return;
+      const source = image.currentSrc || image.src;
+      if (!source) return;
+
+      const naturalWidth = image.naturalWidth || width;
+      const naturalHeight = image.naturalHeight || height;
+      const scale = Math.max(width / naturalWidth, height / naturalHeight);
+      const drawWidth = naturalWidth * scale;
+      const drawHeight = naturalHeight * scale;
+      context.drawImage(
+        image,
+        (width - drawWidth) / 2,
+        (height - drawHeight) / 2,
+        drawWidth,
+        drawHeight,
+      );
+    };
+
+    const resize = () => {
+      const rect = media.getBoundingClientRect();
+      width = Math.max(1, rect.width);
+      height = Math.max(1, rect.height);
+      canvas.width = Math.round(width);
+      canvas.height = Math.round(height);
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, width, height);
+      if (ready) copyImage();
+    };
+
+    const buildMask = (cx: number, cy: number, currentRadius: number, step: number) => {
+      const mask = new Map<string, number>();
+      const bodyRadius = currentRadius;
+
+      for (let py = Math.floor(cy - bodyRadius - step); py <= Math.ceil(cy + bodyRadius + step); py += step) {
+        for (let px = Math.floor(cx - bodyRadius - step); px <= Math.ceil(cx + bodyRadius + step); px += step) {
+          const gx = Math.floor(px / step) * step;
+          const gy = Math.floor(py / step) * step;
+          const centerX = gx + step / 2;
+          const centerY = gy + step / 2;
+          const distance = Math.hypot(centerX - cx, centerY - cy);
+          if (distance <= bodyRadius) mask.set(`${gx},${gy}`, 1);
+        }
+      }
+
+      const rays = 180;
+      const stepAngle = (Math.PI * 2) / rays;
+
+      for (let index = 0; index < rays; index += 1) {
+        const angle = index * stepAngle;
+        const seed1 = Math.sin(index * 127.1 + 43.7);
+        const seed2 = Math.sin(index * 269.5 + 183.3);
+        const seed3 = Math.sin(index * 311.7 + 91.4);
+        const fringeLength = currentRadius * (0.08 + Math.abs(seed1) * 0.5);
+        const rayEnd = currentRadius + fringeLength;
+        const gapFrequency = 4 + Math.abs(seed2) * 6;
+        const gapPhase = seed3 * Math.PI;
+        const cosA = Math.cos(angle);
+        const sinA = Math.sin(angle);
+
+        for (let distance = currentRadius * 0.88; distance < rayEnd; distance += step * 0.8) {
+          const gap = Math.sin((distance * gapFrequency * Math.PI) / currentRadius + gapPhase);
+          if (gap < -0.05) continue;
+
+          const wx = cx + cosA * distance;
+          const wy = cy + sinA * distance;
+          const gx = Math.floor(wx / step) * step;
+          const gy = Math.floor(wy / step) * step;
+          const key = `${gx},${gy}`;
+          const progress = (distance - currentRadius) / fringeLength;
+          const blend = Math.pow(1 - clamp(progress), 1.5);
+          const existing = mask.get(key) ?? 0;
+          if (blend > existing) mask.set(key, blend);
+        }
+      }
+
+      return mask;
+    };
+
+    const render = () => {
+      frameId = 0;
+      if (!ready || !width || !height) return;
+
+      const active = radius.value > 0.5;
+      if (!active) {
+        context.clearRect(0, 0, width, height);
+        media.classList.remove('is-dithering');
+        return;
+      }
+
+      frame.classList.add('is-dithering');
+      context.clearRect(0, 0, width, height);
+      copyImage();
+
+      const mask = buildMask(smooth.x, smooth.y, radius.value, dotSize);
+      if (!mask.size) return;
+
+      let minX = width;
+      let minY = height;
+      let maxX = 0;
+      let maxY = 0;
+
+      for (const key of mask.keys()) {
+        const comma = key.indexOf(',');
+        const x = Number(key.slice(0, comma));
+        const y = Number(key.slice(comma + 1));
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+
+      minX = Math.max(0, minX);
+      minY = Math.max(0, minY);
+      maxX = Math.min(width, maxX + dotSize);
+      maxY = Math.min(height, maxY + dotSize);
+
+      const regionWidth = Math.max(1, maxX - minX);
+      const regionHeight = Math.max(1, maxY - minY);
+      const imageData = context.getImageData(minX, minY, regionWidth, regionHeight);
+      const data = imageData.data;
+
+      for (const [key, blend] of mask) {
+        if (blend <= 0) continue;
+        const comma = key.indexOf(',');
+        const px = Number(key.slice(0, comma)) - minX;
+        const py = Number(key.slice(comma + 1)) - minY;
+        if (px < 0 || py < 0 || px >= regionWidth || py >= regionHeight) continue;
+
+        const blockX = Math.min(px, regionWidth - dotSize);
+        const blockY = Math.min(py, regionHeight - dotSize);
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        let count = 0;
+
+        for (let by = 0; by < dotSize && blockY + by < regionHeight; by += 1) {
+          for (let bx = 0; bx < dotSize && blockX + bx < regionWidth; bx += 1) {
+            const offset = ((blockY + by) * regionWidth + (blockX + bx)) * 4;
+            r += data[offset];
+            g += data[offset + 1];
+            b += data[offset + 2];
+            count += 1;
+          }
+        }
+
+        if (!count) continue;
+        const luma = (0.299 * r + 0.587 * g + 0.114 * b) / (count * 255);
+        const bayerX = Math.floor((blockX + minX) / dotSize) % 8;
+        const bayerY = Math.floor((blockY + minY) / dotSize) % 8;
+        const threshold = BAYER_8[bayerY * 8 + bayerX];
+        const dithered = luma > threshold ? 255 : 0;
+
+        for (let by = 0; by < dotSize && blockY + by < regionHeight; by += 1) {
+          for (let bx = 0; bx < dotSize && blockX + bx < regionWidth; bx += 1) {
+            const offset = ((blockY + by) * regionWidth + (blockX + bx)) * 4;
+            data[offset] = Math.round(dithered * blend + data[offset] * (1 - blend));
+            data[offset + 1] = Math.round(dithered * blend + data[offset + 1] * (1 - blend));
+            data[offset + 2] = Math.round(dithered * blend + data[offset + 2] * (1 - blend));
+          }
+        }
+      }
+
+      context.putImageData(imageData, minX, minY);
+    };
+
+    const loop = () => {
+      frameId = 0;
+      const damping = 0.15;
+      smooth.x += (target.x - smooth.x) * damping;
+      smooth.y += (target.y - smooth.y) * damping;
+      radius.value += (radius.target - radius.value) * 0.12;
+
+      if (Math.abs(radius.target - radius.value) < 0.4 && radius.target === 0) {
+        radius.value = 0;
+        render();
+        return;
+      }
+
+      render();
+      frameId = window.requestAnimationFrame(loop);
+    };
+
+    const kick = () => {
+      if (frameId || reducedMotion) return;
+      frameId = window.requestAnimationFrame(loop);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      const rect = media.getBoundingClientRect();
+      target.x = event.clientX - rect.left;
+      target.y = event.clientY - rect.top;
+
+      if (!hasPositioned) {
+        smooth.x = target.x;
+        smooth.y = target.y;
+        hasPositioned = true;
+      }
+
+      hovering = true;
+      radius.target = lensSize / 2;
+      kick();
+    };
+
+    const onPointerEnter = () => {
+      hasPositioned = false;
+    };
+
+    const onPointerLeave = () => {
+      hovering = false;
+      hasPositioned = false;
+      radius.target = 0;
+      kick();
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse') return;
+      onPointerMove(event);
+      window.setTimeout(onPointerLeave, 1400);
+    };
+
+    const prepare = () => {
+      if (ready) return;
+      ready = true;
+      resize();
+      render();
+    };
+
+    if (image.complete) {
+      prepare();
+    } else {
+      image.addEventListener('load', prepare, { once: true });
+    }
+
+    if (reducedMotion) return;
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(media);
+    media.addEventListener('pointerenter', onPointerEnter, { passive: true });
+    media.addEventListener('pointermove', onPointerMove, { passive: true });
+    media.addEventListener('pointerleave', onPointerLeave, { passive: true });
+    media.addEventListener('pointerdown', onPointerDown, { passive: true });
+    media.addEventListener('pointercancel', onPointerLeave, { passive: true });
+
+    if ('IntersectionObserver' in window) {
+      const visibility = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting && hovering) onPointerLeave();
+      });
+      visibility.observe(media);
+    }
+  });
+</script>

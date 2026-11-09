@@ -1,0 +1,284 @@
+---
+/**
+ * Ink Bleed — an Astro-native rebuild of the Framer `InkBleedText`.
+ * Each word soaks into the page through a fibrous SVG filter, then dries crisp.
+ */
+interface Props {
+  lines: string[];
+  accent?: string;
+  tag?: 'h1' | 'h2' | 'h3' | 'p' | 'div';
+  class?: string;
+  id?: string;
+  label?: string;
+  delay?: number;
+  stagger?: number;
+  duration?: number;
+  spread?: number;
+  roughness?: number;
+  grain?: number;
+  trigger?: 'inView' | 'load';
+}
+
+const {
+  lines,
+  accent = '',
+  tag = 'h2',
+  class: className = '',
+  id,
+  label,
+  delay = 0,
+  stagger = 0.07,
+  duration = 1.05,
+  spread = 7,
+  roughness = 18,
+  grain = 0.75,
+  trigger = 'inView',
+} = Astro.props;
+
+const Tag = tag;
+const uid = `ink-${Math.random().toString(36).slice(2, 9)}`;
+const labelText = label ?? lines.join(' ');
+
+let wordIndex = 0;
+const renderedLines = lines.map((line, lineIndex) => {
+  const words = line.split(/\s+/).filter(Boolean);
+  return {
+    lineIndex,
+    words: words.map((word) => {
+      const index = wordIndex;
+      wordIndex += 1;
+      const normalized = word.replace(/[.,!?;:]+$/, '');
+      const accentNormalized = accent.replace(/[.,!?;:]+$/, '');
+      return {
+        word,
+        index,
+        filterId: `${uid}-${index}`,
+        seed: (index * 17 + lineIndex * 5) % 41,
+        accent: accentNormalized.length > 0 && normalized === accentNormalized,
+      };
+    }),
+  };
+});
+---
+
+<Tag id={id} class:list={['ink-bleed', className]} aria-label={labelText} data-ink-bleed data-delay={delay} data-stagger={stagger} data-duration={duration} data-spread={spread} data-roughness={roughness} data-grain={grain} data-trigger={trigger}>
+  {renderedLines.map((line) => (
+    <span class="ink-line" aria-hidden="true">
+      {line.words.map((item) => (
+        <span class="ink-unit" data-ink-unit style={`--i:${item.index}`}>
+          <span class:list={['ink-word', { 'ink-accent': item.accent }]} data-ink-word>
+            {item.accent ? <em>{item.word}</em> : item.word}
+          </span>
+          <svg class="ink-filter" aria-hidden="true" focusable="false">
+            <filter id={item.filterId} x="-30%" y="-50%" width="160%" height="200%" color-interpolation-filters="sRGB">
+              <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed={item.seed} result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+              <feGaussianBlur in="displaced" stdDeviation="0" />
+            </filter>
+          </svg>
+        </span>
+      ))}
+    </span>
+  ))}
+</Tag>
+
+<style>
+  .ink-bleed {
+    display: block;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .ink-line {
+    display: block;
+  }
+
+  .ink-line + .ink-line {
+    margin-top: 0.02em;
+  }
+
+  .ink-unit {
+    display: inline-block;
+    margin-right: 0.24em;
+    white-space: nowrap;
+  }
+
+  .ink-unit:last-child {
+    margin-right: 0;
+  }
+
+  .ink-word {
+    display: inline-block;
+    will-change: opacity, filter;
+  }
+
+  .ink-accent {
+    color: var(--primary);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .ink-accent em {
+    font-style: inherit;
+  }
+
+  .ink-filter {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ink-word {
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+</style>
+
+<script>
+  const clamp = (value: number, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  type InkUnit = {
+    element: HTMLElement;
+    word: HTMLElement;
+    turbulence: SVGFETurbulenceElement | null;
+    displacement: SVGFEDisplacementMapElement | null;
+    blur: SVGFEGaussianBlurElement | null;
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-ink-bleed]').forEach((root) => {
+    const units: InkUnit[] = Array.from(root.querySelectorAll<HTMLElement>('[data-ink-unit]')).map(
+      (element) => {
+        const word = element.querySelector<HTMLElement>('[data-ink-word]');
+        const filter = element.querySelector('filter');
+        return {
+          element,
+          word: word ?? element,
+          turbulence: filter?.querySelector('feTurbulence') ?? null,
+          displacement: filter?.querySelector('feDisplacementMap') ?? null,
+          blur: filter?.querySelector('feGaussianBlur') ?? null,
+        };
+      },
+    );
+
+    if (!units.length) return;
+
+    if (reducedMotion) {
+      units.forEach((unit) => {
+        unit.word.style.opacity = '1';
+        unit.word.style.filter = 'none';
+      });
+      return;
+    }
+
+    const delay = Number(root.dataset.delay ?? 0);
+    const stagger = Number(root.dataset.stagger ?? 0.07);
+    const duration = Math.max(0.2, Number(root.dataset.duration ?? 1.05));
+    const spread = Number(root.dataset.spread ?? 7);
+    const roughness = Number(root.dataset.roughness ?? 18);
+    const grain = Number(root.dataset.grain ?? 0.75);
+    const trigger = root.dataset.trigger ?? 'inView';
+    const fontSize = Number.parseFloat(getComputedStyle(units[0].word).fontSize) || 64;
+
+    let startTime: number | null = null;
+    let done = false;
+
+    const setStart = () => {
+      units.forEach((unit) => {
+        unit.word.style.opacity = '0';
+        unit.word.style.filter = `url(#${unit.element.querySelector('filter')?.id ?? ''})`;
+      });
+      startTime = null;
+      done = false;
+      run(performance.now());
+    };
+
+    const run = (now: number) => {
+      if (startTime === null) startTime = now;
+      const elapsed = (now - startTime) / 1000;
+      let pending = false;
+
+      units.forEach((unit, index) => {
+        const local = elapsed - delay - index * stagger;
+        const progress = clamp(local / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const wet = 1 - eased;
+
+        if (progress >= 1) {
+          unit.word.style.opacity = '1';
+          unit.word.style.filter = 'none';
+          return;
+        }
+
+        pending = true;
+        const opacity = clamp(local / Math.max(0.04, duration * 0.12));
+        unit.word.style.opacity = `${opacity}`;
+        unit.word.style.filter = `url(#${unit.element.querySelector('filter')?.id ?? ''})`;
+
+        if (unit.displacement) {
+          unit.displacement.setAttribute('scale', `${(wet * roughness * fontSize) / 60}`);
+        }
+        if (unit.blur) {
+          unit.blur.setAttribute('stdDeviation', `${(wet * spread * fontSize) / 100}`);
+        }
+        if (unit.turbulence) {
+          unit.turbulence.setAttribute('baseFrequency', `${0.035 + wet * grain * 0.06}`);
+        }
+      });
+
+      if (pending) {
+        window.requestAnimationFrame(run);
+      } else {
+        done = true;
+      }
+    };
+
+    if (trigger === 'load') {
+      setStart();
+    } else if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting || done) return;
+          observer.disconnect();
+          setStart();
+        },
+        { threshold: 0.35 },
+      );
+      observer.observe(root);
+    } else {
+      setStart();
+    }
+
+    root.addEventListener('pointerenter', (event) => {
+      if (!done) return;
+      const target = (event.target as HTMLElement).closest<HTMLElement>('[data-ink-unit]');
+      if (!target) return;
+      const unit = units.find((candidate) => candidate.element === target);
+      if (!unit) return;
+
+      const unitStart = performance.now();
+      const tick = (now: number) => {
+        const progress = clamp((now - unitStart) / 780);
+        const wet = 1 - (1 - Math.pow(1 - progress, 2));
+        if (progress >= 1) {
+          unit.word.style.filter = 'none';
+          unit.word.style.opacity = '1';
+          return;
+        }
+        unit.word.style.filter = `url(#${unit.element.querySelector('filter')?.id ?? ''})`;
+        if (unit.displacement) {
+          unit.displacement.setAttribute('scale', `${(wet * roughness * fontSize * 0.45) / 60}`);
+        }
+        if (unit.blur) {
+          unit.blur.setAttribute('stdDeviation', `${(wet * spread * fontSize * 0.4) / 100}`);
+        }
+        window.requestAnimationFrame(tick);
+      };
+      window.requestAnimationFrame(tick);
+    });
+  });
+</script>
