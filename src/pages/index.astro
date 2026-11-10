@@ -3,18 +3,18 @@ import { getCollection } from 'astro:content';
 import { ArrowDown, ArrowRight, ArrowUpRight } from '@lucide/astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectArtwork from '../components/ProjectArtwork.astro';
-import DotGrid from '../components/framer/DotGrid.astro';
-import DitheringHover from '../components/framer/DitheringHover.astro';
-import InkBleed from '../components/framer/InkBleed.astro';
-import FloatingPillNav from '../components/framer/FloatingPillNav.astro';
-import AsymmetricTabs from '../components/framer/AsymmetricTabs.astro';
-import PeelableStickers from '../components/framer/PeelableStickers.astro';
-import Docket from '../components/framer/Docket.astro';
-import portrait from '../assets/ishan-avatar.jpg';
-import atlasFitPlan from '../assets/projects/atlas-fit/desktop-plan.png';
-import atlasFitProgress from '../assets/projects/atlas-fit/desktop-progress.png';
-import studyflowAnalytics from '../assets/projects/studyflow/analytics-1440.png';
-import halcyonAlmanac from '../assets/projects/halcyon/almanac-1440.png';
+import DotGrid from '../components/framer/react/DotGrid.jsx';
+import Dithering from '../components/framer/react/Dithering.jsx';
+import SiteInk from '../components/framer/react/SiteInk.jsx';
+import PillNav from '../components/framer/react/PillNav.jsx';
+import Tabs from '../components/framer/react/Tabs.jsx';
+import Stickers from '../components/framer/react/Stickers.jsx';
+import Docket from '../components/framer/react/Docket.jsx';
+import portrait from '../assets/ishan-avatar.jpg?url';
+import atlasFitPlan from '../assets/projects/atlas-fit/desktop-plan.png?url';
+import atlasFitProgress from '../assets/projects/atlas-fit/desktop-progress.png?url';
+import studyflowAnalytics from '../assets/projects/studyflow/analytics-1440.png?url';
+import halcyonAlmanac from '../assets/projects/halcyon/almanac-1440.png?url';
 import { site } from '../config';
 
 const allProjects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -151,66 +151,72 @@ const methodTabs = [
     eyebrow: 'First move',
     title: 'Make the smallest real thing.',
     description:
-      'Every entry here started as something small enough to run: a classifier on a real dataset, a plan screen with a real week behind it, a timer quiet enough to leave open. Building first turns an opinion into evidence.',
-    image: atlasFitPlan,
-    imageAlt: 'The Atlas Fit desktop plan screen, showing a generated training week.',
-    facts: [{ label: 'Practised in', value: 'Atlas Fit, Halcyon' }],
+      'Every entry here started small enough to run: a classifier on a real dataset, a plan screen with a real week behind it. Building first turns an opinion into evidence.',
+    image: { src: atlasFitPlan, alt: 'The Atlas Fit desktop plan screen, showing a generated training week.' },
+    primaryLabel: 'Read the method',
+    primaryLink: '/work/atlas-fit',
+    secondaryLabel: 'The work',
+    secondaryLink: '/work',
   },
   {
     tab: 'Observe',
     eyebrow: 'Second move',
     title: 'Watch what actually happens.',
     description:
-      'A score, a week that survives contact with a calendar, a circuit that misreads its sensor — each one returns something the plan could not predict. Observation is where the interesting failure usually lives.',
-    image: studyflowAnalytics,
-    imageAlt: 'The StudyFlow analytics screen, charting focus sessions over time.',
-    facts: [{ label: 'Practised in', value: 'DermoAI evaluation' }],
+      'A score, a week that survives a calendar, a circuit that misreads its sensor: each returns something the plan could not predict.',
+    image: { src: studyflowAnalytics, alt: 'The StudyFlow analytics screen, charting focus sessions over time.' },
+    primaryLabel: 'Read the method',
+    primaryLink: '/work/studyflow',
+    secondaryLabel: 'The work',
+    secondaryLink: '/work',
   },
   {
     tab: 'Revise',
     eyebrow: 'Third move',
     title: 'Let the evidence change the plan.',
     description:
-      'When a result contradicts the design, the design moves. Atlas Fit generates plans deterministically on purpose. Atlas labels its mocked pipeline as mocked. DermoAI keeps its caveat above its own numbers.',
-    image: atlasFitProgress,
-    imageAlt: 'The Atlas Fit progress screen, showing logged training history.',
-    facts: [{ label: 'Practised in', value: 'Atlas, Atlas Fit' }],
+      'When a result contradicts the design, the design moves. Atlas labels its mocked pipeline as mocked. DermoAI keeps its caveat above its own numbers.',
+    image: { src: atlasFitProgress, alt: 'The Atlas Fit progress screen, showing logged training history.' },
+    primaryLabel: 'Read the method',
+    primaryLink: '/work/atlas-fit',
+    secondaryLabel: 'The work',
+    secondaryLink: '/work',
   },
   {
     tab: 'State plainly',
     eyebrow: 'Last move',
     title: 'Say where it actually stands.',
     description:
-      'Complete build, in development, research study, prototypes and concepts, reserved entry. A status line is more useful than a highlight reel, and it is the part of this site least likely to change quietly.',
-    image: halcyonAlmanac,
-    imageAlt: 'The Halcyon weekly almanac screen, summarising the week behind.',
-    facts: [{ label: 'Practised in', value: 'Every entry in the docket' }],
+      'Complete build, in development, research study, reserved entry. A status line is more useful than a highlight reel.',
+    image: { src: halcyonAlmanac, alt: 'The Halcyon weekly almanac screen, summarising the week behind.' },
+    primaryLabel: 'Read the method',
+    primaryLink: '/work/halcyon',
+    secondaryLabel: 'The work',
+    secondaryLink: '/work',
   },
 ];
 
 const syllabusStickers = [
-  { label: 'Machine learning', sub: 'In use', tone: 'coral' as const, material: 'paper' as const, x: 24, y: 20, rotate: -6, width: 166 },
-  { label: 'Software engineering', sub: 'In use', tone: 'sage' as const, material: 'vinyl' as const, x: 63, y: 15, rotate: 4, width: 180 },
-  { label: 'Hardware & robotics', sub: 'Exploring', tone: 'apricot' as const, material: 'foil' as const, x: 78, y: 45, rotate: -3, width: 162 },
-  { label: 'Systems & open source', sub: 'Exploring', tone: 'steel' as const, material: 'vinyl' as const, x: 32, y: 58, rotate: 3, width: 174 },
-  { label: 'Creative programming', sub: 'Exploring', tone: 'rose' as const, material: 'paper' as const, x: 64, y: 78, rotate: -5, width: 168 },
+  { design: 'burst', label: 'Learning', subtitle: 'In use', color: '#cf5a3c', ink: '#f4efe6', material: 'paper', width: 224, x: 12, y: 32, mobileX: 27, mobileY: 16, rotation: -7, wear: 0.08 },
+  { design: 'ticket', label: 'Software', subtitle: 'In use', color: '#8d9a6b', ink: '#131110', material: 'vinyl', width: 236, x: 35, y: 66, mobileX: 73, mobileY: 18, rotation: 4, wear: 0.05 },
+  { design: 'orbit', label: 'Hardware', subtitle: 'Exploring', color: '#d8a05e', ink: '#131110', material: 'paper', width: 220, x: 53, y: 28, mobileX: 26, mobileY: 47, rotation: -3, wear: 0.12 },
+  { design: 'bubble', label: 'Systems', subtitle: 'Exploring', color: '#6f7f8c', ink: '#f4efe6', material: 'vinyl', width: 232, x: 71, y: 62, mobileX: 74, mobileY: 49, rotation: 3, wear: 0.06 },
+  { design: 'burst', label: 'Creative', subtitle: 'Exploring', color: '#b8705f', ink: '#f4efe6', material: 'paper', width: 210, x: 78, y: 34, mobileX: 41, mobileY: 78, rotation: -5, wear: 0.1 },
 ];
 
-const docketEntries = allProjects.map((project) => ({
-  id: project.id,
-  index: project.data.index,
-  title: project.data.title,
-  category: project.data.category,
-  status: project.data.status,
-  year: project.data.year,
-  deck: project.data.summary,
-  href: `/work/${project.id}`,
+const docketCards = allProjects.map((project) => ({
+  name: project.data.title,
+  role: project.data.category,
+  company: project.data.status,
+  quote: project.data.summary,
+  rating: 0,
+  tab: project.data.title,
+  link: `/work/${project.id}`,
 }));
 
 const pillChapters = railChapters.map((chapter) => ({
-  id: chapter.id,
-  number: chapter.number,
   label: chapter.title,
+  href: `#${chapter.id}`,
 }));
 
 
@@ -229,14 +235,46 @@ const schema = {
 ---
 
 <BaseLayout schema={schema}>
-  <FloatingPillNav items={pillChapters} label="Chapters" />
+  <div class="pill-dock" data-pill-nav>
+    <PillNav
+      client:only="react"
+      items={pillChapters}
+      activeLink="Prologue"
+      backgroundColor="#211d1a"
+      textColor="#a49b8c"
+      activeBackgroundColor="#cf5a3c"
+      activeTextColor="#131110"
+      padding={6}
+      gap={0}
+      linkPadding="10px 16px"
+      font={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 500, letterSpacing: '0.09em' }}
+    />
+  </div>
 
   <div class="edition">
     <!-- Cover -->
     <section class="cover" aria-labelledby="cover-title">
       <div class="cover-field" aria-hidden="true">
-        <DotGrid color="#cf5a3c" size={1.8} spacing={28} impact={150} opacity={0.45} />
+        <DotGrid
+          client:only="react"
+          dotColor="#cf5a3c"
+          dotSize={3}
+          dotSpacing={24}
+          impactRadius={190}
+          scaleOnHover={2.1}
+          orbitSpeed={0.7}
+        />
+        <DotGrid
+          client:only="react"
+          dotColor="#cf5a3c"
+          dotSize={3}
+          dotSpacing={24}
+          impactRadius={190}
+          scaleOnHover={2.1}
+          orbitSpeed={1.1}
+        />
       </div>
+      <div class="cover-wash" aria-hidden="true"></div>
 
       <div class="shell cover-grid">
         <div class="cover-copy">
@@ -246,12 +284,15 @@ const schema = {
             <span>{site.location}</span>
           </p>
 
-          <InkBleed
+          <SiteInk
+            client:only="react"
             tag="h1"
+            text="I build to understand."
             id="cover-title"
-            lines={['I build', 'to understand.']}
-            accent="understand."
-            class="cover-title"
+            align="left"
+            min={42}
+            max={128}
+            scale={12.4}
             trigger="load"
             delay={0.15}
             stagger={0.09}
@@ -290,17 +331,35 @@ const schema = {
           </div>
         </div>
 
-        <DitheringHover
-          image={portrait}
-          alt="Portrait of Ishan Asati"
-          class="cover-portrait"
-          ratio="4 / 5"
-          sizes="(max-width: 900px) 70vw, 340px"
-          widths={[320, 480, 640]}
-          priority={true}
-          dotSize={4}
-          lens={210}
-          caption={`Ishan Asati — ${site.location}, ${site.year}`}
+        <div class="cover-portrait">
+          <Dithering
+            client:only="react"
+            image={{ src: portrait, alt: 'Portrait of Ishan Asati' }}
+            ovalSize={210}
+            dotSize={4}
+            damping={25}
+            stiffness={300}
+          />
+        </div>
+      </div>
+
+      <div class="cover-stickers">
+        <div class="shell cover-stickers-head">
+          <p class="cover-stickers-label">On the desk</p>
+          <p class="cover-stickers-note">
+            Five areas of practice, not a finished syllabus. They peel.
+          </p>
+        </div>
+        <Stickers
+          client:only="react"
+          stickers={syllabusStickers}
+          background="transparent"
+          dots="#3a342e"
+          showDots={false}
+          radius={0}
+          peel={0.95}
+          sound={false}
+          style={{ width: '100%', height: 'clamp(320px, 74vw, 760px)' }}
         />
       </div>
 
@@ -385,11 +444,14 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">01</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter one</p>
-            <InkBleed
+            <SiteInk
+              client:only="react"
               tag="h2"
+              text="Curiosity, kept in the open."
               id="question-title"
-              lines={['Curiosity, kept', 'in the open.']}
-              accent="open"
+              min={30}
+              max={56}
+              scale={5.2}
             />
           </div>
           <p class="chapter-deck">
@@ -448,11 +510,14 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">02</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter two</p>
-            <InkBleed
+            <SiteInk
+              client:only="react"
               tag="h2"
+              text="Three things, built to find out."
               id="work-title"
-              lines={['Three things,', 'built to find out.']}
-              accent="find"
+              min={30}
+              max={56}
+              scale={5.2}
             />
           </div>
           <p class="chapter-deck">
@@ -534,7 +599,21 @@ const schema = {
               still being built and the shelf left empty on purpose.
             </p>
           </div>
-          <Docket entries={docketEntries} label="The full project docket" />
+          <div class="docket-stage">
+            <Docket
+              client:only="react"
+              cards={docketCards}
+              theme="custom"
+              customGround="#131110"
+              customInk="#f4efe6"
+              customInner="#2c2621"
+              customFront="#211d1a"
+              customCards={['#32211b', '#262a20', '#2a2621', '#262a26', '#2e2622', '#232323', '#2b2521']}
+              face={{ showStars: false, showAvatar: false, showNumber: true, linkLabel: 'Read the entry' }}
+              drawer={{ material: 'theme', label: 'The record', sublabel: 'Seven entries' }}
+              style={{ padding: 0 }}
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -546,11 +625,14 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">03</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter three</p>
-            <InkBleed
+            <SiteInk
+              client:only="react"
               tag="h2"
+              text="Build. Observe. Revise."
               id="method-title"
-              lines={['Build. Observe.', 'Revise.']}
-              accent="Revise."
+              min={30}
+              max={56}
+              scale={5.2}
             />
           </div>
           <p class="chapter-deck">
@@ -570,7 +652,34 @@ const schema = {
         </div>
 
         <div class="method-tabs" data-reveal>
-          <AsymmetricTabs items={methodTabs} label="The method, in four moves" />
+          <Tabs
+            client:only="react"
+            items={methodTabs}
+            cardBackground="#1b1816"
+            textColor="#f4efe6"
+            mutedTextColor="#a49b8c"
+            tabColor="#a49b8c"
+            activeTabColor="#f4efe6"
+            primaryBackground="#cf5a3c"
+            primaryTextColor="#131110"
+            secondaryColor="#f4efe6"
+            arrowBackground="#cf5a3c"
+            arrowColor="#131110"
+            cardWidth={48}
+            imageWidth={64}
+            imageHeight={78}
+            style={{ width: '100%', height: 'clamp(620px, 56vw, 700px)' }}
+            cardRadius={4}
+            imageRadius={2}
+            grainOpacity={0.03}
+            imageOverlayColor="#131110"
+            imageOverlayOpacity={0.18}
+            eyebrowFont={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 500, letterSpacing: '0.12em', textTransform: 'uppercase' }}
+            tabFont={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', fontWeight: 500, letterSpacing: '0.06em' }}
+            titleFont={{ fontFamily: "'Fraunces', Georgia, serif", fontSize: '34px', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: '1.05em' }}
+            bodyFont={{ fontFamily: "'Newsreader', Georgia, serif", fontSize: '17px', fontWeight: 400, lineHeight: '1.6em' }}
+            buttonFont={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em' }}
+          />
         </div>
       </div>
     </section>
@@ -582,11 +691,14 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">04</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter four</p>
-            <InkBleed
+            <SiteInk
+              client:only="react"
               tag="h2"
+              text="A syllabus I set myself."
               id="syllabus-title"
-              lines={['A syllabus', 'I set myself.']}
-              accent="myself."
+              min={30}
+              max={56}
+              scale={5.2}
             />
           </div>
           <p class="chapter-deck">
@@ -610,13 +722,6 @@ const schema = {
               </li>
             ))}
           </ol>
-
-          <PeelableStickers
-            stickers={syllabusStickers}
-            title="On the desk"
-            note="Areas of practice, not a finished syllabus."
-            ariaHidden={true}
-          />
         </div>
       </div>
     </section>
@@ -628,7 +733,7 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">05</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter five</p>
-            <InkBleed tag="h2" id="margin-title" lines={['The margin.']} />
+            <SiteInk client:only="react" tag="h2" text="The margin." id="margin-title" min={30} max={56} scale={5.2} />
           </div>
           <p class="chapter-deck">
             Notes, when there is something worth standing behind.
@@ -673,11 +778,14 @@ const schema = {
       <div class="shell epilogue-grid">
         <div data-reveal>
           <p class="eyebrow">Epilogue</p>
-          <InkBleed
+          <SiteInk
+            client:only="react"
             tag="h2"
+            text="A question, a correction, or a half-formed idea?"
             id="epilogue-title"
-            lines={['A question,', 'a correction,', 'or a half-formed idea?']}
-            accent="idea?"
+            min={34}
+            max={68}
+            scale={6.4}
           />
         </div>
 
@@ -711,36 +819,80 @@ const schema = {
     height: clamp(3.5rem, 6vw, 5rem);
   }
 
+  .pill-dock {
+    position: fixed;
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    left: 50%;
+    z-index: 50;
+    max-width: calc(100vw - 1.5rem);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    transform: translateX(-50%);
+    transition:
+      opacity 320ms var(--ease-out),
+      transform 320ms var(--ease-out);
+  }
+
+  .pill-dock::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pill-dock[data-hidden] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 1.2rem);
+  }
+
+  .docket-stage {
+    height: clamp(520px, 44vw, 620px);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--surface);
+  }
+
   /* ---------- Cover ---------- */
 
   .cover {
     position: relative;
     isolation: isolate;
-    padding-top: clamp(1.5rem, 3vw, 2.5rem);
+    padding-top: clamp(5.25rem, 8vw, 7rem);
     border-bottom: 1px solid var(--border);
   }
 
   .cover-field {
     position: absolute;
     inset: 0;
-    z-index: -1;
-    opacity: 0.9;
-    -webkit-mask-image: radial-gradient(120% 90% at 30% 18%, #000 0%, transparent 72%);
-    mask-image: radial-gradient(120% 90% at 30% 18%, #000 0%, transparent 72%);
+    z-index: 0;
+    opacity: 1;
+  }
+
+  .cover-wash {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(58% 52% at 76% 26%, rgba(207, 90, 60, 0.18), transparent 68%),
+      radial-gradient(120% 85% at 50% 108%, rgba(19, 17, 16, 0.96) 18%, rgba(19, 17, 16, 0) 62%),
+      linear-gradient(to bottom, rgba(19, 17, 16, 0.55), rgba(19, 17, 16, 0) 24%);
   }
 
   .cover-grid,
-  .cover-foot {
+  .cover-foot,
+  .cover-stickers {
     position: relative;
     z-index: 1;
   }
 
   .cover-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.5fr);
-    align-items: end;
+    grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.68fr);
+    align-items: center;
     gap: clamp(2rem, 6vw, 5rem);
-    padding-block: clamp(2.25rem, 6vw, 5rem) clamp(2.5rem, 5vw, 4rem);
+    min-height: min(74svh, 680px);
+    padding-block: clamp(2.25rem, 5vw, 4rem) clamp(2.5rem, 5vw, 4rem);
   }
 
   .issue-line {
@@ -875,7 +1027,53 @@ const schema = {
 
   .cover-portrait {
     width: 100%;
+    max-width: 430px;
+    aspect-ratio: 4 / 5;
+    justify-self: end;
     margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--warm);
+    box-shadow:
+      0 2px 0 rgba(244, 239, 230, 0.04) inset,
+      0 32px 80px -30px rgba(0, 0, 0, 0.9);
+  }
+
+  .cover-stickers {
+    padding-top: clamp(1.1rem, 2.6vw, 1.75rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .cover-stickers :global([role='region'] > div[aria-hidden='true'][style*='radial-gradient']) {
+    display: none;
+  }
+
+  .cover-stickers-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .cover-stickers-label {
+    color: var(--primary);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .cover-stickers-note {
+    color: var(--muted);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    text-align: right;
+    text-transform: uppercase;
   }
 
   .cover-foot {
@@ -1453,9 +1651,10 @@ const schema = {
 
   .syllabus-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    grid-template-columns: minmax(0, 1fr);
     align-items: start;
     gap: clamp(2rem, 5vw, 4rem);
+    max-width: 72rem;
   }
 
   .syllabus {
@@ -1722,6 +1921,26 @@ const schema = {
   }
 
   @media (max-width: 760px) {
+    .cover-grid {
+      min-height: 0;
+    }
+
+    .cover-portrait {
+      max-width: 320px;
+      justify-self: start;
+    }
+
+    .cover-stickers-head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+      padding-bottom: 0.85rem;
+    }
+
+    .cover-stickers-note {
+      text-align: left;
+    }
+
     .cover-foot {
       grid-template-columns: 1fr;
       gap: 0.5rem;
@@ -1868,27 +2087,13 @@ const schema = {
       line-height: 0.98;
     }
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    :global(html.js) [data-reveal] {
-      opacity: 1;
-      transform: none;
-    }
-
-    .scroll-cue i {
-      animation: none;
-      transform: none;
-    }
-  }
 </style>
 
 <script>
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   // Reveal editorial blocks as they enter the reading column.
   const revealItems = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
 
-  if (reduceMotion || !('IntersectionObserver' in window)) {
+  if (!('IntersectionObserver' in window)) {
     revealItems.forEach((item) => item.classList.add('is-in'));
   } else {
     const revealObserver = new IntersectionObserver(
@@ -1903,5 +2108,25 @@ const schema = {
     );
 
     revealItems.forEach((item) => revealObserver.observe(item));
+  }
+
+  // The floating chapter pill steps aside for the cover and the footer.
+  const pill = document.querySelector<HTMLElement>('[data-pill-nav]');
+  const cover = document.querySelector('.cover');
+  const footer = document.querySelector('[data-reveal-footer]');
+
+  if (pill && cover && footer) {
+    const setHidden = () => {
+      const bottom = window.innerHeight * 0.08;
+      const coverRect = cover.getBoundingClientRect();
+      const footerRect = footer.getBoundingClientRect();
+      const atCover = coverRect.bottom > bottom;
+      const atFooter = footerRect.top < window.innerHeight - bottom;
+      pill.toggleAttribute('data-hidden', atCover || atFooter);
+    };
+
+    setHidden();
+    window.addEventListener('scroll', setHidden, { passive: true });
+    window.addEventListener('resize', setHidden);
   }
 </script>

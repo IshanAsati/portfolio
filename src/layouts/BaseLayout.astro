@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import MotionOverlayMenu from '../components/framer/MotionOverlayMenu.astro';
+import SiteHeader from '../components/framer/SiteHeader.astro';
 import RevealFooter from '../components/framer/RevealFooter.astro';
 import { site } from '../config';
 
@@ -98,7 +98,7 @@ const structuredData = schema
   </head>
   <body id="top" class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <MotionOverlayMenu />
+    <SiteHeader />
     <main id="main" tabindex="-1">
       <slot />
     </main>

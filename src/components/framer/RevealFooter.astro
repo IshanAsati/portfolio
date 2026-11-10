@@ -5,27 +5,31 @@
  */
 import { ArrowUp, ArrowUpRight } from '@lucide/astro';
 import { navigation, site, socialLinks } from '../../config';
-import DotGrid from './DotGrid.astro';
-import InkBleed from './InkBleed.astro';
+import DotGrid from './react/DotGrid.jsx';
+import SiteInk from './react/SiteInk.jsx';
 
 const year = new Date().getFullYear();
 ---
 
 <footer class="reveal-footer" data-reveal-footer>
   <div class="reveal-band">
-    <DotGrid color="#cf5a3c" size={1.7} spacing={30} impact={150} opacity={0.38} />
+    <DotGrid client:only="react" dotColor="#cf5a3c" dotSize={2} dotSpacing={30} impactRadius={150} orbitSpeed={0.7} />
 
     <div class="shell band-inner">
       <div class="band-top">
         <p class="band-kicker">The record</p>
         <p class="band-meta">{site.issue} / {site.year}</p>
       </div>
-      <InkBleed
+      <SiteInk
+        client:only="react"
         tag="p"
-        lines={['Seven entries.', 'Still learning.']}
-        accent="learning."
-        class="band-line"
+        text="Seven entries. Still learning."
+        align="left"
+        min={34}
+        max={96}
+        scale={7.6}
         stagger={0.08}
+        className="band-line"
       />
       <div class="band-foot">
         <span>Every status stated as it is</span>
@@ -35,17 +39,20 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="footer-body">
-    <DotGrid color="#cf5a3c" size={1.7} spacing={28} impact={140} opacity={0.4} />
+    <DotGrid client:only="react" dotColor="#cf5a3c" dotSize={2} dotSpacing={28} impactRadius={140} orbitSpeed={0.7} />
 
     <div class="shell footer-grid">
       <div class="footer-claim">
         <p class="footer-kicker">Colophon</p>
-        <InkBleed
+        <SiteInk
+          client:only="react"
           tag="h2"
-          lines={['I build', 'to understand.']}
-          accent="understand."
-          class="footer-title"
-          label={`${site.brand} — ${site.tagline}`}
+          text="I build to understand."
+          align="left"
+          min={34}
+          max={72}
+          scale={6.2}
+          className="footer-title"
         />
         <p class="footer-note">
           An independent record of things made in order to understand them.
@@ -406,26 +413,13 @@ const year = new Date().getFullYear();
       gap: 0.35rem;
     }
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    .band-kicker,
-    .band-meta,
-    .band-foot {
-      opacity: 1;
-      transform: none;
-      transition: none;
-    }
-  }
 </style>
 
 <script>
   const footer = document.querySelector<HTMLElement>('[data-reveal-footer]');
 
   if (footer) {
-    if (
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      !('IntersectionObserver' in window)
-    ) {
+    if (!('IntersectionObserver' in window)) {
       footer.classList.add('is-revealed');
     } else {
       const observer = new IntersectionObserver(

@@ -1022,26 +1022,24 @@ hr {
   margin-top: 1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .reveal {
-    animation: reveal-up 0.9s var(--ease-out) both;
-  }
+.reveal {
+  animation: reveal-up 0.9s var(--ease-out) both;
+}
 
-  .reveal-delay-1 {
-    animation-delay: 0.08s;
-  }
+.reveal-delay-1 {
+  animation-delay: 0.08s;
+}
 
-  .reveal-delay-2 {
-    animation-delay: 0.16s;
-  }
+.reveal-delay-2 {
+  animation-delay: 0.16s;
+}
 
-  .reveal-delay-3 {
-    animation-delay: 0.24s;
-  }
+.reveal-delay-3 {
+  animation-delay: 0.24s;
+}
 
-  .reveal-delay-4 {
-    animation-delay: 0.32s;
-  }
+.reveal-delay-4 {
+  animation-delay: 0.32s;
 }
 
 @keyframes reveal-up {
@@ -1090,20 +1088,5 @@ hr {
 
   .segmented::-webkit-scrollbar {
     display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
