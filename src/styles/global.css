@@ -118,6 +118,7 @@
   --page-max: 1264px;
   --gutter: clamp(1.25rem, 4vw, 3.25rem);
   --section-pad: clamp(4.75rem, 8vw, 7.5rem);
+  --page-head-pad-top: clamp(5.5rem, 8.5vw, 7.5rem);
   --radius-img: 2px;
 }
 

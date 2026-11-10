@@ -51,7 +51,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     align-items: center;
     min-height: calc(100svh - 5.5rem);
-    padding-block: clamp(2.5rem, 6vw, 5rem);
+    padding-block: var(--page-head-pad-top, clamp(5.5rem, 8.5vw, 7.5rem)) clamp(2.5rem, 6vw, 5rem);
     border-bottom: 1px solid var(--border);
   }
 
