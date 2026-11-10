@@ -197,11 +197,11 @@ const methodTabs = [
 ];
 
 const syllabusStickers = [
-  { design: 'burst', label: 'Learning', subtitle: 'In use', color: '#cf5a3c', ink: '#f4efe6', material: 'paper', width: 200, x: 64, y: 39, mobileX: 27, mobileY: 24, rotation: -8, wear: 0.08 },
-  { design: 'ticket', label: 'Software', subtitle: 'In use', color: '#8d9a6b', ink: '#131110', material: 'vinyl', width: 205, x: 82, y: 71, mobileX: 70, mobileY: 30, rotation: 5, wear: 0.05 },
-  { design: 'orbit', label: 'Hardware', subtitle: 'Exploring', color: '#d8a05e', ink: '#131110', material: 'paper', width: 190, x: 96, y: 30, mobileX: 76, mobileY: 56, rotation: -3, wear: 0.12 },
-  { design: 'bubble', label: 'Systems', subtitle: 'Exploring', color: '#6f7f8c', ink: '#f4efe6', material: 'vinyl', width: 198, x: 25, y: 84, mobileX: 26, mobileY: 70, rotation: 4, wear: 0.06 },
-  { design: 'burst', label: 'Creative', subtitle: 'Exploring', color: '#b8705f', ink: '#f4efe6', material: 'paper', width: 190, x: 57, y: 93, mobileX: 66, mobileY: 84, rotation: -6, wear: 0.1 },
+  { design: 'burst', label: 'Learning', subtitle: 'In use', color: '#cf5a3c', ink: '#f4efe6', material: 'paper', width: 200, x: 64, y: 39, mobileX: 84, mobileY: 15, rotation: -8, wear: 0.08 },
+  { design: 'ticket', label: 'Software', subtitle: 'In use', color: '#8d9a6b', ink: '#131110', material: 'vinyl', width: 205, x: 82, y: 71, mobileX: 86, mobileY: 42, rotation: 5, wear: 0.05 },
+  { design: 'orbit', label: 'Hardware', subtitle: 'Exploring', color: '#d8a05e', ink: '#131110', material: 'paper', width: 190, x: 96, y: 30, mobileX: 88, mobileY: 70, rotation: -3, wear: 0.12 },
+  { design: 'bubble', label: 'Systems', subtitle: 'Exploring', color: '#6f7f8c', ink: '#f4efe6', material: 'vinyl', width: 198, x: 25, y: 84, mobileX: 20, mobileY: 92, rotation: 4, wear: 0.06 },
+  { design: 'burst', label: 'Creative', subtitle: 'Exploring', color: '#b8705f', ink: '#f4efe6', material: 'paper', width: 190, x: 57, y: 93, mobileX: 74, mobileY: 94, rotation: -6, wear: 0.1 },
 ];
 
 const docketCards = allProjects.map((project) => ({
@@ -868,8 +868,7 @@ const schema = {
       linear-gradient(to bottom, rgba(19, 17, 16, 0.55), rgba(19, 17, 16, 0) 24%);
   }
 
-  .cover-grid,
-  .cover-stickers {
+  .cover-grid {
     position: relative;
     z-index: 1;
   }
@@ -1033,6 +1032,7 @@ const schema = {
     inset: 0;
     z-index: 2;
     pointer-events: none;
+    overflow: hidden;
   }
 
   .cover-stickers :global([role='region'] > div[aria-hidden='true'][style*='radial-gradient']) {
@@ -1834,17 +1834,6 @@ const schema = {
     .method-intro {
       gap: 1rem;
     }
-
-    .cover-stickers {
-      position: relative;
-      inset: auto;
-      width: 100%;
-      height: clamp(380px, 62vw, 520px);
-      margin-top: clamp(1.5rem, 4vw, 2.5rem);
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--line);
-      pointer-events: auto;
-    }
   }
 
   @media (max-width: 760px) {
@@ -1853,8 +1842,9 @@ const schema = {
     }
 
     .cover {
-      min-height: 0;
+      min-height: max(100svh, 680px);
       padding-top: clamp(5.5rem, 18vw, 7rem);
+      padding-bottom: clamp(2.5rem, 6vw, 4rem);
     }
 
     .cover-grid {
