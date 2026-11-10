@@ -1,9 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Faustina:ital,wght@0,300..800;1,300..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Redaction+100&family=Redaction+35&display=swap');
 @import "tailwindcss";
 
 /*
-  The portfolio is set like a printed feature: Fraunces for display,
-  Newsreader for reading, IBM Plex Mono for the apparatus (folios,
-  captions, navigational labels).
+  The portfolio typography is set primarily in Redaction 35 across the site,
+  with Redaction 100, Faustina, and Montserrat appearing dynamically during
+  typewriter sentence decodes. IBM Plex Mono is kept for folios and apparatus.
 */
 
 @font-face {
@@ -64,9 +65,9 @@
   --color-sage: #8d9a6b;
   --color-apricot: #c9a06a;
   --color-border: #3a342e;
-  --font-sans: "IBM Plex Mono", ui-monospace, monospace;
-  --font-display: "Fraunces", Georgia, serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-sans: "Redaction 35", serif;
+  --font-display: "Redaction 35", Georgia, serif;
+  --font-mono: "Redaction 35", serif;
 }
 
 :root {
@@ -109,10 +110,11 @@
   --stone-wash: var(--warm);
   --cobalt-wash: var(--primary-soft);
   --cobalt-bright: var(--control-highlight);
-  --font-serif: "Newsreader", Georgia, serif;
-  --font-text: "Newsreader", Georgia, serif;
-  --font-sans: "IBM Plex Mono", ui-monospace, monospace;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-serif: "Redaction 35", Georgia, serif;
+  --font-text: "Redaction 35", Georgia, serif;
+  --font-sans: "Redaction 35", serif;
+  --font-display: "Redaction 35", Georgia, serif;
+  --font-mono: "Redaction 35", serif;
   --page-max: 1264px;
   --gutter: clamp(1.25rem, 4vw, 3.25rem);
   --section-pad: clamp(4.75rem, 8vw, 7.5rem);
@@ -130,6 +132,51 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
   scrollbar-color: var(--control-border) var(--surface);
+  font-family: "Redaction 35", Georgia, serif;
+}
+
+*,
+*::before,
+*::after {
+  font-family: "Redaction 35", Georgia, serif;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+p,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+td,
+th,
+pre,
+code,
+blockquote,
+figcaption,
+label,
+small,
+strong,
+em,
+cite,
+nav,
+footer,
+header,
+main,
+section,
+div {
+  font-family: "Redaction 35", Georgia, serif !important;
+}
+
+span:not(.decode-char):not(.decode-cursor) {
+  font-family: "Redaction 35", Georgia, serif !important;
 }
 
 body {
@@ -137,7 +184,7 @@ body {
   min-width: 320px;
   background: var(--surface);
   color: var(--ink);
-  font-family: var(--font-text);
+  font-family: "Redaction 35", Georgia, serif !important;
   font-size: 1.0625rem;
   font-weight: 400;
   font-optical-sizing: auto;
@@ -1095,4 +1142,47 @@ hr {
   .dot-grid {
     display: none !important;
   }
+}
+
+/* ---------- Typewriter Sentence Decode Effect ---------- */
+
+@keyframes decode-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.decode-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.decode-space {
+  display: inline;
+}
+
+.decode-char {
+  display: inline-block;
+  font-feature-settings: normal;
+  transition: opacity 0.08s ease, color 0.12s ease;
+  vertical-align: baseline;
+}
+
+.decode-char.is-locked {
+  font-family: "Redaction 35", Georgia, serif !important;
+}
+
+.decode-char.is-locking {
+  color: var(--primary, #cf5a3c) !important;
+}
+
+.decode-cursor {
+  display: inline-block;
+  vertical-align: baseline;
+  user-select: none;
+  pointer-events: none;
+  font-weight: 400;
 }

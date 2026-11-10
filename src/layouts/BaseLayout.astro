@@ -79,9 +79,12 @@ const structuredData = schema
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" type="application/rss+xml" title={`${site.brand} — Notes`} href="/rss.xml" />
 
-    <link rel="preload" href="/fonts/fraunces-latin-var.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/newsreader-latin-var.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/ibm-plex-mono-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Faustina:ital,wght@0,300..800;1,300..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Redaction+100&family=Redaction+35&display=swap"
+    />
 
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.brand} />
@@ -122,6 +125,16 @@ const structuredData = schema
       <slot />
     </main>
     <RevealFooter />
+
+    <script>
+      import { initHeadingDecode } from '../scripts/headingDecode.js';
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHeadingDecode);
+      } else {
+        initHeadingDecode();
+      }
+      document.addEventListener('astro:page-load', initHeadingDecode);
+    </script>
   </body>
 </html>
 
