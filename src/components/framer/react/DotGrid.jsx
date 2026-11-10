@@ -1,5 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DotGridBackground from '../vendor/DotGridBackground.js';
+
+const MOBILE_QUERY = '(max-width: 768px), (hover: none) and (pointer: coarse)';
 
 /**
  * Thin host for the exact Framer "Dot Grid BG" module. The module renders a
@@ -10,12 +12,31 @@ import DotGridBackground from '../vendor/DotGridBackground.js';
  * keeps that canvas out of hit testing (`pointer-events: none`) so it can sit
  * underneath page content. To keep the field cursor-reactive anyway, window
  * pointer movement is replayed onto the canvas as synthetic mouse events.
+ *
+ * For mobile devices (touch screens and small viewports), the canvas and RAF
+ * loop are omitted entirely to preserve battery, performance, and screen clarity.
  */
 export default function DotGrid(props) {
   const { className = '', style, ...rest } = props;
   const hostRef = useRef(null);
 
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(MOBILE_QUERY).matches;
+  });
+
   useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    const update = () => setIsMobile(mq.matches);
+    update();
+
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+
     const canvas = hostRef.current?.querySelector('canvas');
     if (!canvas) return;
 
@@ -71,12 +92,14 @@ export default function DotGrid(props) {
       window.removeEventListener('blur', release);
       document.removeEventListener('mouseleave', release);
     };
-  }, []);
+  }, [isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <div
       ref={hostRef}
-      className={className}
+      className={['dot-grid', className].filter(Boolean).join(' ')}
       aria-hidden="true"
       style={{
         position: 'absolute',

@@ -1090,3 +1090,9 @@ hr {
     display: none;
   }
 }
+
+@media (max-width: 768px), (hover: none) and (pointer: coarse) {
+  .dot-grid {
+    display: none !important;
+  }
+}

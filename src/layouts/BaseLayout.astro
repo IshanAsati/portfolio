@@ -141,4 +141,14 @@ const structuredData = schema
   :global(body.has-page-dots) {
     background: transparent;
   }
+
+  @media (max-width: 768px), (hover: none) and (pointer: coarse) {
+    .page-dots {
+      display: none !important;
+    }
+
+    :global(body.has-page-dots) {
+      background: var(--bg);
+    }
+  }
 </style>
