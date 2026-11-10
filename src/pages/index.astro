@@ -9,7 +9,6 @@ import SiteInk from '../components/framer/react/SiteInk.jsx';
 import PillNav from '../components/framer/react/PillNav.jsx';
 import Tabs from '../components/framer/react/Tabs.jsx';
 import Stickers from '../components/framer/react/Stickers.jsx';
-import Docket from '../components/framer/react/Docket.jsx';
 import portrait from '../assets/ishan-avatar.jpg?url';
 import atlasFitPlan from '../assets/projects/atlas-fit/desktop-plan.png?url';
 import atlasFitProgress from '../assets/projects/atlas-fit/desktop-progress.png?url';
@@ -204,16 +203,6 @@ const syllabusStickers = [
   { design: 'burst', label: 'Creative', subtitle: 'Exploring', color: '#b8705f', ink: '#f4efe6', material: 'paper', width: 190, x: 57, y: 93, mobileX: 74, mobileY: 94, rotation: -6, wear: 0.1 },
 ];
 
-const docketCards = allProjects.map((project) => ({
-  name: project.data.title,
-  role: project.data.category,
-  company: project.data.status,
-  quote: project.data.summary,
-  rating: 0,
-  tab: project.data.title,
-  link: `/work/${project.id}`,
-}));
-
 const pillChapters = railChapters.map((chapter) => ({
   label: chapter.title,
   href: `#${chapter.id}`,
@@ -247,7 +236,7 @@ const schema = {
       padding={6}
       gap={0}
       linkPadding="10px 16px"
-      font={{ fontFamily: "'Redaction 35', serif", fontSize: '12px', fontWeight: 500, letterSpacing: '0.04em' }}
+      font={{ fontFamily: "'Redaction 35', serif", fontSize: '13.5px', fontWeight: 500, letterSpacing: '0.04em' }}
     />
   </div>
 
@@ -290,9 +279,9 @@ const schema = {
             text="I build to understand."
             id="cover-title"
             align="left"
-            min={42}
-            max={128}
-            scale={12.4}
+            min={46}
+            max={136}
+            scale={12.8}
             trigger="load"
             delay={0.15}
             stagger={0.09}
@@ -434,9 +423,9 @@ const schema = {
               tag="h2"
               text="Curiosity, kept in the open."
               id="question-title"
-              min={30}
-              max={56}
-              scale={5.2}
+              min={34}
+              max={62}
+              scale={5.6}
             />
           </div>
           <p class="chapter-deck">
@@ -500,9 +489,9 @@ const schema = {
               tag="h2"
               text="Three things, built to find out."
               id="work-title"
-              min={30}
-              max={56}
-              scale={5.2}
+              min={34}
+              max={62}
+              scale={5.6}
             />
           </div>
           <p class="chapter-deck">
@@ -575,31 +564,6 @@ const schema = {
             );
           })}
         </div>
-
-        <div class="docket-block" data-reveal>
-          <div class="docket-intro">
-            <p class="eyebrow">The whole index</p>
-            <p class="docket-lede">
-              Three stories above, and seven entries in the record — including the ones
-              still being built and the shelf left empty on purpose.
-            </p>
-          </div>
-          <div class="docket-stage">
-            <Docket
-              client:only="react"
-              cards={docketCards}
-              theme="custom"
-              customGround="#131110"
-              customInk="#f4efe6"
-              customInner="#2c2621"
-              customFront="#211d1a"
-              customCards={['#32211b', '#262a20', '#2a2621', '#262a26', '#2e2622', '#232323', '#2b2521']}
-              face={{ showStars: false, showAvatar: false, showNumber: true, linkLabel: 'Read the entry' }}
-              drawer={{ material: 'theme', label: 'The record', sublabel: 'Seven entries' }}
-              style={{ padding: 0 }}
-            />
-          </div>
-        </div>
       </div>
     </section>
 
@@ -615,9 +579,9 @@ const schema = {
               tag="h2"
               text="Build. Observe. Revise."
               id="method-title"
-              min={30}
-              max={56}
-              scale={5.2}
+              min={34}
+              max={62}
+              scale={5.6}
             />
           </div>
           <p class="chapter-deck">
@@ -627,12 +591,11 @@ const schema = {
 
         <div class="method-intro" data-reveal>
           <p class="lede">
-            The docket above is the whole index, not a highlight reel.
+            Honest records, not a highlight reel.
           </p>
           <p>
-            The docket in the previous chapter carries every entry and its status. These
-            four moves describe how the work gets made — and what happens when a result
-            disagrees with the plan.
+            Every entry carries its real stage and status. These four moves describe how
+            the work gets made — and what happens when a result disagrees with the plan.
           </p>
         </div>
 
@@ -659,11 +622,11 @@ const schema = {
             grainOpacity={0.03}
             imageOverlayColor="#131110"
             imageOverlayOpacity={0.18}
-            eyebrowFont={{ fontFamily: "'Redaction 35', serif", fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}
-            tabFont={{ fontFamily: "'Redaction 35', serif", fontSize: '13px', fontWeight: 500, letterSpacing: '0.04em' }}
-            titleFont={{ fontFamily: "'Redaction 35', serif", fontSize: '34px', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: '1.05em' }}
-            bodyFont={{ fontFamily: "'Redaction 35', serif", fontSize: '17px', fontWeight: 400, lineHeight: '1.6em' }}
-            buttonFont={{ fontFamily: "'Redaction 35', serif", fontSize: '12px', fontWeight: 500, letterSpacing: '0.04em' }}
+            eyebrowFont={{ fontFamily: "'Redaction 35', serif", fontSize: '12px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}
+            tabFont={{ fontFamily: "'Redaction 35', serif", fontSize: '14.5px', fontWeight: 500, letterSpacing: '0.04em' }}
+            titleFont={{ fontFamily: "'Redaction 35', serif", fontSize: '38px', fontWeight: 400, letterSpacing: '-0.03em', lineHeight: '1.05em' }}
+            bodyFont={{ fontFamily: "'Redaction 35', serif", fontSize: '18.5px', fontWeight: 400, lineHeight: '1.6em' }}
+            buttonFont={{ fontFamily: "'Redaction 35', serif", fontSize: '13px', fontWeight: 500, letterSpacing: '0.04em' }}
           />
         </div>
       </div>
@@ -681,9 +644,9 @@ const schema = {
               tag="h2"
               text="A syllabus I set myself."
               id="syllabus-title"
-              min={30}
-              max={56}
-              scale={5.2}
+              min={34}
+              max={62}
+              scale={5.6}
             />
           </div>
           <p class="chapter-deck">
@@ -718,7 +681,7 @@ const schema = {
           <p class="chapter-number" aria-hidden="true">05</p>
           <div class="chapter-heading">
             <p class="eyebrow">Chapter five</p>
-            <SiteInk client:only="react" tag="h2" text="The margin." id="margin-title" min={30} max={56} scale={5.2} />
+            <SiteInk client:only="react" tag="h2" text="The margin." id="margin-title" min={34} max={62} scale={5.6} />
           </div>
           <p class="chapter-deck">
             Notes, when there is something worth standing behind.
@@ -768,9 +731,9 @@ const schema = {
             tag="h2"
             text="A question, a correction, or a half-formed idea?"
             id="epilogue-title"
-            min={34}
-            max={68}
-            scale={6.4}
+            min={38}
+            max={76}
+            scale={7.0}
           />
         </div>
 

@@ -185,10 +185,10 @@ body {
   background: var(--surface);
   color: var(--ink);
   font-family: "Redaction 35", Georgia, serif !important;
-  font-size: 1.0625rem;
+  font-size: 1.1875rem;
   font-weight: 400;
   font-optical-sizing: auto;
-  line-height: 1.65;
+  line-height: 1.68;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -337,7 +337,7 @@ hr {
 
 .mono {
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 650;
   letter-spacing: 0.1em;
   line-height: 1.5;
@@ -351,7 +351,7 @@ hr {
   gap: 9px;
   color: var(--sage);
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.78125rem;
   font-weight: 750;
   letter-spacing: 0.16em;
   line-height: 1.5;
@@ -391,7 +391,7 @@ hr {
 .index-number {
   color: var(--primary);
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.78125rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums;
@@ -417,7 +417,7 @@ hr {
   gap: 10px;
   min-height: 44px;
   color: var(--ink);
-  font-size: 0.75rem;
+  font-size: 0.84375rem;
   font-weight: 650;
   line-height: 1.4;
   transition: color var(--motion-state) var(--ease);
@@ -471,7 +471,7 @@ hr {
   background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 400;
   letter-spacing: 0.08em;
   line-height: 1.2;
@@ -534,7 +534,7 @@ hr {
   background: var(--ink);
   color: var(--surface);
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -579,7 +579,7 @@ hr {
   background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 400;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -604,14 +604,14 @@ hr {
   align-items: center;
   justify-content: center;
   gap: 13px;
-  min-height: 46px;
-  padding: 0 20px;
+  min-height: 48px;
+  padding: 0 22px;
   border: 1px solid var(--control-border);
   border-radius: 2px;
   background: transparent;
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 0.6875rem;
+  font-size: 0.78125rem;
   font-weight: 500;
   letter-spacing: 0.09em;
   line-height: 1.2;
@@ -709,7 +709,7 @@ hr {
   background: transparent;
   color: var(--muted);
   font-family: var(--font-sans);
-  font-size: 0.5625rem;
+  font-size: 0.65rem;
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -734,13 +734,13 @@ hr {
 .prose-case {
   counter-reset: case-section;
   color: var(--ink-soft);
-  font-size: 1.0625rem;
-  line-height: 1.8;
+  font-size: 1.1875rem;
+  line-height: 1.82;
 }
 
 .prose-case > p:first-child {
   color: var(--ink);
-  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  font-size: clamp(1.3rem, 2.2vw, 1.6rem);
   line-height: 1.6;
   letter-spacing: -0.012em;
 }
@@ -756,7 +756,7 @@ hr {
   border-top: 1px solid var(--border);
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 3.4vw, 2.8rem);
+  font-size: clamp(2rem, 3.8vw, 3.1rem);
   font-weight: 500;
   letter-spacing: -0.05em;
   line-height: 1.12;
@@ -768,7 +768,7 @@ hr {
   margin-bottom: 0.8rem;
   color: var(--primary);
   font-family: var(--font-sans);
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   content: "0" counter(case-section);
@@ -778,7 +778,7 @@ hr {
   margin-top: 2.5rem;
   color: var(--ink);
   font-family: var(--font-text);
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.4;
@@ -1107,15 +1107,15 @@ hr {
   }
 
   body {
-    font-size: 0.96875rem;
+    font-size: 1.0625rem;
   }
 
   .prose-case {
-    font-size: 1rem;
+    font-size: 1.0625rem;
   }
 
   .prose-case > p:first-child {
-    font-size: 1.12rem;
+    font-size: 1.22rem;
   }
 
   .prose-case h2 {
