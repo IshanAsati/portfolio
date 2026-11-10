@@ -1169,6 +1169,8 @@ hr {
   font-feature-settings: normal;
   transition: opacity 0.08s ease, color 0.12s ease;
   vertical-align: baseline;
+  line-height: inherit;
+  box-sizing: content-box;
 }
 
 .decode-char.is-locked {
@@ -1181,8 +1183,11 @@ hr {
 
 .decode-cursor {
   display: inline-block;
+  width: 0;
+  overflow: visible;
   vertical-align: baseline;
   user-select: none;
   pointer-events: none;
   font-weight: 400;
+  line-height: 1;
 }

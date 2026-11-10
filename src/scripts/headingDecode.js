@@ -7,7 +7,8 @@ export const DECODE_FONTS = [
 
 export const END_FONT = "'Redaction 35', serif";
 
-const CIPHER_GLYPHS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#%&*?@+-/§~=<>[]';
+// Uniform-width cipher glyphs to eliminate width jitter
+const CIPHER_GLYPHS = '0123456789ABCDEFHKLNPRSTXYZ?#*+';
 
 const processedElements = new WeakSet();
 
@@ -22,6 +23,7 @@ function getRandomCipher() {
 /**
  * Decodes a sentence from left to right typewriter style while rapidly switching fonts
  * and scrambling cipher glyphs ahead of the typewriter cursor.
+ * Uses fixed-width character slots and zero-layout cursor to eliminate all layout jitter.
  *
  * @param {HTMLElement} element - The heading element to animate.
  * @param {Object} [options]
@@ -124,25 +126,45 @@ export function decodeSentence(element, options = {}) {
     return;
   }
 
-  // Typewriter cursor
+  // Pre-measure each character's exact rendered width in Redaction 35.
+  // Lock this width on each slot so font swaps and cipher flips NEVER jitter or shift neighbors.
+  const measuredWidths = charElements.map((c) => {
+    const rect = c.getBoundingClientRect();
+    return rect.width;
+  });
+
+  for (let i = 0; i < charElements.length; i++) {
+    const w = measuredWidths[i];
+    if (w > 0) {
+      charElements[i].style.width = `${w.toFixed(2)}px`;
+      charElements[i].style.display = 'inline-block';
+      charElements[i].style.textAlign = 'center';
+    }
+  }
+
+  // Zero-width typewriter cursor: renders cleanly beside characters without pushing layout
   const cursor = document.createElement('span');
   cursor.className = 'decode-cursor';
   cursor.setAttribute('aria-hidden', 'true');
   cursor.textContent = '|';
   cursor.style.display = 'inline-block';
+  cursor.style.width = '0';
+  cursor.style.overflow = 'visible';
   cursor.style.marginLeft = '1px';
   cursor.style.color = 'var(--primary, #cf5a3c)';
   cursor.style.setProperty('font-family', END_FONT, 'important');
   cursor.style.lineHeight = '1';
   cursor.style.verticalAlign = 'baseline';
+  cursor.style.pointerEvents = 'none';
+  cursor.style.userSelect = 'none';
   cursor.style.animation = 'decode-blink 0.7s ease infinite';
 
   const total = charElements.length;
-  // Dynamic typing speed scaled to sentence length: snappy for long lines, deliberate for short
-  const stepMs = Math.max(18, Math.min(34, Math.round(850 / Math.max(1, total))));
-  const FLIPS_PER_CHAR = 4;
-  const FLIP_INTERVAL = 18; // ms between fast font & cipher flips
-  const AURA_AHEAD = 3; // Characters ahead shimmering with scramble glyphs
+  // Dynamic typing speed: snappy for long lines, calm for short
+  const stepMs = Math.max(22, Math.min(38, Math.round(920 / Math.max(1, total))));
+  const FLIPS_PER_CHAR = 3;
+  const FLIP_INTERVAL = 22; // ms between font flips
+  const AURA_AHEAD = 1; // Subtle 1-character preview aura to keep screen calm
 
   let head = 0;
 
@@ -154,7 +176,7 @@ export function decodeSentence(element, options = {}) {
     const timer = setInterval(() => {
       if (head >= total) {
         clearInterval(timer);
-        // Ensure all characters are locked to final font
+        // Ensure all characters are locked to final font and content
         charElements.forEach((c) => {
           c.style.opacity = '1';
           c.textContent = c.dataset.char;
@@ -164,32 +186,37 @@ export function decodeSentence(element, options = {}) {
 
         // Let cursor blink at the end before smoothly fading away
         setTimeout(() => {
-          cursor.style.transition = 'opacity 0.28s ease';
+          cursor.style.transition = 'opacity 0.24s ease';
           cursor.style.opacity = '0';
           setTimeout(() => {
             cursor.remove();
+            // Reset fixed widths back to natural flow once fully decoded
+            charElements.forEach((c) => {
+              c.style.width = '';
+              c.style.textAlign = '';
+            });
             element.dataset.headingStatus = 'done';
             if (options.onComplete) options.onComplete();
-          }, 300);
-        }, 280);
+          }, 260);
+        }, 240);
         return;
       }
 
       const currentEl = charElements[head];
       const targetChar = currentEl.dataset.char;
 
-      // Advance typewriter cursor
+      // Advance zero-width cursor
       if (currentEl.parentNode) {
         currentEl.parentNode.insertBefore(cursor, currentEl.nextSibling);
       }
 
-      // Shimmer aura ahead of cursor
+      // Shimmer 1-char aura ahead of cursor
       for (let offset = 1; offset <= AURA_AHEAD; offset++) {
         const auraEl = charElements[head + offset];
         if (auraEl && !auraEl.classList.contains('is-locked')) {
           const auraChar = auraEl.dataset.char;
           if (auraChar && auraChar.trim()) {
-            auraEl.style.opacity = '0.35';
+            auraEl.style.opacity = '0.28';
             auraEl.style.setProperty('font-family', getRandomFont(), 'important');
             auraEl.textContent = getRandomCipher();
           }
@@ -202,7 +229,7 @@ export function decodeSentence(element, options = {}) {
       currentEl.style.opacity = '1';
 
       if (!targetChar || !targetChar.trim()) {
-        // Whitespace or empty character: snap immediately
+        // Space / whitespace: snap immediately
         currentEl.style.setProperty('font-family', END_FONT, 'important');
         currentEl.textContent = targetChar;
         currentEl.classList.add('is-locked');
@@ -221,9 +248,9 @@ export function decodeSentence(element, options = {}) {
           currentEl.classList.add('is-locking');
           setTimeout(() => {
             currentEl.classList.remove('is-locking');
-          }, 110);
+          }, 90);
         } else {
-          // Rapid font & cipher flip
+          // Rapid font & cipher flip within fixed-width slot
           currentEl.style.setProperty('font-family', getRandomFont(), 'important');
           currentEl.textContent = getRandomCipher();
         }
