@@ -128,12 +128,19 @@ const structuredData = schema
 
     <script>
       import { initHeadingDecode } from '../scripts/headingDecode.js';
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initHeadingDecode);
-      } else {
+      import { initRetroMode } from '../scripts/retroMode.js';
+
+      function bootScripts() {
         initHeadingDecode();
+        initRetroMode();
       }
-      document.addEventListener('astro:page-load', initHeadingDecode);
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootScripts);
+      } else {
+        bootScripts();
+      }
+      document.addEventListener('astro:page-load', bootScripts);
     </script>
   </body>
 </html>
