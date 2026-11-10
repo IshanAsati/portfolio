@@ -197,11 +197,11 @@ const methodTabs = [
 ];
 
 const syllabusStickers = [
-  { design: 'burst', label: 'Learning', subtitle: 'In use', color: '#cf5a3c', ink: '#f4efe6', material: 'paper', width: 224, x: 12, y: 32, mobileX: 27, mobileY: 16, rotation: -7, wear: 0.08 },
-  { design: 'ticket', label: 'Software', subtitle: 'In use', color: '#8d9a6b', ink: '#131110', material: 'vinyl', width: 236, x: 35, y: 66, mobileX: 73, mobileY: 18, rotation: 4, wear: 0.05 },
-  { design: 'orbit', label: 'Hardware', subtitle: 'Exploring', color: '#d8a05e', ink: '#131110', material: 'paper', width: 220, x: 53, y: 28, mobileX: 26, mobileY: 47, rotation: -3, wear: 0.12 },
-  { design: 'bubble', label: 'Systems', subtitle: 'Exploring', color: '#6f7f8c', ink: '#f4efe6', material: 'vinyl', width: 232, x: 71, y: 62, mobileX: 74, mobileY: 49, rotation: 3, wear: 0.06 },
-  { design: 'burst', label: 'Creative', subtitle: 'Exploring', color: '#b8705f', ink: '#f4efe6', material: 'paper', width: 210, x: 78, y: 34, mobileX: 41, mobileY: 78, rotation: -5, wear: 0.1 },
+  { design: 'burst', label: 'Learning', subtitle: 'In use', color: '#cf5a3c', ink: '#f4efe6', material: 'paper', width: 200, x: 64, y: 39, mobileX: 27, mobileY: 24, rotation: -8, wear: 0.08 },
+  { design: 'ticket', label: 'Software', subtitle: 'In use', color: '#8d9a6b', ink: '#131110', material: 'vinyl', width: 205, x: 82, y: 71, mobileX: 70, mobileY: 30, rotation: 5, wear: 0.05 },
+  { design: 'orbit', label: 'Hardware', subtitle: 'Exploring', color: '#d8a05e', ink: '#131110', material: 'paper', width: 190, x: 96, y: 30, mobileX: 76, mobileY: 56, rotation: -3, wear: 0.12 },
+  { design: 'bubble', label: 'Systems', subtitle: 'Exploring', color: '#6f7f8c', ink: '#f4efe6', material: 'vinyl', width: 198, x: 25, y: 84, mobileX: 26, mobileY: 70, rotation: 4, wear: 0.06 },
+  { design: 'burst', label: 'Creative', subtitle: 'Exploring', color: '#b8705f', ink: '#f4efe6', material: 'paper', width: 190, x: 57, y: 93, mobileX: 66, mobileY: 84, rotation: -6, wear: 0.1 },
 ];
 
 const docketCards = allProjects.map((project) => ({
@@ -344,12 +344,6 @@ const schema = {
       </div>
 
       <div class="cover-stickers">
-        <div class="shell cover-stickers-head">
-          <p class="cover-stickers-label">On the desk</p>
-          <p class="cover-stickers-note">
-            Five areas of practice, not a finished syllabus. They peel.
-          </p>
-        </div>
         <Stickers
           client:only="react"
           stickers={syllabusStickers}
@@ -359,17 +353,8 @@ const schema = {
           radius={0}
           peel={0.95}
           sound={false}
-          style={{ width: '100%', height: 'clamp(320px, 74vw, 760px)' }}
+          style={{ width: '100%', height: '100%' }}
         />
-      </div>
-
-      <div class="shell cover-foot">
-        <p>Words and work by Ishan Asati</p>
-        <p>Six chapters, one working record</p>
-        <p class="scroll-cue">
-          Scroll
-          <span aria-hidden="true"><i /></span>
-        </p>
       </div>
     </section>
 
@@ -856,8 +841,12 @@ const schema = {
 
   .cover {
     position: relative;
+    display: flex;
+    flex-direction: column;
     isolation: isolate;
+    min-height: 100svh;
     padding-top: clamp(5.25rem, 8vw, 7rem);
+    overflow: clip;
     border-bottom: 1px solid var(--border);
   }
 
@@ -880,7 +869,6 @@ const schema = {
   }
 
   .cover-grid,
-  .cover-foot,
   .cover-stickers {
     position: relative;
     z-index: 1;
@@ -1041,92 +1029,14 @@ const schema = {
   }
 
   .cover-stickers {
-    padding-top: clamp(1.1rem, 2.6vw, 1.75rem);
-    border-top: 1px solid var(--line);
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
   }
 
   .cover-stickers :global([role='region'] > div[aria-hidden='true'][style*='radial-gradient']) {
     display: none;
-  }
-
-  .cover-stickers-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem 2rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .cover-stickers-label {
-    color: var(--primary);
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    letter-spacing: 0.16em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-
-  .cover-stickers-note {
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    letter-spacing: 0.1em;
-    line-height: 1.6;
-    text-align: right;
-    text-transform: uppercase;
-  }
-
-  .cover-foot {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: center;
-    gap: 1rem;
-    padding-block: 1rem;
-    border-top: 1px solid var(--line);
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    letter-spacing: 0.1em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-
-  .cover-foot p:nth-child(2) {
-    text-align: center;
-  }
-
-  .scroll-cue {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    justify-self: end;
-  }
-
-  .scroll-cue span {
-    position: relative;
-    display: block;
-    width: 38px;
-    height: 1px;
-    overflow: hidden;
-    background: var(--line);
-  }
-
-  .scroll-cue i {
-    position: absolute;
-    inset: 0;
-    background: var(--primary);
-    animation: scroll-line 2.8s var(--ease) infinite;
-  }
-
-  @keyframes scroll-line {
-    0% {
-      transform: translateX(-100%);
-    }
-    55%,
-    100% {
-      transform: translateX(100%);
-    }
   }
 
   /* ---------- Prologue ---------- */
@@ -1854,6 +1764,12 @@ const schema = {
 
   /* ---------- Responsive ---------- */
 
+  @media (min-width: 1001px) {
+    .cover {
+      min-height: max(100svh, 860px);
+    }
+  }
+
   @media (max-width: 1000px) {
     .cover-grid,
     .chapter-head,
@@ -1918,39 +1834,31 @@ const schema = {
     .method-intro {
       gap: 1rem;
     }
+
+    .cover-stickers {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      height: clamp(380px, 62vw, 520px);
+      margin-top: clamp(1.5rem, 4vw, 2.5rem);
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--line);
+      pointer-events: auto;
+    }
   }
 
   @media (max-width: 760px) {
+    .cover {
+      min-height: 0;
+      padding-top: clamp(5.5rem, 18vw, 7rem);
+    }
+
     .cover-grid {
       min-height: 0;
     }
 
     .cover-portrait {
       max-width: 320px;
-      justify-self: start;
-    }
-
-    .cover-stickers-head {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.35rem;
-      padding-bottom: 0.85rem;
-    }
-
-    .cover-stickers-note {
-      text-align: left;
-    }
-
-    .cover-foot {
-      grid-template-columns: 1fr;
-      gap: 0.5rem;
-    }
-
-    .cover-foot p:nth-child(2) {
-      text-align: left;
-    }
-
-    .scroll-cue {
       justify-self: start;
     }
 

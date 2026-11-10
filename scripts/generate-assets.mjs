@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import sharp from 'sharp';
 import { mkdir, readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
@@ -10,6 +11,8 @@ await mkdir(publicDir, { recursive: true });
 const font = (name) => pathToFileURL(path.join(root, 'public', 'fonts', name)).href;
 const portraitBuffer = await readFile(path.join(root, 'src', 'assets', 'ishan-avatar.jpg'));
 const portrait = `data:image/jpeg;base64,${portraitBuffer.toString('base64')}`;
+const markBuffer = await readFile(path.join(root, 'src', 'assets', 'mark.png'));
+const mark = `data:image/png;base64,${markBuffer.toString('base64')}`;
 
 const shared = `
   @font-face {
@@ -55,7 +58,7 @@ ${shared}
     font-family: "Fraunces", Georgia, serif; font-size: 34px; font-weight: 500;
     letter-spacing: -0.035em; line-height: 1;
   }
-  .brand .mark { width: 17px; height: 17px; color: #cf5a3c; }
+  .brand .mark { display: block; height: 29px; width: auto; }
   .brand .dot { color: #cf5a3c; }
   .issue {
     font-family: "IBM Plex Mono", monospace;
@@ -119,7 +122,7 @@ ${shared}
 
   <div class="masthead">
     <div class="brand">
-      <svg class="mark" viewBox="0 0 24 24" fill="none"><path d="M12 2.6c.7 4.6 4.1 8 8.7 8.7-4.6.7-8 4.1-8.7 8.7-.7-4.6-4.1-8-8.7-8.7 4.6-.7 8-4.1 8.7-8.7Z" fill="currentColor"/></svg>
+      <img class="mark" src="${mark}" alt="">
       ishan.asati<span class="dot">.</span>
     </div>
     <div class="issue"><b>Vol. 01 / 2026</b>Independent portfolio<br>India</div>
@@ -148,22 +151,13 @@ ${shared}
 const iconHtml = (size) => `<!doctype html>
 <html><head><meta charset="utf-8"><style>
 ${shared}
-  body { width: ${size}px; height: ${size}px; overflow: hidden; }
+  body { width: ${size}px; height: ${size}px; overflow: hidden; background: #131110; }
   .icon {
-    position: relative; width: 100%; height: 100%; background: #131110; color: #f4efe6;
+    width: 100%; height: 100%; background: #131110;
     display: flex; align-items: center; justify-content: center;
   }
-  .icon::before {
-    content: ""; position: absolute; top: ${Math.round(size * 0.1)}px; left: ${Math.round(size * 0.1)}px;
-    right: ${Math.round(size * 0.1)}px; bottom: ${Math.round(size * 0.1)}px;
-    border: 1px solid #3a342e; border-radius: 2px;
-  }
-  .icon span {
-    position: relative; font-family: "Fraunces", Georgia, serif; font-weight: 500;
-    font-size: ${Math.round(size * 0.5)}px; letter-spacing: -0.05em; line-height: 1;
-  }
-  .icon span::after { content: "."; color: #cf5a3c; }
-</style></head><body><div class="icon"><span>ia</span></div></body></html>`;
+  .icon img { display: block; height: ${Math.round(size * 0.62)}px; width: auto; }
+</style></head><body><div class="icon"><img src="${mark}" alt=""></div></body></html>`;
 
 const browser = await chromium.launch();
 
@@ -180,5 +174,14 @@ await shoot(ogHtml, 1200, 630, path.join(publicDir, 'og.png'));
 await shoot(iconHtml(180), 180, 180, path.join(publicDir, 'apple-touch-icon.png'));
 await shoot(iconHtml(192), 192, 192, path.join(publicDir, 'icon-192.png'));
 await shoot(iconHtml(512), 512, 512, path.join(publicDir, 'icon-512.png'));
+await shoot(iconHtml(64), 64, 64, path.join(publicDir, 'favicon-64.png'));
+await shoot(iconHtml(32), 32, 32, path.join(publicDir, 'favicon-32.png'));
+
+// The transparent mark used beside the brand in the header.
+await sharp(path.join(root, 'src', 'assets', 'mark.png'))
+  .resize({ height: 160, fit: 'inside' })
+  .png({ compressionLevel: 9 })
+  .toFile(path.join(publicDir, 'mark.png'));
+console.log('wrote public/mark.png');
 
 await browser.close();

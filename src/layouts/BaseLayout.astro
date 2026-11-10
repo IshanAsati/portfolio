@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import SiteHeader from '../components/framer/SiteHeader.astro';
 import RevealFooter from '../components/framer/RevealFooter.astro';
+import DotGrid from '../components/framer/react/DotGrid.jsx';
 import { site } from '../config';
 
 interface Props {
@@ -27,6 +28,10 @@ const {
 const pageTitle = title ? `${title} — ${site.brand}` : site.title;
 const canonical = new URL(Astro.url.pathname, site.url);
 const ogImage = new URL(image, site.url);
+
+// The cover carries its own full-bleed dot field; every other page gets the
+// same cursor-reactive matrix as a top-of-page layer behind the content.
+const showPageDots = Astro.url.pathname !== '/';
 
 const personSchema = {
   '@context': 'https://schema.org',
@@ -69,7 +74,8 @@ const structuredData = schema
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" type="application/rss+xml" title={`${site.brand} — Notes`} href="/rss.xml" />
 
@@ -96,8 +102,21 @@ const structuredData = schema
 
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   </head>
-  <body id="top" class={bodyClass}>
+  <body id="top" class:list={[bodyClass, { 'has-page-dots': showPageDots }]}>
     <a class="skip-link" href="#main">Skip to content</a>
+    {showPageDots && (
+      <div class="page-dots" aria-hidden="true">
+        <DotGrid
+          client:only="react"
+          dotColor="#cf5a3c"
+          dotSize={2}
+          dotSpacing={26}
+          impactRadius={180}
+          scaleOnHover={2.1}
+          orbitSpeed={0.75}
+        />
+      </div>
+    )}
     <SiteHeader />
     <main id="main" tabindex="-1">
       <slot />
@@ -105,3 +124,21 @@ const structuredData = schema
     <RevealFooter />
   </body>
 </html>
+
+<style>
+  .page-dots {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: min(145vh, 1500px);
+    z-index: -1;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 56%, transparent 100%);
+  }
+
+  :global(body.has-page-dots) {
+    background: transparent;
+  }
+</style>

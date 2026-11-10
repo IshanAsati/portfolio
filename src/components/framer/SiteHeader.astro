@@ -23,8 +23,9 @@ const secondary = socialLinks.map((item) => ({
   <div class="site-header-bar">
     <OverlayMenu
       client:only="react"
-      logo="mark"
-      logoSize={18}
+      logo="image"
+      logoImage={{ src: '/mark.png', alt: '' }}
+      logoSize={26}
       brand={site.name}
       brandLink="/"
       links={links}
