@@ -34,6 +34,9 @@ const framerVendorShims = {
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ishan.smartfools.in',
+  redirects: {
+    '/work': '/#work',
+  },
   integrations: [
     mdx(),
     react(),

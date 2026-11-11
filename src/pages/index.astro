@@ -24,19 +24,18 @@ const featured = featuredIds
   .map((id) => byId[id])
   .filter((project) => project !== undefined);
 
-// Featured stories show two facts each. DermoAI's headline percentages are
-// already drawn into its artwork plate, so its story shows the class count and
-// the competition result instead of repeating the numbers a third time.
-const featureMetricIndexes: Record<string, [number, number]> = {
-  dermoai: [2, 3],
-  atlas: [0, 1],
-  halcyon: [0, 1],
-};
+const filters = [
+  { key: 'all', label: 'All' },
+  { key: 'ai', label: 'AI / ML' },
+  { key: 'software', label: 'Software' },
+  { key: 'hardware', label: 'Hardware' },
+  { key: 'experiments', label: 'Experiments' },
+];
 
 const chapters = [
   { id: 'prologue', number: '00', title: 'Prologue', note: 'A note before the work' },
   { id: 'question', number: '01', title: 'The question', note: 'Why any of this' },
-  { id: 'work', number: '02', title: 'The work', note: 'Three projects, three edges' },
+  { id: 'work', number: '02', title: 'The work', note: 'Every entry, at its real stage' },
   { id: 'method', number: '03', title: 'The method', note: 'The honest ledger' },
   { id: 'syllabus', number: '04', title: 'The syllabus', note: 'What I am learning now' },
   { id: 'margin', number: '05', title: 'The margin', note: 'Notes, and the empty shelf' },
@@ -46,52 +45,6 @@ const railChapters = [
   ...chapters,
   { id: 'correspondence', number: '—', title: 'Epilogue', note: 'Correspondence' },
 ];
-
-const storyNotes: Record<
-  string,
-  {
-    kicker: string;
-    headline: string;
-    body: string[];
-    caseLabel: string;
-    caveat?: string;
-    external?: string;
-    externalLabel?: string;
-  }
-> = {
-  dermoai: {
-    kicker: 'Research study · 2026',
-    headline: 'A score is not a system.',
-    body: [
-      'DermoAI classifies skin images into twelve categories. It uses a ConvNeXt-Base backbone, a classification head adapted to the problem, and test-time augmentation at inference. It placed first in the DAV ML Khanna machine learning competition.',
-      'None of that makes it a medical device. The project is a research study, evaluated within itself: 82.79% reported accuracy and 87.30% cancer-class sensitivity. The distance between those numbers and a system that deserves trust is the actual subject of the work.',
-    ],
-    caseLabel: 'Read the DermoAI study',
-    caveat: 'Research prototype — not clinically validated.',
-    external: 'https://github.com/IshanAsati/dermoai-final',
-    externalLabel: 'Repository',
-  },
-  atlas: {
-    kicker: 'Study operating system · In development',
-    headline: 'The plan that argues back.',
-    body: [
-      'Atlas keeps a confidence score for every syllabus topic, lets that score decay, and asks the next question instead of handing over the answer. A syllabus PDF is extracted into subjects and topics; a streaming coach handles the conversation.',
-      'The screens for the full loop exist. The mission-planning pipeline is still mocked, and this entry says so. A demo that hid that difference would be a different, less useful product.',
-    ],
-    caseLabel: 'Read the Atlas case study',
-    external: 'https://atlas-sooty-gamma.vercel.app',
-    externalLabel: 'Live demo',
-  },
-  halcyon: {
-    kicker: 'Focus workspace · Complete build',
-    headline: 'Make room for one thing.',
-    body: [
-      'Halcyon is a local-first focus workspace: a timer with room to breathe, a dated schedule you can argue with, a place for stray thoughts, a four-voice sequencer and a weekly almanac.',
-      'It has six destinations and no account. Everything lives in the browser. The completeness is the point — a quiet tool that asks for nothing beyond the next session.',
-    ],
-    caseLabel: 'Read the Halcyon case study',
-  },
-};
 
 const explorations = [
   {
@@ -158,7 +111,7 @@ const methodTabs = [
     primaryLabel: 'Read the method',
     primaryLink: '/work/atlas-fit',
     secondaryLabel: 'The work',
-    secondaryLink: '/work',
+    secondaryLink: '#work',
   },
   {
     tab: 'Observe',
@@ -173,7 +126,7 @@ const methodTabs = [
     primaryLabel: 'Read the method',
     primaryLink: '/work/studyflow',
     secondaryLabel: 'The work',
-    secondaryLink: '/work',
+    secondaryLink: '#work',
   },
   {
     tab: 'Revise',
@@ -188,7 +141,7 @@ const methodTabs = [
     primaryLabel: 'Read the method',
     primaryLink: '/work/dermoai',
     secondaryLabel: 'The work',
-    secondaryLink: '/work',
+    secondaryLink: '#work',
   },
   {
     tab: 'State plainly',
@@ -203,7 +156,7 @@ const methodTabs = [
     primaryLabel: 'Read the method',
     primaryLink: '/work/halcyon',
     secondaryLabel: 'The work',
-    secondaryLink: '/work',
+    secondaryLink: '#work',
   },
 ];
 
@@ -498,7 +451,7 @@ const schema = {
             <SiteInk
               client:only="react"
               tag="h2"
-              text="Three things, built to find out."
+              text="Work, in progress."
               id="work-title"
               min={42}
               max={84}
@@ -510,70 +463,85 @@ const schema = {
           </p>
         </header>
 
-        <div class="stories">
-          {featured.map((project, i) => {
-            const story = storyNotes[project.id];
-            const metrics = featureMetricIndexes[project.id]
-              .map((index) => project.data.metrics[index])
-              .filter((metric) => metric !== undefined);
+        <div class="work-index" data-reveal>
+          <div class="filter-panel panel">
+            <div class="filter-copy">
+              <p class="eyebrow eyebrow--plain">Filter the record</p>
+              <p class="filter-count" data-filter-count aria-live="polite">
+                Showing {allProjects.length} of {allProjects.length} entries
+              </p>
+            </div>
 
-            return (
-              <article class:list={['story', { 'story--reverse': i % 2 === 1 }]} data-reveal>
-                <p class="story-index" aria-hidden="true">02.{i + 1}</p>
+            <div class="segmented" role="group" aria-label="Filter work by category">
+              {filters.map((filter) => (
+                <button
+                  type="button"
+                  data-filter={filter.key}
+                  aria-pressed={filter.key === 'all' ? 'true' : 'false'}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-                <div class="story-copy">
-                  <p class="story-kicker">{story.kicker}</p>
-                  <h3>{story.headline}</h3>
-                  <p class="story-deck">{project.data.deck}</p>
+          <noscript>
+            <p class="noscript-note">
+              Filters require JavaScript. All {allProjects.length} entries are listed below.
+            </p>
+          </noscript>
 
-                  <div class="story-body">
-                    {story.body.map((paragraph) => <p>{paragraph}</p>)}
+          <div class="project-grid" data-project-grid>
+            {allProjects.map((project) => (
+              <article
+                class:list={['project-card', 'panel', `project-card--${project.data.cover}`]}
+                data-category={project.data.filter}
+              >
+                <a class="card-art" href={`/work/${project.id}`}>
+                  <span class="sr-only">View {project.data.title}</span>
+                  <div aria-hidden="true"><ProjectArtwork kind={project.data.cover} /></div>
+                </a>
+
+                <div class="card-body">
+                  <div class="card-topline">
+                    <span class="index-number">{project.data.index}</span>
+                    <span class="chip">{project.data.category}</span>
+                    <span class="chip chip--accent card-status">{project.data.status}</span>
                   </div>
 
-                  <dl class="story-facts">
-                    {metrics.map((metric) => (
-                      <div>
-                        <dt>{metric.label}</dt>
-                        <dd>
-                          <span class="story-fact-value">{metric.value}</span>
-                          {metric.note && <span class="story-fact-note">{metric.note}</span>}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
+                  <h3><a href={`/work/${project.id}`}>{project.data.title}</a></h3>
+                  <p class="card-summary">{project.data.summary}</p>
 
-                  {story.caveat && <p class="story-caveat">{story.caveat}</p>}
-
-                  <div class="story-links">
-                    <a class="story-link" href={`/work/${project.id}`}>
-                      {story.caseLabel}
-                      <ArrowRight aria-hidden="true" stroke-width="1.4" />
+                  <div class="card-foot">
+                    <span class="mono card-year">{project.data.year}</span>
+                    <a class="card-link" href={`/work/${project.id}`}>
+                      Open entry
+                      <ArrowUpRight aria-hidden="true" stroke-width="1.6" />
                     </a>
-                    {story.external && (
-                      <a
-                        class="story-link story-link--quiet"
-                        href={story.external}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                      >
-                        {story.externalLabel}
-                        <ArrowUpRight aria-hidden="true" stroke-width="1.4" />
-                        <span class="sr-only"> (opens in a new tab)</span>
-                      </a>
-                    )}
                   </div>
                 </div>
-
-                <figure class="story-plate">
-                  <ProjectArtwork kind={project.data.cover} />
-                  <figcaption>
-                    <span>Fig. {project.data.index} — {project.data.title}</span>
-                    <span>{project.data.status}</span>
-                  </figcaption>
-                </figure>
               </article>
-            );
-          })}
+            ))}
+          </div>
+
+          <div class="empty-filter panel" data-empty-filter hidden>
+            <p class="mono">No entries in this category yet.</p>
+            <button type="button" class="button" data-filter-reset>Show all entries</button>
+          </div>
+        </div>
+
+        <div class="work-foot-panel panel">
+          <p class="eyebrow">A note on the record</p>
+          <p class="work-foot-note">
+            Projects are described at the stage they are actually in. Research work is marked
+            as research. Unfinished software is marked as unfinished. Concepts are not
+            presented as products. If an entry looks quiet, it is because the work is still
+            being done.
+          </p>
+          <a class="button" href="/about">
+            About the person behind the index
+            <ArrowRight aria-hidden="true" stroke-width="1.6" />
+          </a>
         </div>
       </div>
     </section>
@@ -1286,139 +1254,227 @@ const schema = {
     line-height: 1.5;
   }
 
-  /* ---------- Stories ---------- */
+  /* ---------- Work index ---------- */
 
-  .stories {
-    border-top: 1px solid var(--border);
+  .work-index {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
   }
 
-  .story {
-    display: grid;
-    grid-template-columns: clamp(4rem, 8vw, 7rem) minmax(0, 1fr) minmax(0, 1.15fr);
-    align-items: start;
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    padding-block: clamp(3rem, 6vw, 5.5rem);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .story:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
-
-  .story-index {
-    color: var(--primary);
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
-    letter-spacing: 0.1em;
-    line-height: 1.5;
-    font-variant-numeric: tabular-nums;
-    padding-top: 0.45rem;
-  }
-
-  .story-copy {
-    max-width: 46ch;
-  }
-
-  .story-kicker {
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
-    letter-spacing: 0.1em;
-    line-height: 1.6;
-    text-transform: uppercase;
-  }
-
-  .story-copy h3 {
-    margin-top: 0.85rem;
-    font-size: clamp(2.4rem, 4.5vw, 3.8rem);
-    font-weight: 400;
-    letter-spacing: -0.035em;
-    line-height: 1.02;
-  }
-
-  .story-deck {
-    margin-top: 1rem;
-    color: var(--ink-soft);
-    font-family: var(--font-display);
-    font-size: clamp(1.35rem, 2vw, 1.65rem);
-    font-style: italic;
-    line-height: 1.45;
-  }
-
-  .story-body p {
-    margin-top: 1rem;
-    color: var(--muted);
-    font-size: 1.25rem;
-    line-height: 1.8;
-  }
-
-  .story-facts {
-    margin-top: 1.5rem;
-    border-top: 1px solid var(--line);
-  }
-
-  .story-facts > div {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-block: 0.6rem;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .story-facts dt {
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
-    letter-spacing: 0.1em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-
-  .story-facts dd {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.25rem;
-    font-family: var(--font-display);
-    font-size: 1.45rem;
-    font-weight: 450;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.2;
-    text-align: right;
-  }
-
-  .story-fact-note {
-    max-width: 28ch;
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    line-height: 1.5;
-    text-align: right;
-  }
-
-  .story-caveat {
-    margin-top: 0.9rem;
-    padding: 0.65rem 0.8rem;
-    border-left: 2px solid var(--primary);
-    background: color-mix(in srgb, var(--primary) 8%, transparent);
-    color: var(--ink);
-    font-family: var(--font-sans);
-    font-size: 1.05rem;
-    letter-spacing: 0.03em;
-    line-height: 1.55;
-  }
-
-  .story-links {
+  .filter-panel {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 1.5rem;
-    margin-top: 1.35rem;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding: clamp(0.85rem, 1.6vw, 1.1rem);
+    background: var(--warm);
+    box-shadow: none;
   }
+
+  .filter-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-left: 0.35rem;
+  }
+
+  .filter-count {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    font-weight: 550;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .noscript-note {
+    margin-top: 0.85rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(0.85rem, 1.6vw, 1.25rem);
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 0.75rem;
+    background: var(--paper);
+    box-shadow: none;
+    transition:
+      border-color var(--motion-state) var(--ease),
+      transform 300ms var(--ease);
+  }
+
+  .project-card:hover {
+    border-color: var(--control-border);
+    transform: translateY(-2px);
+  }
+
+  .project-card:nth-child(1) {
+    grid-column: span 7;
+  }
+
+  .project-card:nth-child(2) {
+    grid-column: span 5;
+  }
+
+  .project-card:nth-child(3),
+  .project-card:nth-child(4),
+  .project-card:nth-child(5) {
+    grid-column: span 4;
+  }
+
+  .project-card:nth-child(6) {
+    grid-column: span 7;
+  }
+
+  .project-card:nth-child(7) {
+    grid-column: span 5;
+  }
+
+  .project-card[hidden] {
+    display: none;
+  }
+
+  .card-art {
+    display: block;
+    overflow: hidden;
+    border-radius: 2px;
+    transition: transform 420ms var(--ease);
+  }
+
+  .card-art:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-art :global(.plate) {
+    height: 100%;
+    border-color: var(--line);
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: clamp(1rem, 2vw, 1.35rem) 0.4rem 0.35rem;
+  }
+
+  .card-topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .card-status {
+    margin-left: auto;
+  }
+
+  .card-body h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.6rem);
+    font-weight: 500;
+    letter-spacing: -0.05em;
+    line-height: 1.02;
+  }
+
+  .card-body h3 a {
+    transition: color var(--motion-state) var(--ease);
+  }
+
+  .card-body h3 a:hover {
+    color: var(--primary);
+  }
+
+  .card-summary {
+    max-width: 52ch;
+    margin-top: 0.75rem;
+    color: var(--muted);
+    font-size: 1.15rem;
+    line-height: 1.65;
+  }
+
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.1rem;
+  }
+
+  .card-year {
+    color: var(--muted);
+  }
+
+  .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 36px;
+    color: var(--ink);
+    font-size: 0.9375rem;
+    font-weight: 650;
+    line-height: 1.4;
+    transition: color var(--motion-state) var(--ease);
+  }
+
+  .card-link svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    color: var(--primary);
+    transition: transform 220ms var(--ease);
+  }
+
+  .card-link:hover {
+    color: var(--primary);
+  }
+
+  .card-link:hover svg {
+    transform: translate(2px, -2px);
+  }
+
+  .empty-filter {
+    margin-top: 1.5rem;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+  }
+
+  .empty-filter .mono {
+    color: var(--muted);
+  }
+
+  .empty-filter .button {
+    margin-top: 1rem;
+  }
+
+  .work-foot-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--warm);
+    box-shadow: none;
+  }
+
+  .work-foot-note {
+    max-width: 58ch;
+    color: var(--ink-soft);
+    font-size: 1.15rem;
+    line-height: 1.7;
+  }
+
+  /* ---------- Inline links ---------- */
 
   .story-link {
     display: inline-flex;
@@ -1457,38 +1513,6 @@ const schema = {
 
   .story-link--quiet svg {
     color: inherit;
-  }
-
-  .story-plate {
-    margin: 0;
-  }
-
-  .story-plate figcaption {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 0.65rem;
-    color: var(--muted);
-    font-family: var(--font-sans);
-    font-size: 0.85rem;
-    letter-spacing: 0.09em;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-
-  .story--reverse .story-copy {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .story--reverse .story-plate {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .story--reverse .story-index {
-    grid-column: 1;
-    grid-row: 1;
   }
 
   /* ---------- Method ---------- */
@@ -1780,28 +1804,17 @@ const schema = {
       max-width: 52ch;
     }
 
-    .story,
-    .story--reverse {
-      grid-template-columns: clamp(2rem, 6vw, 3rem) minmax(0, 1fr);
-      gap: 1.25rem;
+    .project-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
 
-    .story-copy,
-    .story--reverse .story-copy {
-      grid-column: 2;
-      grid-row: 1;
+    .project-card:nth-child(n) {
+      grid-column: span 3;
     }
 
-    .story-plate,
-    .story--reverse .story-plate {
-      grid-column: 2;
-      grid-row: 2;
-      margin-top: 1.5rem;
-    }
-
-    .story--reverse .story-index {
-      grid-column: 1;
-      grid-row: 1;
+    .work-foot-panel {
+      grid-template-columns: 1fr;
+      align-items: start;
     }
 
     .margin-statement {
@@ -1872,32 +1885,35 @@ const schema = {
       gap: 0;
     }
 
-    .story,
-    .story--reverse {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
+    .project-grid {
+      grid-template-columns: 1fr;
     }
 
-    .story-index,
-    .story--reverse .story-index {
-      grid-column: 1;
-      grid-row: 1;
-      margin-bottom: 0.65rem;
-      padding-top: 0;
+    .project-card:nth-child(n) {
+      grid-column: 1 / -1;
     }
 
-    .story-copy,
-    .story--reverse .story-copy {
-      grid-column: 1;
-      grid-row: 2;
-      max-width: none;
+    .card-status {
+      margin-left: 0;
     }
 
-    .story-plate,
-    .story--reverse .story-plate {
-      grid-column: 1;
-      grid-row: 3;
-      margin-top: 1.75rem;
+    .filter-panel {
+      align-items: stretch;
+    }
+
+    .filter-copy {
+      padding-left: 0;
+    }
+
+    .segmented {
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .segmented button {
+      flex: 1 1 calc(33.333% - 3px);
+      min-width: 0;
+      padding-inline: 6px;
     }
 
     .syllabus-row {
@@ -1909,10 +1925,6 @@ const schema = {
       grid-column: 2;
       justify-self: start;
       margin-top: 0.35rem;
-    }
-
-    .story-plate figcaption {
-      font-size: 0.6875rem;
     }
   }
 
@@ -1937,22 +1949,8 @@ const schema = {
       font-size: clamp(2rem, 8vw, 2.8rem);
     }
 
-    .story-copy h3 {
-      font-size: 1.9rem;
-    }
-
-    .story-deck {
-      font-size: 1.05rem;
-    }
-
-    .story-facts > div {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.15rem;
-    }
-
-    .story-facts dd {
-      text-align: left;
+    .card-body h3 {
+      font-size: clamp(1.75rem, 8vw, 2.3rem);
     }
 
     .epilogue :global(h2) {
@@ -2008,4 +2006,60 @@ const schema = {
     window.addEventListener('scroll', setHidden, { passive: true });
     window.addEventListener('resize', setHidden);
   }
+</script>
+
+<script>
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-filter]'));
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-category]'));
+  const count = document.querySelector<HTMLElement>('[data-filter-count]');
+  const empty = document.querySelector<HTMLElement>('[data-empty-filter]');
+  const reset = document.querySelector<HTMLButtonElement>('[data-filter-reset]');
+
+  const applyFilter = (filter: string) => {
+    let visible = 0;
+
+    cards.forEach((card) => {
+      const match = filter === 'all' || card.dataset.category === filter;
+      card.hidden = !match;
+      if (match) visible += 1;
+    });
+
+    buttons.forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
+    });
+
+    if (count) {
+      count.textContent = `Showing ${visible} of ${cards.length} entries`;
+    }
+
+    if (empty) {
+      empty.hidden = visible !== 0;
+    }
+  };
+
+  const fromUrl = new URLSearchParams(window.location.search).get('filter');
+  const valid = buttons.some((button) => button.dataset.filter === fromUrl);
+  if (valid && fromUrl) applyFilter(fromUrl);
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.filter ?? 'all';
+      applyFilter(filter);
+
+      const url = new URL(window.location.href);
+      if (filter === 'all') {
+        url.searchParams.delete('filter');
+      } else {
+        url.searchParams.set('filter', filter);
+      }
+      window.history.replaceState({}, '', url);
+    });
+  });
+
+  reset?.addEventListener('click', () => {
+    applyFilter('all');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('filter');
+    window.history.replaceState({}, '', url);
+  });
 </script>

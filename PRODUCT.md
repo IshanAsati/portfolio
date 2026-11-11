@@ -20,7 +20,7 @@ A field journal rather than a résumé or project gallery. The differentiator is
 
 ## Operating Context
 
-Visitors move from a chaptered homepage narrative into individual case studies, then to the work index, about page or contact page. The site is a static web publication with no backend and no contact form; email and GitHub are the direct channels. Case studies are long-form and include screenshots, diagrams and technical detail.
+Visitors move from a chaptered homepage, which holds the full work grid, into individual case studies, then to the about page or contact page. The site is a static web publication with no backend and no contact form; email and GitHub are the direct channels. Case studies are long-form and include screenshots, diagrams and technical detail.
 
 ## Capabilities and Constraints
 

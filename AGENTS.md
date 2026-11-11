@@ -11,8 +11,8 @@
 
 - Static Astro 7 site. Tailwind v4 is wired through the Vite plugin (`@tailwindcss/vite`), not an Astro integration. No client-side framework; interactivity is inline `<script>`.
 - Project case studies are MDX in `src/content/projects/`, rendered by `src/pages/work/[slug].astro`. The schema lives in `src/content.config.ts`.
-- `src/pages/index.astro` hardcodes the three featured projects and the extra index link. Adding an MDX entry does **not** add it to the homepage.
-- `/work` sorts entries by `order`, but its CSS only assigns grid spans to cards `:nth-child(1)` through `:nth-child(4)`. A fifth entry needs the span rules and both media queries extended.
+- The project grid lives in chapter two of `src/pages/index.astro`. It reads the `projects` collection sorted by `order`, so a new MDX entry appears on the homepage without editing the page. There is no work index page: `/work` redirects to `/#work` via `redirects` in `astro.config.mjs`.
+- The grid's CSS assigns spans to cards `:nth-child(1)` through `:nth-child(7)`. An eighth entry needs its own span rule and both media queries extended.
 - `cover` is duplicated: the enum in `src/content.config.ts` and the prop union in `src/components/ProjectArtwork.astro`. Add a new cover kind to both.
 - Design tokens and base styles live in `src/styles/global.css`; most page and component styles are scoped `<style>` blocks in `.astro` files.
 
