@@ -103,7 +103,7 @@ const methodTabs = [
     eyebrow: 'First move',
     title: 'Make the smallest real thing.',
     description:
-      'Every entry here started small enough to run: a classifier on a real dataset, a plan screen with a real week behind it. Building first turns an opinion into evidence.',
+      'Every entry started small enough to run. Building first turns an opinion into evidence.',
     image: {
       src: methodBuild,
       alt: 'Hands assembling and soldering an electronics circuit board at a maker workbench.',
@@ -118,7 +118,7 @@ const methodTabs = [
     eyebrow: 'Second move',
     title: 'Watch what actually happens.',
     description:
-      'A score, a week that survives a calendar, a circuit that misreads its sensor: each returns something the plan could not predict.',
+      'A score, a real week, a misreading sensor: each returns something the plan could not predict.',
     image: {
       src: methodObserve,
       alt: 'An oscilloscope measuring live electronic waveforms on a laboratory test bench.',
@@ -133,7 +133,7 @@ const methodTabs = [
     eyebrow: 'Third move',
     title: 'Let the evidence change the plan.',
     description:
-      'When a result contradicts the design, the design moves. Atlas labels its mocked pipeline as mocked. DermoAI keeps its caveat above its own numbers.',
+      'When a result contradicts the design, the design moves. Atlas labels its mocked pipeline as mocked.',
     image: {
       src: methodRevise,
       alt: 'Precision drafting pencil and technical schematics on an engineering drafting table.',
@@ -148,7 +148,7 @@ const methodTabs = [
     eyebrow: 'Last move',
     title: 'Say where it actually stands.',
     description:
-      'Complete build, in development, research study, reserved entry. A status line is more useful than a highlight reel.',
+      'Complete build, in development, research study. A status line beats a highlight reel.',
     image: {
       src: methodStatePlainly,
       alt: 'A vintage mechanical typewriter on a solid wood desk with paper loaded in the carriage.',
@@ -244,18 +244,29 @@ const schema = {
             id="cover-title"
             align="left"
             min={60}
-            max={172}
-            scale={16.5}
+            max={128}
+            scale={12.5}
             trigger="load"
             delay={0.15}
             stagger={0.09}
           />
 
           <p class="cover-deck">
-            Notes from a student who learns by making things: a skin-image classifier,
-            a study coach that argues back, a quieter place to focus, and a few circuits
-            on the bench.
+            Student in India building machine-learning, software and embedded projects.
+            First place, DAV ML Khanna ML competition. Every project below is labelled
+            with its real stage.
           </p>
+
+          <div class="cover-actions">
+            <a class="button button--primary" href="#work">
+              See the work
+              <ArrowRight aria-hidden="true" stroke-width="1.5" />
+            </a>
+            <a class="button" href="#prologue">
+              Begin reading
+              <ArrowDown aria-hidden="true" stroke-width="1.5" />
+            </a>
+          </div>
 
           <div class="cover-work">
             <p class="cover-work-label">Selected work</p>
@@ -270,17 +281,6 @@ const schema = {
                 </li>
               ))}
             </ul>
-          </div>
-
-          <div class="cover-actions">
-            <a class="button" href="#prologue">
-              Begin reading
-              <ArrowDown aria-hidden="true" stroke-width="1.5" />
-            </a>
-            <a class="button" href="#work">
-              See the work
-              <ArrowRight aria-hidden="true" stroke-width="1.5" />
-            </a>
           </div>
         </div>
 
@@ -327,50 +327,14 @@ const schema = {
           </h2>
 
           <p class="dropcap" data-reveal>
-            Most of what I know arrived through projects that were slightly beyond me at
-            the start. A model that had to classify images. A study plan that had to
-            survive a real week. A timer that had to be quiet enough to use. The making
-            came first; the understanding followed.
-          </p>
-
-          <p data-reveal>
-            I am a student in India, working across artificial intelligence, software and
-            the physical edge of computing. I do not have a single stack, and I have
-            stopped treating that as a flaw. The through-line is a preference for
-            understanding the whole system — and for making ideas into something that runs.
+            I learn by building things slightly beyond me: a model that had to classify
+            images, a study plan that had to survive a real week, a timer quiet enough to
+            use. The making comes first and the understanding follows.
           </p>
 
           <blockquote data-reveal>
             <p>“Build, observe, revise. Then say plainly what is real and what is still a sketch.”</p>
           </blockquote>
-
-          <div class="toc" data-reveal>
-            <div class="toc-head">
-              <p class="toc-label">Contents</p>
-              <p class="toc-meta">{site.issue} / {site.year}</p>
-            </div>
-
-            <ol class="toc-list">
-              {chapters.map((chapter) => (
-                <li>
-                  <a href={`#${chapter.id}`}>
-                    <span class="toc-number">{chapter.number}</span>
-                    <span class="toc-title">{chapter.title}</span>
-                    <span class="toc-dots" aria-hidden="true" />
-                    <span class="toc-note">{chapter.note}</span>
-                  </a>
-                </li>
-              ))}
-              <li>
-                <a href="#correspondence">
-                  <span class="toc-number">—</span>
-                  <span class="toc-title">Epilogue</span>
-                  <span class="toc-dots" aria-hidden="true" />
-                  <span class="toc-note">Correspondence</span>
-                </a>
-              </li>
-            </ol>
-          </div>
         </div>
       </div>
     </section>
@@ -405,14 +369,9 @@ const schema = {
               because the questions do.
             </p>
             <p>
-              A vision model raises questions about data and trust. A study tool raises
-              questions about memory and attention. A circuit raises questions about
-              timing, voltage and the gap between a diagram and a wire.
-            </p>
-            <p>
-              The interests rarely stay in one place. That is how I like it. The point was
-              never to look like someone who has arrived. It was to keep the questions
-              close enough to work on.
+              A vision model raises questions about trust. A study tool raises questions
+              about attention. A circuit raises questions about the gap between a diagram
+              and a wire.
             </p>
           </div>
 
@@ -420,7 +379,7 @@ const schema = {
             <p class="margin-label">At a glance</p>
             <dl class="margin-list">
               <div>
-                <dt>Currently</dt>
+                <dt>Now</dt>
                 <dd>Student, building in public</dd>
               </div>
               <div>
@@ -432,8 +391,12 @@ const schema = {
                 <dd>AI, software, hardware</dd>
               </div>
               <div>
-                <dt>Preferred method</dt>
-                <dd>Build, observe, revise</dd>
+                <dt>Recognition</dt>
+                <dd>1st place, DAV ML Khanna</dd>
+              </div>
+              <div>
+                <dt>Code</dt>
+                <dd><a href={site.github} rel="noopener">github.com/IshanAsati</a></dd>
               </div>
             </dl>
           </aside>
@@ -459,7 +422,7 @@ const schema = {
             />
           </div>
           <p class="chapter-deck">
-            Each began with a question that a plan alone could not answer.
+            Each began with a question a plan alone could not answer.
           </p>
         </header>
 
@@ -511,6 +474,7 @@ const schema = {
 
                   <h3><a href={`/work/${project.id}`}>{project.data.title}</a></h3>
                   <p class="card-summary">{project.data.summary}</p>
+                  {project.data.caveat && <p class="sr-only">{project.data.caveat}</p>}
 
                   <div class="card-foot">
                     <span class="mono card-year">{project.data.year}</span>
@@ -533,13 +497,11 @@ const schema = {
         <div class="work-foot-panel panel">
           <p class="eyebrow">A note on the record</p>
           <p class="work-foot-note">
-            Projects are described at the stage they are actually in. Research work is marked
-            as research. Unfinished software is marked as unfinished. Concepts are not
-            presented as products. If an entry looks quiet, it is because the work is still
-            being done.
+            Each project is shown at its real stage: research is research, unfinished is
+            unfinished.
           </p>
           <a class="button" href="/about">
-            About the person behind the index
+            About me
             <ArrowRight aria-hidden="true" stroke-width="1.6" />
           </a>
         </div>
@@ -563,19 +525,11 @@ const schema = {
               scale={7.8}
             />
           </div>
-          <p class="chapter-deck">
-            A portfolio is more useful when it says where each thing actually stands.
-          </p>
+          <p class="chapter-deck">Each project, at its real stage.</p>
         </header>
 
         <div class="method-intro" data-reveal>
-          <p class="lede">
-            Honest records, not a highlight reel.
-          </p>
-          <p>
-            Every entry carries its real stage and status. These four moves describe how
-            the work gets made — and what happens when a result disagrees with the plan.
-          </p>
+          <p class="lede">Honest records, not a highlight reel.</p>
         </div>
 
         <div class="method-tabs" data-reveal>
@@ -631,8 +585,7 @@ const schema = {
             />
           </div>
           <p class="chapter-deck">
-            <em>In use</em> means it appears in something I have built.
-            <em>Exploring</em> means I am still learning my way around it.
+            <em>In use</em>: appears in something I built. <em>Exploring</em>: still learning.
           </p>
         </header>
 
@@ -664,21 +617,13 @@ const schema = {
             <p class="eyebrow">Chapter five</p>
             <SiteInk client:only="react" tag="h2" text="The margin." id="margin-title" min={42} max={84} scale={7.8} />
           </div>
-          <p class="chapter-deck">
-            Notes, when there is something worth standing behind.
-          </p>
+          <p class="chapter-deck">Notes, once written.</p>
         </header>
 
         <div class="margin-grid">
           <div class="margin-statement" data-reveal>
-            <p class="lede">
-              The shelf is empty on purpose.
-            </p>
-            <p>
-              Writing takes longer than building. I would rather publish nothing than
-              publish something manufactured to fill a page. The first entries will appear
-              when they are actually written, edited and worth your time.
-            </p>
+            <p class="lede">The shelf is empty on purpose.</p>
+            <p>I would rather publish nothing than filler. Entries appear when they are worth reading.</p>
           </div>
 
           <div class="planned" data-reveal>
@@ -719,10 +664,7 @@ const schema = {
         </div>
 
         <div class="epilogue-body" data-reveal>
-          <p>
-            Email is a real inbox, read by a real person. It is the best place to start a
-            conversation about a project, a shared interest or something this site got wrong.
-          </p>
+          <p>Email is the best way to reach me.</p>
           <a class="epilogue-mail" href={`mailto:${site.email}`}>
             {site.email}
             <ArrowUpRight aria-hidden="true" stroke-width="1.3" />
@@ -789,7 +731,7 @@ const schema = {
     flex-direction: column;
     isolation: isolate;
     min-height: 100svh;
-    padding-top: clamp(5.25rem, 8vw, 7rem);
+    padding-top: clamp(4.5rem, 6vw, 5.25rem);
     overflow: clip;
     border-bottom: 1px solid var(--border);
   }
@@ -822,8 +764,8 @@ const schema = {
     grid-template-columns: minmax(0, 1.32fr) minmax(0, 0.68fr);
     align-items: center;
     gap: clamp(2rem, 6vw, 5rem);
-    min-height: min(74svh, 680px);
-    padding-block: var(--page-head-pad-top, clamp(5.5rem, 8.5vw, 7.5rem)) clamp(2.5rem, 5vw, 4rem);
+    min-height: min(62svh, 600px);
+    padding-block: clamp(1.5rem, 3vw, 2.5rem) clamp(2rem, 4vw, 3.5rem);
   }
 
   .issue-line {
@@ -849,6 +791,12 @@ const schema = {
     color: var(--primary);
   }
 
+  @media (max-width: 700px) {
+    .issue-line span:nth-child(2) {
+      display: none;
+    }
+  }
+
   .cover :global(h1) {
     margin-top: 1.5rem;
     font-size: clamp(4.2rem, 11vw, 10.5rem);
@@ -865,11 +813,11 @@ const schema = {
   }
 
   .cover-deck {
-    max-width: 46ch;
-    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+    max-width: 52ch;
+    margin-top: clamp(1.25rem, 2.2vw, 1.75rem);
     color: var(--ink-soft);
-    font-size: clamp(1.35rem, 2vw, 1.65rem);
-    line-height: 1.72;
+    font-size: clamp(1.25rem, 1.7vw, 1.45rem);
+    line-height: 1.6;
   }
 
   .cover-actions {
@@ -877,7 +825,7 @@ const schema = {
     flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem 1.75rem;
-    margin-top: clamp(1.6rem, 3vw, 2.4rem);
+    margin-top: clamp(1.25rem, 2.2vw, 1.75rem);
   }
 
   .cover-actions .button {
@@ -1069,82 +1017,12 @@ const schema = {
     line-height: 1.22;
   }
 
-  .toc {
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    border-top: 1px solid var(--border);
-  }
-
-  .toc-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-block: 0.85rem;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .toc-label,
-  .toc-meta,
   .margin-label {
     color: var(--muted);
     font-family: var(--font-sans);
     font-size: 0.9375rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-  }
-
-  .toc-list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .toc-list li {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .toc-list a {
-    display: grid;
-    grid-template-columns: 2.25rem minmax(0, 1fr) minmax(2rem, 5rem) minmax(0, 0.9fr);
-    align-items: baseline;
-    gap: 1rem;
-    padding-block: 0.85rem;
-    transition: color 180ms var(--ease);
-  }
-
-  .toc-number {
-    color: var(--primary);
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
-    letter-spacing: 0.08em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .toc-title {
-    font-family: var(--font-display);
-    font-size: clamp(1.3rem, 2.2vw, 1.65rem);
-    font-weight: 450;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-  }
-
-  .toc-dots {
-    height: 1px;
-    background: repeating-linear-gradient(
-      to right,
-      color-mix(in srgb, var(--muted) 45%, transparent) 0 2px,
-      transparent 2px 6px
-    );
-    transform: translateY(-3px);
-  }
-
-  .toc-note {
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.5;
-  }
-
-  .toc-list a:hover .toc-title {
-    color: var(--primary);
   }
 
   /* ---------- Chapter furniture ---------- */
@@ -1252,6 +1130,19 @@ const schema = {
   .margin-list dd {
     font-size: 1.15rem;
     line-height: 1.5;
+  }
+
+  .margin-list dd a {
+    display: inline-block;
+    padding-block: 0.3rem;
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 0.2em;
+    transition: color 180ms var(--ease);
+  }
+
+  .margin-list dd a:hover {
+    color: var(--primary);
   }
 
   /* ---------- Work index ---------- */
@@ -1864,20 +1755,6 @@ const schema = {
     .folio-label {
       margin-top: 0;
       writing-mode: horizontal-tb;
-    }
-
-    .toc-list a {
-      grid-template-columns: 2rem minmax(0, 1fr) auto;
-      gap: 0.75rem;
-    }
-
-    .toc-dots {
-      display: none;
-    }
-
-    .toc-note {
-      text-align: right;
-      font-size: 0.75rem;
     }
 
     .cover-work-list {
