@@ -17,7 +17,7 @@ tools:
   - Computer vision
   - Test-time augmentation
 repo: "https://github.com/IshanAsati/dermoai-final"
-award: "First place — DAV ML Khanna machine learning competition"
+award: "First place — DAV ML Khanna · Third place — CBSE Science Exhibition 2026-27, Zone 21"
 caveat: "Research prototype — not clinically validated."
 metrics:
   - value: "82.79%"
@@ -45,7 +45,7 @@ DermoAI is an experimental machine-learning project that classifies skin images 
 
 The project is a single-label image classifier: one image in, one of twelve class predictions out. It uses a ConvNeXt-Base backbone, a classification head adapted to the twelve-class problem, and test-time augmentation at inference.
 
-The work was entered into the DAV ML Khanna machine learning competition, where it placed first. That result is the most concrete external signal the project has. It is not evidence that the model is ready for clinical use.
+The work was entered into the DAV ML Khanna machine learning competition, where it placed first. It also placed third in Zone 21 of the CBSE DOE Science Exhibition 2026-27, under Science: Artificial Intelligence (AI) for Better Life. Those results are the most concrete external signals the project has. They are not evidence that the model is ready for clinical use.
 
 The full implementation and model tester live in the [DermoAI repository](https://github.com/IshanAsati/dermoai-final).
 
@@ -104,7 +104,7 @@ The public repository includes a local drag-and-drop tester. It runs on the user
 
 The project's original competition entry reported **82.79% accuracy** across twelve classes and **87.30% sensitivity on the cancer-related classes**. Those are the figures from the project's own evaluation and the ones I present here. I have not invented a dataset size, a comparison against other architectures or a clinical validation study to make them sound stronger.
 
-The work placed **first in the DAV ML Khanna machine learning competition**.
+The work placed **first in the DAV ML Khanna machine learning competition** and **third in Zone 21 at the CBSE Science Exhibition 2026-27**, under Science: Artificial Intelligence (AI) for Better Life.
 
 | Measure | Reported result |
 | --- | --- |
@@ -113,6 +113,7 @@ The work placed **first in the DAV ML Khanna machine learning competition**.
 | Classes | 12 |
 | Inference | Test-time augmentation |
 | Competition | First place, DAV ML Khanna |
+| Exhibition | Third place, CBSE Science Exhibition 2026-27, Zone 21 |
 
 Accuracy and sensitivity answer different questions. A model can be accurate overall while still missing the cases that matter most. Reporting both is a minimum, not a complete evaluation.
 
@@ -124,7 +125,7 @@ The limitations are the important part of this page.
 - **No claim of diagnostic utility.** A class prediction is not a diagnosis. The model's outputs are uncalibrated research outputs.
 - **Narrow evaluation.** The reported metrics come from the project's own evaluation setup. They do not establish how the model behaves on images from different devices, populations or lighting conditions.
 - **Dataset bias is unresolved.** Skin-image datasets are known to under-represent darker skin tones and rare conditions. This project does not solve that problem.
-- **A competition result is not a product result.** First place is a useful signal about the project relative to its entrants. It is not evidence of safety, fairness or readiness.
+- **A competition result is not a product result.** First place at DAV ML Khanna and third in Zone 21 are useful signals about the project relative to its entrants. It is not evidence of safety, fairness or readiness.
 
 I would rather state these limits plainly than let a strong headline number imply more than the work supports.
 
