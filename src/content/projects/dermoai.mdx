@@ -4,133 +4,237 @@ index: "01"
 year: "2026"
 category: "AI / Machine Learning"
 filter: ai
-status: "Research study"
-summary: "A 12-class skin-image classifier built on ConvNeXt-Base, evaluated with test-time augmentation and entered into a machine-learning competition."
-deck: "A computer-vision study in skin-image classification — built to understand the gap between a model that scores well and a system that deserves trust."
+status: "In development"
+summary: "An Android skin-awareness app that runs a 12-class ConvNeXt-Base skin-image model on the phone, with an image-quality check, a healthy-skin gate and a doctor dashboard. Educational, not diagnostic."
+deck: "A research model rebuilt as an Android app, and a long lesson in how much work sits between a good validation score and something a person can safely use on their own skin."
 order: 1
 featured: true
 cover: dermoai
 tools:
-  - Python
+  - Kotlin
+  - Jetpack Compose
+  - TensorFlow Lite
   - PyTorch
   - ConvNeXt-Base
-  - Computer vision
-  - Test-time augmentation
-repo: "https://github.com/IshanAsati/dermoai-final"
+  - CameraX
+  - Room
+  - Hilt
+  - Appwrite
+  - Next.js
+repo: "https://github.com/IshanAsati/dermoai-android"
 award: "First place — DAV ML Khanna · Third place — CBSE Science Exhibition 2026-27, Zone 21"
-caveat: "Research prototype — not clinically validated."
+caveat: "Educational tool — not a medical device, not clinically validated."
 metrics:
   - value: "82.79%"
-    label: "Reported accuracy"
-    note: "As evaluated within the project"
+    label: "Research model accuracy"
+    note: "Competition entry, project's own evaluation"
   - value: "87.30%"
     label: "Cancer-class sensitivity"
-    note: "As evaluated within the project"
+    note: "Competition entry, project's own evaluation"
   - value: "12"
     label: "Output classes"
-    note: "Single-label image classification"
-  - value: "1st"
-    label: "DAV ML Khanna competition"
-    note: "Machine learning competition"
+    note: "Same label set on the phone"
+  - value: "On-device"
+    label: "Inference"
+    note: "TensorFlow Lite, no server round-trip"
 ---
 
-DermoAI is an experimental machine-learning project that classifies skin images into one of twelve categories. It began as a question about how far a modern vision model could be pushed on a small, difficult dataset — and became a lesson in why a good score is not the same thing as a reliable system.
+import { Image } from 'astro:assets';
+import homeShot from '../../assets/projects/dermoai/home.png';
+import moreShot from '../../assets/projects/dermoai/more.png';
+import faqShot from '../../assets/projects/dermoai/faq.png';
+import finderShot from '../../assets/projects/dermoai/finder.png';
+
+DermoAI started as a skin-image classifier: a ConvNeXt-Base model that sorts a photo into one of twelve categories. It is now an Android app built around that model. You photograph a patch of skin, the app checks the photo, runs the model on the phone, and explains the result in plain language with a clear next step. The app also keeps a photo timeline, daily check-ins, routines and a report you can take to a doctor.
+
+The app is in active development. There is a working debug build, but no Play Store release.
 
 <aside class="notice">
-  <p class="notice-label">Research use only</p>
-  <p>DermoAI is not a medical device, a diagnostic system or a screening tool. It has not been clinically validated, and its outputs must not be treated as medical advice. The figures on this page are the project's own reported evaluation results, not an independent clinical assessment. Any concern about skin health belongs with a qualified clinician.</p>
+  <p class="notice-label">Educational use only</p>
+  <p>DermoAI is not a medical device, a diagnostic system or a screening tool. It has not been clinically validated, and its outputs must not be treated as medical advice. The app shows this disclaimer throughout. The figures on this page are the project's own evaluation results, not an independent clinical assessment. Any concern about skin health belongs with a qualified clinician.</p>
 </aside>
 
 ## Overview
 
-The project is a single-label image classifier: one image in, one of twelve class predictions out. It uses a ConvNeXt-Base backbone, a classification head adapted to the twelve-class problem, and test-time augmentation at inference.
+The project has two halves.
 
-The work was entered into the DAV ML Khanna machine learning competition, where it placed first. It also placed third in Zone 21 of the CBSE DOE Science Exhibition 2026-27, under Science: Artificial Intelligence (AI) for Better Life. Those results are the most concrete external signals the project has. They are not evidence that the model is ready for clinical use.
+The **research model** is the original work. I fine-tuned ConvNeXt-Base on twelve skin categories and evaluated it with test-time augmentation. That entry placed first in the DAV ML Khanna machine learning competition. Its training code, weights and tester live in the [research repository](https://github.com/IshanAsati/dermoai-final).
 
-The full implementation and model tester live in the [DermoAI repository](https://github.com/IshanAsati/dermoai-final).
+The **Android app** puts that model in a phone and builds a product around it. The project placed third in Zone 21 of the CBSE DOE Science Exhibition 2026-27, under Science: Artificial Intelligence (AI) for Better Life. The app's source is in the [Android repository](https://github.com/IshanAsati/dermoai-android).
+
+Neither result is evidence that the model is ready for clinical use.
 
 ## The problem
 
-Skin-image classification is hard for reasons that have little to do with architecture choice. Many categories look alike to a non-expert eye. Images vary in lighting, scale, focus and skin tone. A dataset can be imbalanced in ways that make overall accuracy flattering and per-class performance uneven.
+A model that scores well on its validation split answers a narrow question. An app has to answer a harder one: what happens when a real person points a real phone at their own skin, in bad light, and reads the result alone?
 
-The question I set out to explore was deliberately modest: can a fine-tuned ConvNeXt-Base model classify images across twelve categories well enough to be a credible research prototype? A second question sat underneath it — what should I report, and what should I refuse to claim?
+Moving to the phone exposed problems the research numbers never showed:
 
-## Approach
+- **Real photos are not dataset photos.** Phone pictures are blurry, dark, tilted and taken at odd distances.
+- **The model had never really learned healthy skin.** Its Healthy class scored well on its own validation split. On real phone photos of normal skin it almost always predicted a lesion instead.
+- **A label is not guidance.** "SCC, 71%" is frightening and unhelpful. The app has to turn a prediction into a calm, honest next step without overstating what the model knows.
 
-The approach was standard transfer learning, treated carefully:
+## What the app does
 
-- Start from a pretrained ConvNeXt-Base backbone rather than training a vision model from scratch.
-- Adapt the output head to twelve classes and fine-tune the model on the available labelled images.
-- Evaluate with metrics that expose more than aggregate accuracy, including sensitivity on the cancer-related classes.
-- Apply test-time augmentation at inference to reduce the variance of a single prediction.
-- Package the selected model with a local tester so results could be inspected rather than only described.
+The scan flow is the core of the app:
 
-Test-time augmentation does not add information to the model. It averages predictions over transformed versions of the same image, which can make inference more stable. It was a deliberate, small robustness measure — not a substitute for a proper external validation set.
+1. **Capture.** A CameraX screen with a framing guide, or a photo from the gallery.
+2. **Crop.** Manual crop and rotate, so the model sees the skin and not the room.
+3. **Quality check.** Before analysis, the app measures blur (variance of a Laplacian filter), exposure (mean brightness) and resolution. A poor photo gets a warning and guidance. You can retake, adjust or analyse anyway; the check never blocks you.
+4. **Inference.** The model runs on the phone with TensorFlow Lite.
+5. **Healthy-skin gate.** A small second model decides whether the photo looks like normal skin (more on this below).
+6. **Profile rules.** A rule engine uses the profile you set up (age, skin type, sun exposure and similar) to adjust the level of concern. The rules can raise concern but never lower it, and the app lists every adjustment it made.
+7. **Guidance.** The result maps to one of four tiers: educational, monitor, consult or urgent. High-concern results show a button that opens a map of nearby dermatologists.
+
+Around the scan, the app includes:
+
+- A photo **timeline** for tracking a spot over time.
+- **SkinMind**, a daily check-in with optional voice notes.
+- **Treatment routines**, plus a wellness section with a breathing exercise and a journal.
+- **Analytics** with rule-based pattern hints, labelled "possible pattern — not medical advice".
+- A **PDF doctor report** generated on the phone and shared through the system share sheet.
+- **UV and heat alerts** from the Open-Meteo weather API.
+- An offline **FAQ** on skin conditions, prevention and how the app works.
+- A **dermatologist finder** built on OpenStreetMap data.
+- An optional **AI chat assistant**. It only works if you paste in your own DeepSeek API key, so no key ships inside the app.
+- English, with partial translations into Hindi, Marathi, Bengali, Telugu and Tamil.
 
 ## Architecture
 
-The core is **ConvNeXt-Base**, a modern convolutional architecture, used as a feature extractor and then fine-tuned for the classification task.
+The app is a multi-module Kotlin project with 24 Gradle modules: ten core modules and thirteen feature modules around a thin app shell.
 
 ```text
-skin image
+camera / gallery
     │
     ▼
-ConvNeXt-Base backbone
+crop + rotate
     │
     ▼
-12-class classification head
+image-quality check (blur, exposure, size)
     │
     ▼
-test-time augmentation
+ConvNeXt-Base, TensorFlow Lite, 224×224
+    │                 │
+    │                 └── 1024-d features ──▶ healthy-skin gate
+    ▼
+12-class probabilities
     │
     ▼
-averaged class prediction
+profile rules (escalate only)
+    │
+    ▼
+severity tier + plain-language guidance
 ```
 
-The diagram above is the conceptual pipeline. Implementation details, weights and the tester are documented in the repository rather than reproduced here, so this page does not drift out of sync with the code.
+- **UI:** Jetpack Compose with a custom design system, plus CameraX for capture.
+- **State and data:** Hilt for dependency injection, Room for local storage and DataStore for settings.
+- **On-device by default:** inference, photos, the timeline and PDF reports stay on the phone.
+- **Network use is specific:** Location goes to Open-Meteo for weather and to OpenStreetMap's Overpass API for the finder. Chat text goes to DeepSeek only if you turn chat on. Firebase handles sign-in, and Appwrite handles doctor sharing.
 
-## Development
+## The model on the phone
 
-Development moved through the usual research loop: prepare the data pipeline, get a baseline training run working, inspect where the model failed, adjust the training setup, and evaluate again. The expensive part was not writing the training loop. It was learning to read the results honestly.
+The deployed model is a ConvNeXt-Base checkpoint from the research project. It was converted from PyTorch through Keras to TensorFlow Lite, with 8-bit weights, which brings it to about 89 MB. Input is a 224×224 image with standard ImageNet normalisation. The model returns two things: the twelve class scores and the 1024-dimensional feature vector the gate needs.
 
-Two decisions shaped the project more than any hyperparameter:
+Two changes after conversion mattered more than the conversion itself:
 
-1. **Report per-class behaviour, not just accuracy.** A single accuracy number can hide a class the model never learns to recognise.
-2. **Keep the evaluation reproducible.** The selected checkpoint, evaluation artifacts and a local tester were kept together so the reported numbers could be traced back to something concrete.
+- **A healthy-skin gate.** On eleven phone photos of healthy skin, the classifier on its own labelled one as healthy. To fix this, a logistic-regression gate now reads the model's internal features and decides whether the photo looks like normal skin. It catches most of those photos. That test set is one person's skin from one camera, and it probably overlaps the gate's training data, so I treat this as a working fix rather than a measured result.
+- **Removing a melanoma bias.** The research model came with a setting that pushed melanoma scores down. On a small sample of public ISIC photos, removing it doubled the share of melanomas the model caught, so the app no longer uses it.
 
-The public repository includes a local drag-and-drop tester. It runs on the user's machine and is intended for inspection and experimentation only.
+The research evaluation used test-time augmentation. The app currently runs a single pass per image; wiring TTA into the phone pipeline is still on the list.
+
+## The doctor side
+
+DermoAI includes a doctor mode. A doctor signs up, gets a pairing code and QR code, and a patient links to them with explicit consent. The doctor sees an urgency-ranked list of linked patients, each with trends, routine adherence and clinical notes. A patient can revoke access at any time, and an audit log records access. Sharing can also be protected by a passcode.
+
+The same view exists as a web dashboard built with Next.js and Appwrite, tested with Vitest unit tests and Playwright end-to-end tests against a fake Appwrite server. Sharing scan photos with a linked doctor is in progress and not yet part of the published code.
+
+## Team
+
+DermoAI is not a solo project, and I don't want this page to imply that.
+
+I built the app's foundation: the module architecture, the scan flow and quality check, severity messaging, the profile rules, the FAQ and dermatologist finder, the AI chat, the visual redesign and the web dashboard.
+
+[Aarush Sonker](https://github.com/aarushsonker) built the healthy-skin gate, removed the melanoma bias, fixed photo orientation and wrote the ML evaluation tools. He also built the in-app doctor dashboard, Appwrite sync, cross-device pairing and passcode sharing.
 
 ## Results
 
-The project's original competition entry reported **82.79% accuracy** across twelve classes and **87.30% sensitivity on the cancer-related classes**. Those are the figures from the project's own evaluation and the ones I present here. I have not invented a dataset size, a comparison against other architectures or a clinical validation study to make them sound stronger.
+The research model's competition entry reported **82.79% accuracy** across twelve classes and **87.30% sensitivity on the cancer-related classes**. Those are the figures from the project's own evaluation, and they are the ones I present. I have not added a dataset size, a comparison against other architectures or a clinical study to make them sound stronger.
 
 The work placed **first in the DAV ML Khanna machine learning competition** and **third in Zone 21 at the CBSE Science Exhibition 2026-27**, under Science: Artificial Intelligence (AI) for Better Life.
 
-| Measure | Reported result |
+| Measure | Result |
 | --- | --- |
-| Accuracy | 82.79% |
-| Cancer-class sensitivity | 87.30% |
+| Accuracy (research model) | 82.79% |
+| Cancer-class sensitivity (research model) | 87.30% |
 | Classes | 12 |
-| Inference | Test-time augmentation |
+| Inference in the app | On-device, TensorFlow Lite |
+| Automated tests (Android) | 214 JVM unit tests |
 | Competition | First place, DAV ML Khanna |
 | Exhibition | Third place, CBSE Science Exhibition 2026-27, Zone 21 |
 
 Accuracy and sensitivity answer different questions. A model can be accurate overall while still missing the cases that matter most. Reporting both is a minimum, not a complete evaluation.
+
+<figure class="case-gallery">
+  <div class="case-gallery-grid">
+    <figure class="case-shot">
+      <Image
+        src={homeShot}
+        alt="DermoAI home screen with a scan prompt, a latest-scan card, the daily SkinMind check-in and an insight card."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02a</span> Home</figcaption>
+    </figure>
+    <figure class="case-shot">
+      <Image
+        src={moreShot}
+        alt="DermoAI More menu listing Treatment, Wellness, Analytics, Doctor Report, Settings, FAQ and Find a dermatologist."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02b</span> More menu</figcaption>
+    </figure>
+    <figure class="case-shot">
+      <Image
+        src={faqShot}
+        alt="DermoAI FAQ screen with a search field, category chips and questions about melanoma."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02c</span> Offline FAQ</figcaption>
+    </figure>
+    <figure class="case-shot">
+      <Image
+        src={finderShot}
+        alt="DermoAI dermatologist finder showing its no-location state with a retry button."
+        widths={[280, 420, 560]}
+        sizes="(max-width: 700px) 45vw, 260px"
+      />
+      <figcaption><span>Fig. 02d</span> Finder, no location</figcaption>
+    </figure>
+  </div>
+  <figcaption class="case-gallery-caption">
+    Screenshots from the debug build on an Android emulator, not mockups. The finder is shown in
+    its no-location state because the emulator had no GPS fix.
+  </figcaption>
+</figure>
 
 ## Limitations
 
 The limitations are the important part of this page.
 
 - **No clinical validation.** The model has not been tested in a clinical setting, against a prospective patient population, or under the supervision of dermatologists.
-- **No claim of diagnostic utility.** A class prediction is not a diagnosis. The model's outputs are uncalibrated research outputs.
-- **Narrow evaluation.** The reported metrics come from the project's own evaluation setup. They do not establish how the model behaves on images from different devices, populations or lighting conditions.
-- **Dataset bias is unresolved.** Skin-image datasets are known to under-represent darker skin tones and rare conditions. This project does not solve that problem.
-- **A competition result is not a product result.** First place at DAV ML Khanna and third in Zone 21 are useful signals about the project relative to its entrants. It is not evidence of safety, fairness or readiness.
+- **No claim of diagnostic utility.** A class prediction is not a diagnosis. The model's outputs are uncalibrated research outputs, and the app frames them as educational estimates.
+- **The model is weakest where it matters most.** Melanoma and squamous cell carcinoma are its least reliable classes.
+- **The healthy-skin gate is barely tested.** It has been checked on one person and one camera. How it behaves across skin tones, devices and lighting is unmeasured.
+- **Dataset bias is unresolved.** Skin-image datasets under-represent darker skin tones and rare conditions. For an app aimed at users in India, this is the most serious open problem, and this project does not solve it.
+- **Not released.** There is a debug build, but no store release. The doctor-sharing backend needs a security review before it holds real patient data.
+- **Competition results are not product results.** First place at DAV ML Khanna and third in Zone 21 are useful signals about the project relative to its entrants. They are not evidence of safety, fairness or readiness.
 
 I would rather state these limits plainly than let a strong headline number imply more than the work supports.
 
 ## What I learned
 
-The technical lessons — transfer learning, augmentation, evaluation hygiene — matter, but the larger lesson was about framing. In applied machine learning, the distance between "the model performs well" and "this system should be used" is enormous. Most of that distance is made of validation, failure analysis and honesty about what was never tested.
+The research model taught me transfer learning and evaluation hygiene. The app taught me that most of the difficulty sits after the model. A photo has to be good enough to judge. A healthy arm should not come back as cancer. A frightening label has to become a calm, honest next step. None of that shows up in a validation score.
 
-DermoAI made me more interested in evaluation than in leaderboard chasing. It also changed how I describe my own work: state the result, state the scope, state what remains unknown.
+It was also a team project, and the most important fix in the app, the healthy-skin gate, was Aarush's work. DermoAI made me more interested in evaluation than in leaderboard chasing, and it made me describe my own work the same way the app describes a result: state the result, state the scope, state what remains unknown.
